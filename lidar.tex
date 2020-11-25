@@ -1,0 +1,110 @@
+\documentclass[11pt,a4paper]{article}
+
+% Define page geometry
+\usepackage{geometry}
+\geometry{left=2.2cm,
+	right=2.2cm,
+	top=2.2cm,
+	bottom=2cm}
+\parskip 0.15cm
+\setlength{\parindent}{0cm}
+\usepackage{pdflscape}
+\usepackage[document]{ragged2e}
+
+% Text formatting
+\usepackage[T1]{fontenc}  % Set font
+
+\usepackage{lineno}  % Line numbers
+
+\usepackage{amssymb}  % Symbols
+
+\linespread{1.25}  % Linespacing
+
+\usepackage{xcolor}
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{#1}}}   % todonote
+
+% Tables
+\usepackage{multirow}
+\setlength{\tabcolsep}{4pt}
+
+% Image handling
+\usepackage{graphicx} 
+
+\makeatletter
+	\g@addto@macro\@floatboxreset\centering  % Automatically centre images (floats)
+\makeatother
+
+\graphicspath{ {img/} }  % Define image path
+
+\usepackage{subfig}  % Compound figures
+
+\usepackage{float}  % Precise figure location
+
+% Bibliography management
+\usepackage[style=authoryear, natbib=true, backend=biber]{biblatex}
+\addbibresource{lidar.bib}
+
+% Links within document, nice figure formatting
+\usepackage[breaklinks]{hyperref}
+\definecolor{links}{RGB}{0,0,0}
+\hypersetup{
+	breaklinks,
+	colorlinks=true,
+	linkcolor=links,
+	anchorcolor=links,
+	citecolor=links,
+	filecolor=links,
+	menucolor=links,
+	runcolor=links,
+	urlcolor=links,
+	pdfauthor={John L. Godlee}
+}
+\def\subsectionautorefname{section}
+\def\subsubsectionautorefname{section}
+
+\newcommand{\beginsupplement}{%
+	\setcounter{table}{0}
+	\renewcommand{\thetable}{S\arabic{table}}%
+	\setcounter{figure}{0}
+	\renewcommand{\thefigure}{S\arabic{figure}}%
+	}
+     
+% Variables
+
+\newcommand{\titletext}{Terrestrial laser scanning}
+
+\begin{document}
+
+{\Large{Title: \titletext{}}}
+
+
+\section*{Abstract}
+
+\section{Introduction}
+
+\section{Materials and methods}
+
+\subsection{Study site}
+
+\subsection{Field measurements}
+
+\subsection{Terrestrial laser scanning}
+
+We used a Leica HDS6100 Terrestrial Laser Scanner, with an angular resolution of x. This produces a point density of approximately x at x m.
+
+phase shift
+
+\subsection{Data analysis}
+
+\section{Results}
+
+\section{Discussion}
+
+\section{Conclusion}
+
+\printbibliography
+
+\section{Supplementary Material}
+\beginsupplement
+
+\end{document}

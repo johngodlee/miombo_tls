@@ -1,0 +1,24 @@
+[
+	{
+		"type" : "readers.las",
+		"filename" : "input.laz"
+	},
+    {
+        "type" : "filters.outlier",
+        "method" : "statistical",
+        "mean_k" : 8,
+        "multiplier" : 1.96
+    },
+	{
+  	  "type" : "filters.range",
+  	  "limits" : "Classification![7:7]"
+	},
+    {
+        "type" : "writers.las",
+        "compression" : "true",
+        "minor_version" : "2",
+        "dataformat_id" : "0",
+        "forward" : "all",
+        "filename" : "output.laz"
+    }
+]

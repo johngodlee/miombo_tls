@@ -1,0 +1,15 @@
+[
+	{
+		"type" : "readers.las",
+		"filename" : "input.laz"
+	},
+    {
+        "type" : "writers.text",
+        "format" : "csv",
+        "precision" : 3,
+        "order" : "X,Y,Z",
+        "keep_unspecified" : "false",
+        "filename" : "output.csv"
+    }
+]
+

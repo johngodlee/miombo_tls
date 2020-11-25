@@ -1,0 +1,18 @@
+[
+	{
+		"type" : "readers.las",
+		"filename" : "out.las"
+	},
+	{
+		"type" : "filters.decimation",
+		"step" : 50
+	},
+	{
+        "type" : "writers.las",
+        "compression" : "true",
+        "minor_version" : "2",
+        "dataformat_id" : "0",
+        "forward" : "all",
+        "filename" : "output.laz"
+	}
+]
