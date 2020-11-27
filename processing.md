@@ -1,22 +1,34 @@
-# Processing steps
+# Processing TLS data
 
-1. Remove empty returns - `empty_returns.sh`
-2. Split scans into individual .ptx files - `ptx_split.sh`
-3. Convert to .laz with affine transformation of coordinates - `ptx_laz.sh`
-4. Merge .laz files - `laz_merge.sh`
-6. Voxelize - `vox.sh`
-7. Exclude noise (95% CI of mean of 8 nearest neighbour dist) - `noise.sh` 
-8. Subset to cylinder of interest around subplot at 1 m height - `cylinder.sh`
-9. Generate height foliage distribution profile, cumulative distribution, canopy top height
-10. Calculate AUC (Area Under Curve) and other statistics from cumulative height distribution profile - 
-11. Gather other data sources: species richness, plot-level stocking density, Canopy dimensions, hemispherical photography LAI
+* Gather non-TLS data sources: species richness, plot-level stocking density, Canopy dimensions, hemispherical photography LAI - `data_prep.R`
+* Process hemispherical photos - `hemi_calc.R`
+* Clean target location data - `target_calc.R`
 
-Need to probably combine all of this into one pipeline to aid batch processing later
+## Canopy closure 
 
-Extract grassy volume, start from `laz_merge.sh` stage, make smaller voxels, height below 1 m, subset to 2.5 m radius around subplot centre. Need to remove ground somehow.
+1. Split scans into individual .ptx files - `ptx_split.sh`
+2. Convert to .laz with affine transformation of coordinates - `ptx_laz.sh`
+3. Merge .laz files - `laz_merge.sh`
+4. Subset to cylinder of interest around subplot - `cylinder.sh`
+5. Voxelize - `vox.sh`
+6. Exclude noise (95% CI of mean of 8 nearest neighbour dist) - `noise.sh` 
+7. Convert .laz to .csv - `laz_txt.sh`
+8. Estimate canopy gap fraction from subplot centre using ray-tracing - `ray_trace`
+9. Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R`
+10. Statistical modelling - `models.R`
 
-Need to calculate canopy closure
+* Need to probably combine all of this into one pipeline to aid batch processing later
 
-How to calculate unfilled voxels?
+## Grassy biomass 
 
-* Canopy height variation across plot (Height of 95th percentile of cumulative height per voxel column?) - what about the blanket laying algorithm?
+1. Starting from `laz_merge.sh`, restrict height to below 2 m - `grass_subset.sh`
+2. Remove ground - `ground_filter.sh`
+3. Voxelize - `grass_vox.sh`
+4. Subset to 4 circles NESW of 41 cm diameter - `dpm_subset.sh`
+
+## Canopy height variation 
+
+1. Starting from `laz_merge.sh`, take all subplots per plot `plot_merge.sh`
+2. Voxelize - `vox.sh`
+3. Exclude noise (95% CI of mean of 8 nearest neighbour dist) - `noise.sh` 
+4. Canopy height variation across plot (Height of 95th percentile of cumulative height per voxel column?) - what about the blanket laying algorithm?

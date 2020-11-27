@@ -82,6 +82,8 @@
 
 \section{Introduction}
 
+Assessments of woodland canopy structure are most often conducted using indirect techniques limited to a two-dimensional perspective. Terrestrial Laser Scanning (TLS) technology offers a means of assessing canopy structure in three dimensions.
+
 \section{Materials and methods}
 
 \subsection{Study site}
@@ -90,11 +92,29 @@
 
 \subsection{Terrestrial laser scanning}
 
-We used a Leica HDS6100 Terrestrial Laser Scanner, with an angular resolution of x. This produces a point density of approximately x at x m.
+We used a Leica HDS6100 Terrestrial Laser Scanner, with an angular resolution of x. This produces a point density of approximately x at x m. Wave length of x nm.
 
-phase shift
+Phase shift
+
+Point clouds within each subplot were registered and unified.
+
+We validated our measurements with traditional digital hemispherical photography (DHP), with one image taken at the centre point of each subplot.
+
+Acquired our images at the maximum foliage volume in the wet season.
 
 \subsection{Data analysis}
+
+Registration of multiple scans from different locations allows us to minimise the occlusion effect and improve canopy penetration.
+
+\subsubsection{Scan processing}
+
+Filtering
+
+Voxelisation: Points don't have an area or defined volume and so are unsuitable for estimating hemispherical points \citep{Seidel2012}.
+
+Objects located closer to the instrument will be represented by a higher density of points, resulting in an imbalanced representation of the measured 3D space.
+
+Resultant points clouds had ~points, ~points after filtering, ~voxels after voxelisation.
 
 \section{Results}
 

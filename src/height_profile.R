@@ -25,6 +25,13 @@ if (!dir.exists(density_map_dir)) {
   dir.create(density_map_dir, recursive = TRUE)
 }
 
+# Define parameters 
+voxel_dim <- 0.01
+cylinder_radius <- 10
+
+# Calculate maximum 1 voxel layer volume
+layer_vol <- pi * cylinder_radius^2 * voxel_dim
+
 # For each subplot:
 profile_stat_list <- lapply(datname, function(x) {
 
@@ -36,7 +43,7 @@ profile_stat_list <- lapply(datname, function(x) {
 
   # Get target centre row
   target_loc <- targets[grepl(subplot_id, targets$point_id) & targets$centre == TRUE,]
-
+  
   # Check that only one row returned
   if (nrow(target_loc) != 1) {
     stop("Subplot centre target location unknown")
@@ -47,13 +54,25 @@ profile_stat_list <- lapply(datname, function(x) {
   dat$y_norm <- dat$Y - target_loc$lat
   dat$z_norm <- dat$Z - target_loc$ground_elev
 
-  # Plot histogram
+  # Round to nearest cm
+  dat$z_norm <- round(dat$z_norm, digits = 2)
+
+  bin_tally <- dat %>% 
+    group_by(z_norm) %>%
+    tally() %>% 
+    as.data.frame() %>%
+    mutate(vol = n * voxel_dim,
+      gap_frac = vol / layer_vol)
+
+  # Plot gap fraction histogram
   pdf(file = paste0(hist_dir, "/", subplot_id, "_foliage_hist.pdf"), 
     width = 8, height = 6)
     print(
-      ggplot(dat, aes(x = z_norm)) +
-        geom_histogram(colour = "black", fill = "grey", binwidth = 0.1) + 
-        theme_bw()
+      ggplot(bin_tally, aes(x = z_norm, y = gap_frac)) +
+        geom_line() +
+        theme_bw() + 
+        labs(x = "Elevation (m)", y = "Gap fraction") + 
+        coord_flip()
     )
   dev.off()
 
