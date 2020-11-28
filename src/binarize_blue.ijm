@@ -1,7 +1,7 @@
 // User inputs
 ///////////////////////////////////
 input_path = "/Users/johngodlee/google_drive/phd/thesis/lidar/dat/hemi_photos/jpg/";
-output_path = "/Users/johngodlee/google_drive/phd/thesis/lidar/dat/hemi_photos/tif/";
+output_path = "/Users/johngodlee/google_drive/phd/thesis/lidar/dat/hemi_photos/png/";
 algorithm = "Default"
 ///////////////////////////////////
 // END user inputs
@@ -17,6 +17,6 @@ for (i=0; i<(list.length); i++){
 	setOption("BlackBackground", true);
 	run("Invert LUT");
 	run("Convert to Mask");
-	saveAs("tif", ""+output_path+file_name+"");
+	saveAs("png", ""+output_path+file_name+"");
 	close("*");
 }

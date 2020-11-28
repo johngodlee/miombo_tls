@@ -1,0 +1,25 @@
+[
+	{
+		"type" : "readers.las",
+		"filename" : "input.laz"
+	},
+	{
+        "type" : "filters.pmf"
+    },
+	{
+        "type" : "filters.hag_nn",
+        "allow_extrapolation" : "true"
+    },    
+    {
+        "type":"filters.ferry",
+        "dimensions":"HeightAboveGround=>Z"
+    },
+	{
+        "type" : "writers.las",
+        "compression" : "true",
+        "minor_version" : "2",
+        "dataformat_id" : "0",
+        "forward" : "all",
+        "filename" : "output.laz"
+	}
+]

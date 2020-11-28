@@ -4,41 +4,64 @@
 
 # Packages
 library(dplyr)
-library(tiff)
+library(png)
 source("Hemiphot.R")
 source("fov_func.R")
 
 # Image list
-hemi_files <- list.files("../dat/hemi_photos/tif", "*.tif", full.names = TRUE)
+cam_hemi_files <- list.files("../dat/hemi_photos/png", "*.png", full.names = TRUE)
+tls_hemi_files <- list.files("../dat/tls/hemi", "*.png", full.names = TRUE)
 
-hemi_basename <- gsub(".tif", "", basename(hemi_files))
+cam_hemi_basename <- gsub(".png", "", basename(cam_hemi_files))
+tls_hemi_basename <- gsub(".png", "", basename(tls_hemi_files))
 
 # Subplot image lookup table
 subplot_lookup <- read.csv("../dat/hemi_photos/hemi_photos.csv")
 
+# Plot ID name lookup table
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
+
+subplot_lookup_clean <- left_join(subplot_lookup, plot_id_lookup, 
+  by = c("plot_id" = "seosaw_id")) %>%
+  rename(plot_name = plot_id.y) %>%
+  mutate(tls = paste0(plot_name, subplot))
+
 # Subset files list to those needed 
-hemi_files_sub <- hemi_files[hemi_basename %in% 
-  subplot_lookup$file]
+cam_hemi_files_sub <- cam_hemi_files[cam_hemi_basename %in% 
+  subplot_lookup_clean$file]
+
+tls_hemi_files_sub <- tls_hemi_files[tls_hemi_basename %in% 
+  paste0(subplot_lookup_clean$plot_name, subplot_lookup_clean$subplot)]
 
 # Check all files in subplot lookup exist
-stopifnot(nrow(subplot_lookup[!is.na(subplot_lookup$file),]) == length(hemi_files_sub))
+stopifnot(nrow(subplot_lookup_clean[!is.na(subplot_lookup_clean$file),]) == 
+  length(cam_hemi_files_sub))
 
 # For each file, get gap fraction
-gap_frac_list <- lapply(hemi_files_sub, function(x) {
-
+gap_frac <- function(x) {
   out <- list()
 
-  # Read .tif
-  img <- readTIFF(x)
+  # Read .png
+  img <- readPNG(x)
 
   # Get image ID
-  out[1] <- gsub("\\..*", "", basename(x))
+  img_id <- gsub("\\..*", "", basename(x))
 
   # Define parameters based on location
-  img_info <- subplot_lookup[subplot_lookup$file == out[1] & !is.na(subplot_lookup$file),] 
+  if (grepl("DSC", img_id)) {
+    img_info <- subplot_lookup_clean[subplot_lookup_clean$file == img_id & 
+      !is.na(subplot_lookup_clean$file),] %>%
+      dplyr::select(plot_id, plot_name, subplot, date, longitude, latitude, file)
+  } else {
+    img_info <- subplot_lookup_clean[subplot_lookup_clean$tls == img_id,] %>%
+      dplyr::select(plot_id, plot_name, subplot, date, longitude, latitude, file = tls)
+  }
   img_lon <- img_info$longitude
   img_lat <- img_info$latitude
   img_doy <- as.integer(strftime(img_info$date, format = "%j"))
+  out[1] <- img_info$plot_id
+  out[2] <- img_info$subplot
+  out[3] <- img_info$file
 
   days_vec <- seq(15,360,30)
 
@@ -61,32 +84,39 @@ gap_frac_list <- lapply(hemi_files_sub, function(x) {
 
   # Calculate gap fraction
   gap_frac <- CalcGapFractions(img)
-  out[2] <- CalcOpenness(fractions = gap_frac)
+  out[4] <- CalcOpenness(fractions = gap_frac)
 
   # LAI
-  out[3] <- CalcLAI(fractions = gap_frac)
+  out[5] <- CalcLAI(fractions = gap_frac)
 
   rad <- CalcPAR.Day(im = img,
     lat = img_lat, d = days_vec,
     tau = loc_tau, uoc = loc_uoc, 
     draw.tracks = F, full.day = F)
 
-  out[4] = rad[1]
-  out[5] = rad[2]
-  out[6] = rad[3]
-  out[7] = rad[4]
+  out[6] = rad[1]
+  out[7] = rad[2]
+  out[8] = rad[3]
+  out[9] = rad[4]
 
   out_df <- as.data.frame(out)
-  names(out_df) <- c("file", "gap_frac", "lai", "direct_above", 
-  "diff_above", "direct_below", "diff_below")
+  names(out_df) <- c("plot_id", "subplot", "file", "gap_frac", "lai", 
+    "direct_above", "diff_above", "direct_below", "diff_below")
   return(out_df)
-})
+}
+
+cam_gap_frac_list <- lapply(cam_hemi_files_sub, gap_frac) 
+tls_gap_frac_list <- lapply(tls_hemi_files_sub, gap_frac) 
 
 # Create tidy dataframe
-gap_frac_df <- do.call(rbind, gap_frac_list)
+gap_frac_df <- do.call(rbind, c(cam_gap_frac_list, tls_gap_frac_list))
 
-gap_frac_clean <- left_join(gap_frac_df, subplot_lookup, by = "file")
+gap_frac_df$method <- case_when(
+  grepl("DSC", gap_frac_df$file) ~ "hemi",
+  TRUE ~ "tls")
 
 # Write to .csv
-write.csv(gap_frac_clean, "../dat/hemi_photos/gap_frac.csv", row.names = FALSE)
+write.csv(gap_frac_df, "../dat/hemi_photos/gap_frac.csv", row.names = FALSE)
+
+
 

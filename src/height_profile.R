@@ -10,10 +10,7 @@ library(scico)
 library(zoo)
 
 # Import data
-datname <- list.files(path = "../dat", pattern = "*cylinder.csv", full.names = TRUE)
-
-# Read target coordinates
-targets <- read.csv("../dat/target_coords/target_coords.csv")
+datname <- list.files(path = "../dat/tls", pattern = "*hag.csv", full.names = TRUE)
 
 # Check for output directories
 hist_dir <- "../img/foliage_hist"
@@ -39,26 +36,13 @@ profile_stat_list <- lapply(datname, function(x) {
   dat <- fread(x)
 
   # Get names of subplots from filenames
-  subplot_id <- basename(gsub("_cylinder.csv", "", x))
+  subplot_id <- basename(gsub("_hag.csv", "", x))
 
-  # Get target centre row
-  target_loc <- targets[grepl(subplot_id, targets$point_id) & targets$centre == TRUE,]
-  
-  # Check that only one row returned
-  if (nrow(target_loc) != 1) {
-    stop("Subplot centre target location unknown")
-  }
-
-  # Normalise pointcloud coordinates
-  dat$x_norm <- dat$X - target_loc$lon
-  dat$y_norm <- dat$Y - target_loc$lat
-  dat$z_norm <- dat$Z - target_loc$ground_elev
-
-  # Round to nearest cm
-  dat$z_norm <- round(dat$z_norm, digits = 2)
+  dat$z_round <- round(dat$Z, digits = 2)
 
   bin_tally <- dat %>% 
-    group_by(z_norm) %>%
+    group_by(z_round) %>%
+    filter(z_round > 0) %>%
     tally() %>% 
     as.data.frame() %>%
     mutate(vol = n * voxel_dim,
@@ -68,7 +52,7 @@ profile_stat_list <- lapply(datname, function(x) {
   pdf(file = paste0(hist_dir, "/", subplot_id, "_foliage_hist.pdf"), 
     width = 8, height = 6)
     print(
-      ggplot(bin_tally, aes(x = z_norm, y = gap_frac)) +
+      ggplot(bin_tally, aes(x = z_round, y = gap_frac)) +
         geom_line() +
         theme_bw() + 
         labs(x = "Elevation (m)", y = "Gap fraction") + 
@@ -80,7 +64,7 @@ profile_stat_list <- lapply(datname, function(x) {
   pdf(file = paste0(density_map_dir, "/", subplot_id, "_xy_density_map.pdf"), 
     width = 8, height = 8)
     print(
-      ggplot(dat, aes(x = x_norm, y = y_norm)) + 
+      ggplot(dat, aes(x = X, y = Y)) + 
         geom_bin2d(binwidth = 0.1) + 
         scale_fill_scico( palette = "batlow") + 
         theme_bw() + 
@@ -89,10 +73,10 @@ profile_stat_list <- lapply(datname, function(x) {
   dev.off()
 
   # Subset canopy material
-  dat_canopy <- dat[dat$z_norm > 2,]
+  dat_canopy <- dat[dat$z_round > 2,]
 
   # Calculate area under curve 
-  den <- density(dat_canopy$z_norm)
+  den <- density(dat_canopy$z_round)
 
   den_df <- data.frame(x = den$x, y = den$y)
 

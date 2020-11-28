@@ -11,7 +11,6 @@ lines=$(rg -n --no-encoding -M 10 "^[0-9]+\s+?$" $1 |
 	awk 'NR%2!=0' | 
 	tr '\n' ' ' | 
 	sed 's/^[0-9]\s//g')
-echo "Extracted lines to split"
 
 # Get name of file without extension
 noext="${1%.ptx}"

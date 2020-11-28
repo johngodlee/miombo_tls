@@ -183,7 +183,8 @@ tza_hemi_photos_clean <- tza_hemi_photos %>%
   left_join(., plot_id_lookup, by = c("mcdi_plot_id" = "plot_id")) %>%
   left_join(., tza_seosaw_plots[,c("plot_id", "longitude_of_centre", "latitude_of_centre")], 
     by = c("seosaw_id" = "plot_id")) %>%
-  mutate(file = gsub("\\.jpg", "", photo_filename)) %>%
+  mutate(file = gsub("\\.jpg", "", photo_filename),
+    subplot = paste0("S", subplot)) %>%
   dplyr::select(
     plot_id = seosaw_id,
     subplot,
@@ -197,7 +198,8 @@ ago_hemi_photos_clean <- ago_hemi_photos %>%
   left_join(., plot_id_lookup, by = c("plot_name" = "plot_id")) %>%
   left_join(., ago_seosaw_plots[,c("plot_id", "longitude_of_centre", "latitude_of_centre")], 
     by = c("seosaw_id" = "plot_id")) %>%
-  mutate(file = gsub("\\.jpg", "", file)) %>%
+  mutate(file = gsub("\\.jpg", "", file),
+    subplot = paste0("S", subplot)) %>%
   dplyr::select(
     plot_id = seosaw_id,
     subplot,
