@@ -7,12 +7,14 @@
         "type" : "filters.transformation",
         "matrix" : "0 -1  0  1  1  0  0  2  0  0  1  3  0  0  0  1"
     },
-    {
+	{
         "type" : "writers.las",
         "compression" : "true",
         "minor_version" : "2",
         "dataformat_id" : "0",
         "forward" : "all",
         "filename" : "output.laz"
-    }
+	}
+]
+		
 
