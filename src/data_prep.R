@@ -4,6 +4,7 @@
 
 # Packages
 library(dplyr)
+library(sf)
 
 # Import common data
 
@@ -155,7 +156,8 @@ tza_dpm_clean <- tza_dpm %>%
     dry_mass = dry_mass_g)
 
 ago_dpm_clean <- ago_dpm %>%
-  mutate(plot_name = gsub("LOT", "", plot)) %>%
+  mutate(plot_name = gsub("LOT", "", plot),
+    subplot = paste0("S", subplot)) %>%
   left_join(., plot_id_lookup, by = c("plot_name" = "plot_id")) %>%
   dplyr::select(
     plot_id = seosaw_id,
@@ -189,8 +191,8 @@ tza_hemi_photos_clean <- tza_hemi_photos %>%
     plot_id = seosaw_id,
     subplot,
     date,
-    longitude = longitude_of_centre,
-    latitude = latitude_of_centre,
+    lon = longitude_of_centre,
+    lat = latitude_of_centre,
     file)
 
 ago_hemi_photos_clean <- ago_hemi_photos %>%
@@ -204,8 +206,8 @@ ago_hemi_photos_clean <- ago_hemi_photos %>%
     plot_id = seosaw_id,
     subplot,
     date,
-    longitude = longitude_of_centre,
-    latitude = latitude_of_centre,
+    lon = longitude_of_centre,
+    lat = latitude_of_centre,
     file)
 
 # Check columns are identical
@@ -216,3 +218,52 @@ hemi_photos_merge <- rbind(ago_hemi_photos_clean, tza_hemi_photos_clean)
 
 # Write .csv
 write.csv(hemi_photos_merge, "../dat/hemi_photos/hemi_photos.csv", row.names = FALSE)
+
+# Plot corners
+tza_polys <- st_read("../dat/plot_corners/tza_polys.shp")
+ago_corners <- read.csv("../dat/plot_corners/ago_plot_corners.csv")
+
+# Tanzania corners from polygon vertices
+tza_polys_coords <- as.data.frame(st_coordinates(tza_polys))
+
+tza_corners_clean <- tza_polys_coords %>%
+  dplyr::select(
+    plot_id = L2,
+    lon = X,
+    lat = Y) %>%
+  mutate(plot_id = paste0("TKW_", plot_id)) %>%
+  group_by(plot_id) %>%
+  mutate(n = seq(1:5)) %>% 
+  filter(n != 5) %>%
+  mutate(corner = case_when(
+      n == 1 ~ "NE",
+      n == 2 ~ "SE",
+      n == 3 ~ "SW",
+      n == 4 ~ "NW",
+      TRUE ~ as.character(n))) %>%
+  dplyr::select(-n)
+
+# Angola corners
+ago_corners_clean <- ago_corners %>%
+  dplyr::select(
+    plot_id = plot, 
+    lon = decimal_lon,
+    lat = decimal_lat, 
+    corner) %>%
+  mutate(plot_id = paste0("ABG_", plot_id),
+    corner = case_when(
+      corner == "N" ~ "NW",
+      corner == "E" ~ "NE",
+      corner == "S" ~ "SE",
+      corner == "W" ~ "SW",
+      TRUE ~ corner))
+
+# Bind
+corners_clean <- rbind(ago_corners_clean, tza_corners_clean)
+
+# Match plot IDs
+corners_fil <- corners_clean %>%
+  filter(plot_id %in% plot_id_lookup$seosaw_id)
+
+# Write to .csv
+write.csv(corners_fil, "../dat/plot_corners/plot_corners.csv", row.names = FALSE)
