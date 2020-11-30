@@ -30,13 +30,16 @@ _Need to probably combine all of this into one pipeline to aid batch processing 
 5. Render POV-ray image - `ray_trace.sh`
 6. Calculate gap fraction, also hemispherical photos - `hemi_calc.R` 
 
+## Canopy height variation 
+
+1. Starting from `noise.sh`, merge all subplots in a plot - `laz_merge.sh`
+2. Subset to plot boundary - `plot_crop.sh` - `"bounds":"([0,1000000],[0,1000000])"`
+2. Define groung and re-classify height - `hag.sh`
+3. Canopy height variation - `canopy_height.sh`
+
 ## Grassy biomass 
 
 1. Starting from `hag.sh`, subset points below 2 m - `height_crop.sh`
 2. Remove ground points - `ground_filter.sh`
 3. Subset to 4 circles NESW of 41 cm diameter - `dpm_crop.sh`
 
-## Canopy height variation 
-
-1. Starting from `hag.sh`, combine all subplots within a plot `laz_merge.sh`
-4. Canopy height variation across plot (Height of 95th percentile of cumulative height per voxel column?) - what about the blanket laying algorithm?
