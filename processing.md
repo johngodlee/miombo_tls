@@ -33,9 +33,10 @@ _Need to probably combine all of this into one pipeline to aid batch processing 
 ## Canopy height variation 
 
 1. Starting from `noise.sh`, merge all subplots in a plot - `laz_merge.sh`
-2. Subset to plot boundary - `plot_crop.sh` - `"bounds":"([0,1000000],[0,1000000])"`
+2. Subset to plot boundary - `plot_crop.sh`
 2. Define groung and re-classify height - `hag.sh`
-3. Canopy height variation - `canopy_height.sh`
+3. Canopy height variation - `canopy_height.R`
+
 
 ## Grassy biomass 
 

@@ -10,7 +10,7 @@ library(scico)
 library(zoo)
 
 # Import data
-datname <- list.files(path = "../dat/tls", pattern = "*hag.csv", full.names = TRUE)
+datname <- list.files(path = "../dat/tls", pattern = "*.csv", full.names = TRUE)
 
 # Check for output directories
 hist_dir <- "../img/foliage_hist"
