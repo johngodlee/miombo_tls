@@ -4,8 +4,9 @@
 		"filename" : "input.laz"
 	},
 	{
-        "type":"filters.voxelcentroidnearestneighbor",
-		"cell" : 0.001
+        "type":"filters.voxeldownsize",
+		"cell" : 0.01,
+		"mode" : "center"
 	},
 	{
         "type" : "writers.las",
