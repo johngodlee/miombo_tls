@@ -48,18 +48,19 @@ for i in $@ ; do
 	# If subplot centre coordinates are available:
    	if [ -z "${sublatlon[0]}" ]
    	then
-		printf "Subplot ID didn't yield subplot centre coordinates,\nskipping cylinder and centering operations\n"
+		printf "Subplot ID didn't yield subplot centre coordinates,\nskipping centering operation\n"
+
 		rm ${lazsplit}
 		rm ${noext}.laz
 		rm ${noext}_vox.laz
 		rm ${noext}_hag.laz
 		rm ${noext}_canopy.laz
 	else
-		# 9. Subset to 20 m cylinder
-		./cylinder.sh ${noext}_canopy.laz ${sublatlon[0]} ${sublatlon[1]} 20 ${noext}_cylinder20.laz
+		# 9. Centre on subplot centre
+		./centre.sh ${noext}_canopy.laz ${sublatlon[0]} ${sublatlon[1]} ${noext}_centre.laz
 
-		# 10. Centre cylinder on target
-		./centre.sh ${noext}_cylinder20.laz ${sublatlon[0]} ${sublatlon[1]} ${noext}_centre.laz
+		# 9. Subset to 20 m cylinder around subplot centre
+		./cylinder.sh ${noext}_centre.laz 0 0 20 ${noext}_cylinder20.laz
 
 		# 11. Convert to .csv
 		./laz_txt.sh ${noext}_centre.laz ${noext}_cylinder20.csv

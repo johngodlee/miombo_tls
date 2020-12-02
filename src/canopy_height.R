@@ -8,6 +8,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(scico)
+library(raster)
 
 # List files
 file_list <- list.files(path = "../dat/tls/plot_canopy_height", 
@@ -39,38 +40,42 @@ out <- lapply(file_list, function(x) {
       y = as.numeric(gsub(",.*", "", 
         gsub(".*_\\(", "", bin_xy)))) %>%
     group_by(x, y) %>%
-    summarise(q99 = quantile(Z, 0.99))
+    summarise(q95 = quantile(Z, 0.95),
+      q99 = quantile(Z, 0.99),
+      max = max(Z, na.rm = TRUE))
 
-  dat_bin_fil <- dat_bin %>%
-    filter(q99 > 4)
+  # Filter just to canopy 
+  dat_bin_canopy <- dat_bin %>%
+    filter(q99 > 3) 
 
   # Calculate mean, median, stdev of distribution
-  summ <- dat_bin_fil %>%
+  summ <- dat_bin_canopy %>%
     ungroup() %>%
-    summarise(mean_q99 = mean(q99, na.rm = TRUE),
+    summarise(
+      mean_q95 = mean(q95, na.rm = TRUE),
+      median_q95 = median(q95, na.rm = TRUE),
+      sd_q95 = sd(q95, na.rm = TRUE),
+      cov_q95 = sd_q95 / mean_q95 * 100,
+      mean_q99 = mean(q99, na.rm = TRUE),
       median_q99 = median(q99, na.rm = TRUE),
       sd_q99 = sd(q99, na.rm = TRUE),
-      cov_q99 = sd_q99 / mean_q99 * 100) %>%
+      cov_q99 = sd_q99 / mean_q99 * 100,
+      mode_bin_q99 = as.numeric(
+        gsub("]", "", 
+          gsub(".*,", "", 
+            names(sort(table(cut(.$q99, 
+                    seq(floor(min(.$q99)), 
+                      ceiling(max(.$q99)), by = binw))), 
+                decreasing = TRUE)[1]))))) %>%
     gather() %>% 
     mutate(plot_id = plot_id)
-
-  # Bin 99th percentile of height by 10 cm
-  dat_bin_bin <- cut(dat_bin_fil$q99, 
-    seq(floor(min(dat_bin_fil$q99)), ceiling(max(dat_bin_fil$q99)), by = binw))
-
-  # Get modal 10 cm bin
-  summ <- rbind(summ, data.frame(key = "mode_bin_q99", value = as.numeric(gsub("]", "", 
-    gsub(".*,", "", 
-      names(sort(table(dat_bin_bin), decreasing = TRUE)[1])
-      ))), 
-    plot_id = plot_id))
 
   # Histogram of distribution
   pdf(file = file.path("../img/canopy_height_hist", 
       paste0(plot_id, "_canopy_height_hist.pdf")), width = 12, height = 8)
   print(
     ggplot() + 
-    geom_histogram(data = dat_bin, aes(x = q99), binwidth = binw,
+    geom_histogram(data = dat_bin_canopy, aes(x = q99), binwidth = binw,
       fill = "grey", colour = "black") +
     geom_vline(data = summ[summ$key %in% c("mode_bin_q99", "mean_q99", "median_q99"),], 
       aes(xintercept = value, colour = key), 
@@ -84,7 +89,7 @@ out <- lapply(file_list, function(x) {
       paste0(plot_id, "_canopy_height_surface.pdf")), width = 12, height = 12)
   print(
     ggplot() + 
-      geom_tile(data = dat_bin, 
+      geom_tile(data = dat_bin_canopy, 
         aes(x = x, y = y, fill = q99)) + 
       scale_fill_scico(palette = "bamako") + 
       theme_bw() + 
