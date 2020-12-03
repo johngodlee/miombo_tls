@@ -1,14 +1,8 @@
 \documentclass[11pt,a4paper]{article}
 
 % Define page geometry
-\usepackage{geometry}
-\geometry{left=2.2cm,
-	right=2.2cm,
-	top=2.2cm,
-	bottom=2cm}
-\parskip 0.15cm
-\setlength{\parindent}{0cm}
-\usepackage{pdflscape}
+\usepackage{geometry} \geometry{left=2.2cm, right=2.2cm, top=2.2cm, bottom=2cm}
+\parskip 0.15cm \setlength{\parindent}{0cm} \usepackage{pdflscape}
 \usepackage[document]{ragged2e}
 
 % Text formatting
@@ -20,18 +14,15 @@
 
 \linespread{1.25}  % Linespacing
 
-\usepackage{xcolor}
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{#1}}}   % todonote
+\usepackage{xcolor} \newcommand{\todo}[1]{\textcolor{red}{\textbf{#1}}}   %
 
 % Tables
-\usepackage{multirow}
-\setlength{\tabcolsep}{4pt}
+\usepackage{multirow} \setlength{\tabcolsep}{4pt}
 
 % Image handling
 \usepackage{graphicx} 
 
-\makeatletter
-	\g@addto@macro\@floatboxreset\centering  % Automatically centre images (floats)
+\makeatletter \g@addto@macro\@floatboxreset\centering  
 \makeatother
 
 \graphicspath{ {img/} }  % Define image path
@@ -45,29 +36,18 @@
 \addbibresource{lidar.bib}
 
 % Links within document, nice figure formatting
-\usepackage[breaklinks]{hyperref}
-\definecolor{links}{RGB}{0,0,0}
-\hypersetup{
-	breaklinks,
-	colorlinks=true,
-	linkcolor=links,
-	anchorcolor=links,
-	citecolor=links,
-	filecolor=links,
-	menucolor=links,
-	runcolor=links,
-	urlcolor=links,
-	pdfauthor={John L. Godlee}
-}
-\def\subsectionautorefname{section}
-\def\subsubsectionautorefname{section}
+\usepackage[breaklinks]{hyperref} \definecolor{links}{RGB}{0,0,0} \hypersetup{
+	breaklinks, colorlinks=true, linkcolor=links, anchorcolor=links,
+	citecolor=links, filecolor=links, menucolor=links, runcolor=links,
+	urlcolor=links, pdfauthor={John L. Godlee} }
+	\def\subsectionautorefname{section} \def\subsubsectionautorefname{section}
 
-\newcommand{\beginsupplement}{%
+\newcommand{\beginsupplement}{% 
 	\setcounter{table}{0}
-	\renewcommand{\thetable}{S\arabic{table}}%
+	\renewcommand{\thetable}{S\arabic{table}}% 
 	\setcounter{figure}{0}
-	\renewcommand{\thefigure}{S\arabic{figure}}%
-	}
+	\renewcommand{\thefigure}{S\arabic{figure}}% 
+}
      
 % Variables
 
@@ -82,9 +62,12 @@
 
 \section{Introduction}
 
-Assessments of woodland canopy structure are most often conducted using indirect techniques limited to a two-dimensional perspective. Terrestrial Laser Scanning (TLS) technology offers a means of assessing canopy structure in three dimensions.
+Assessments of woodland canopy structure are most often conducted using indirect
+techniques limited to a two-dimensional perspective. Terrestrial Laser Scanning
+(TLS) technology offers a means of assessing canopy structure in three
+dimensions. This text should hard wrap at 80 columns, wll does it?
 
-* canopy space filling increases with tree species richness
+ canopy space filling increases with tree species richness
 
 \section{Materials and methods}
 
@@ -94,19 +77,22 @@ Assessments of woodland canopy structure are most often conducted using indirect
 
 \subsection{Terrestrial laser scanning}
 
-We used a Leica HDS6100 Terrestrial Laser Scanner, with an angular resolution of x. This produces a point density of approximately x at x m. Wave length of x nm.
+We used a Leica HDS6100 Terrestrial Laser Scanner, with an angular resolution of
+x. This produces a point density of approximately x at x m. Wave length of x nm.
 
 Phase shift
 
 Point clouds within each subplot were registered and unified.
 
-We validated our measurements with traditional digital hemispherical photography (DHP), with one image taken at the centre point of each subplot.
+We validated our measurements with traditional digital hemispherical photography
+(DHP), with one image taken at the centre point of each subplot.
 
 Acquired our images at the maximum foliage volume in the wet season.
 
 \subsection{Data analysis}
 
-Registration of multiple scans from different locations allows us to minimise the occlusion effect and improve canopy penetration.
+Registration of multiple scans from different locations allows us to minimise
+the occlusion effect and improve canopy penetration.
 
 \subsubsection{Scan processing}
 
@@ -114,15 +100,26 @@ Open source methods
 
 Filtering
 
-Voxelisation: Points don't have an area or defined volume and so are unsuitable for estimating hemispherical points \citep{Seidel2012}.
+Voxelisation: Points don't have an area or defined volume and so are unsuitable
+for estimating hemispherical points \citep{Seidel2012}.
 
-Objects located closer to the instrument will be represented by a higher density of points, resulting in an imbalanced representation of the measured 3D space.
+Objects located closer to the instrument will be represented by a higher density
+of points, resulting in an imbalanced representation of the measured 3D space.
 
-Resultant points clouds had ~points, ~points after filtering, ~voxels after voxelisation.
+Resultant points clouds had ~points, ~points after filtering, ~voxels after
+voxelisation.
 
-Classified ground points using the Progressive Morphological Filter (PMF) from \citep{Zhang2003}. Reclassified height based on this revised ground layer by measuring the vertical distance between the nearest ground point and each point.
+Classified ground points using the Progressive Morphological Filter (PMF) from
+\citep{Zhang2003}. Reclassified height based on this revised ground layer by
+measuring the vertical distance between the nearest ground point and each point.
 
-We used ray-tracing (POV-ray) to calculate gap fraction from TLS scans at the centre of each subplot. Voxels were converted to cubes filling the voxel volume, with a ``camera'' placed at the subplot centre at 1.8 m height, at a height of 1.8 m. Used a fisheye lens with a view angle of 180 degrees, with matt black Cubes against a white background and no light source. The images produced by POV-ray were analysed using Hemiphot in an identical manner to the hemispherical photographs.
+We used ray-tracing (POV-ray) to calculate gap fraction from TLS scans at the
+centre of each subplot. Voxels were converted to cubes filling the voxel volume,
+with a ``camera'' placed at the subplot centre at 1.8 m height, at a height of
+1.8 m. Used a fisheye lens with a view angle of 180 degrees, with matt black
+Cubes against a white background and no light source. The images produced by
+POV-ray were analysed using Hemiphot in an identical manner to the hemispherical
+photographs.
 
 \section{Results}
 
@@ -132,7 +129,6 @@ We used ray-tracing (POV-ray) to calculate gap fraction from TLS scans at the ce
 
 \printbibliography
 
-\section{Supplementary Material}
-\beginsupplement
+\section{Supplementary Material} \beginsupplement
 
 \end{document}
