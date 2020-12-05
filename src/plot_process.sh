@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+printf "Remember to supply all subplot scans for a single plot"
+
 if [ $# -lt 2 ]; then
 	printf "Must supply at least two arguments:\n  [1-n] input.laz\n  [n+1] plot ID\n"
     exit 1
@@ -28,7 +30,7 @@ plotlatlon=($(./plot_lat_lon.sh ${last}))
 # 5. Convert .laz to .csv
 ./laz_txt.sh ${pathonly}/${last}_hag.laz ${pathonly}/${last}.csv
 
-# Tidy up
+# Tidy up intermediary files
 rm ${pathonly}/${last}_merge.laz
 rm ${pathonly}/${last}_crop.laz
 rm ${pathonly}/${last}_hag.laz

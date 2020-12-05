@@ -24,7 +24,6 @@ coord_list <- lapply(file_list, read.csv, strip.white = TRUE)
 poss_subs <- paste0(rep(plot_id_lookup$seosaw_id, each = 9), "_", 
   rep(paste0("S", seq(1,9)), times = length(plot_id_lookup$seosaw_id)))
 
-
 # Count number of scans per subplot
 ## TZA scans per subplot
 tza_scan_pos_clean <- tza_scan_pos %>%
@@ -63,7 +62,7 @@ stopifnot(all(poss_subs %in%
     paste(scan_count_all_subs$plot_id, scan_count_all_subs$subplot, sep = "_")))
 
 ## Write to .csv
-write.csv(scan_count_all_subs, "../dat/scan_count.csv", row.names = FALSE)
+write.csv(scan_count_all_subs, "../dat/scan_positions/scan_count.csv", row.names = FALSE)
 
 # Create list of all scanned subplots 
 all_subs <- scan_count_all_subs %>%
@@ -107,10 +106,12 @@ write.csv(coords_clean, "../dat/target_coords/target_coords.csv",
   row.names = FALSE)
 
 
+
 # Create dataframe with just subplot centre coordinates
 centre_df <- coords_clean %>%
   dplyr::select(plot_id, subplot, lon, lat, centre) %>%
   filter(centre == TRUE)
+
 
 
 # Find which subplots don't have centre target coordinates 
@@ -139,7 +140,7 @@ centre_scan_coords_clean <- centre_scan_coords %>%
 all_centres_df <- rbind(centre_df, centre_scan_coords_clean, no_gnss)
 
 # Check that all scanned subplots accounted for
-all_subs[which(!all_subs %in% 
+poss_subs[which(!poss_subs %in% 
   paste(all_centres_df$plot_id, all_centres_df$subplot, sep = "_"))]
 
 stopifnot(all(all_subs %in% 
@@ -148,5 +149,4 @@ stopifnot(all(all_subs %in%
 # Write 
 write.csv(all_centres_df, "../dat/target_coords/subplot_centre_coords.csv", 
   row.names = FALSE)
-
 
