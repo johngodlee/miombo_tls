@@ -1,5 +1,8 @@
 .DS_Store
 reading
 old
-dat
 Pipfile.lock
+dat
+!/dat/raw/
+dat/raw/hemi_photos/jpg
+
