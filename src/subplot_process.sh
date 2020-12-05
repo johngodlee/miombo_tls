@@ -7,10 +7,14 @@ fi
 
 for i in $@ ; do
 	# Get basename of file without extension
-	nopath="${i##*/}"
-	noext="${i%.ptx}"
-	base="${nopath%.ptx}"
-	pathonly="${i%/*}"
+	nopath=${i##*/}
+	noext=${i%.ptx}
+	base=${nopath%.ptx}
+	pathonly=${i%/*}
+
+	plot=$(echo $base | sed -E 's/(^[A-Z]+[0-9]+).*/\1/g')
+	plot_new=$(./plot_id_lookup.sh $plot)
+	subplot=$(echo $base | sed -E 's/^[A-Z]+[0-9]+//g')
 
 	# 1. Split scans into individual .ptx files - `ptx_split.sh`
 	./ptx_split.sh $i
@@ -18,6 +22,14 @@ for i in $@ ; do
 	## List files created by ptx_split.sh
 	ptxsplit=$(find ${pathonly} -type f -regex ".*/${base}_[0-9].ptx")
 
+	## Check that number of split .ptx equals number of scans expected
+	nscans=$(./scan_count_lookup.sh ${plot_new} ${subplot})
+	nptx=$(echo "$ptxsplit" | wc -l)
+	
+	if [ $nptx -ne $nscans ]; then
+		printf ".ptx files != expected number of scans: $base\n"
+	fi
+	
 	# 2. Convert each to .laz with affine transformation of coordinates - `ptx_laz.sh`
 	for j in ${ptxsplit} ; do
 		jnoext="${j%.ptx}"

@@ -5,10 +5,6 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-awk -v subplot="$1" ' BEGIN {
-	FPAT = "([^,]+)|(\"[^\"]+\")"
-}
-{
-	if ($5 ~ subplot && $14 == "TRUE") {printf "%f\n%f\n", $6, $7}
-}' ../dat/target_coords.csv
+awk -v SUBPLOT="$1" 'BEGIN { FPAT = "([^,]+)|(\"[^\"]+\")" }
+$5 ~ SUBPLOT && $14 == "TRUE" {printf "%f\n%f\n", $6, $7}' ../dat/target_coords.csv
 
