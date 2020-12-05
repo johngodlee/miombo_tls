@@ -1,7 +1,6 @@
 .DS_Store
 reading
 old
-Pipfile.lock
 dat/raw/hemi_photos/jpg
 dat/tls
 
