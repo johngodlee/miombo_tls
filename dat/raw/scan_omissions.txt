@@ -1,0 +1,4 @@
+Plots which can't be scanned:
+
+* W26S6 - dense thicket
+

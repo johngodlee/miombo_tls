@@ -1,0 +1,3 @@
+PointID,Easting,Northing,GroundLevel,AntennaHeight
+P3S9T3          , 489394.4442, 8320242.2048, 1223.8633,    0.7230
+P3S9T4          , 489393.3018, 8320254.9449, 1224.3918,    0.6620
