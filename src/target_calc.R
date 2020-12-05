@@ -7,17 +7,17 @@ library(dplyr)
 
 # Import data 
 ## Plot ID translation
-plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 
 ## Coordinates for subplots where single scan at centre
-centre_scan_coords <- read.csv("../dat/target_coords/centre_scan_coords.csv")
+centre_scan_coords <- read.csv("../dat/raw/centre_scan_coords.csv")
 
 ## scan positions per subplot
-tza_scan_pos <- read.csv("../dat/scan_positions/tza_scan_positions.csv")
-ago_scan_pos <- read.csv("../dat/scan_positions/ago_scan_positions.csv")
+tza_scan_pos <- read.csv("../dat/raw/scan_positions/tza_scan_positions.csv")
+ago_scan_pos <- read.csv("../dat/raw/scan_positions/ago_scan_positions.csv")
 
 ## Target coordinates .txt files
-file_list <- list.files(path = "../dat/target_coords/raw", pattern = "*.txt", full.names = TRUE)
+file_list <- list.files(path = "../dat/raw/target_coords", pattern = "*.txt", full.names = TRUE)
 coord_list <- lapply(file_list, read.csv, strip.white = TRUE)
 
 # Create vector of all possible subplots
@@ -62,7 +62,7 @@ stopifnot(all(poss_subs %in%
     paste(scan_count_all_subs$plot_id, scan_count_all_subs$subplot, sep = "_")))
 
 ## Write to .csv
-write.csv(scan_count_all_subs, "../dat/scan_positions/scan_count.csv", row.names = FALSE)
+write.csv(scan_count_all_subs, "../dat/scan_count.csv", row.names = FALSE)
 
 # Create list of all scanned subplots 
 all_subs <- scan_count_all_subs %>%
@@ -102,7 +102,7 @@ coords_clean <- coords %>%
     target_elev, country, utm, centre)
 
 ## Write to .csv
-write.csv(coords_clean, "../dat/target_coords/target_coords.csv", 
+write.csv(coords_clean, "../dat/target_coords.csv", 
   row.names = FALSE)
 
 
@@ -147,6 +147,6 @@ stopifnot(all(all_subs %in%
     paste(all_centres_df$plot_id, all_centres_df$subplot, sep = "_")))
 
 # Write 
-write.csv(all_centres_df, "../dat/target_coords/subplot_centre_coords.csv", 
+write.csv(all_centres_df, "../dat/subplot_centre_coords.csv", 
   row.names = FALSE)
 

@@ -16,4 +16,4 @@ awk -v plot="$1" ' BEGIN {
 {
 	if ($1 ~ plot && $4 ~ "SW") {printf "%f\n%f\n", $2, $3}
 	if ($1 ~ plot && $4 ~ "NE") {printf "%f\n%f\n", $2, $3}
-}' ../dat/plot_corners/plot_corners.csv
+}' ../dat/plot_corners.csv

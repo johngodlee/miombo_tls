@@ -11,17 +11,17 @@ source("Hemiphot.R")
 source("fov_func.R")
 
 # Image list
-cam_hemi_files <- list.files("../dat/hemi_photos/png", "*.png", full.names = TRUE)
+cam_hemi_files <- list.files("../dat/hemi_png", "*.png", full.names = TRUE)
 tls_hemi_files <- list.files("../dat/tls/hemi", "*.png", full.names = TRUE)
 
 cam_hemi_basename <- gsub(".png", "", basename(cam_hemi_files))
 tls_hemi_basename <- gsub(".png", "", basename(tls_hemi_files))
 
 # Subplot image lookup table
-subplot_lookup <- read.csv("../dat/hemi_photos/hemi_photos.csv")
+subplot_lookup <- read.csv("../dat/hemi_photos.csv")
 
 # Plot ID name lookup table
-plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 
 subplot_lookup_clean <- left_join(subplot_lookup, plot_id_lookup, 
   by = c("plot_id" = "seosaw_id")) %>%
@@ -118,7 +118,7 @@ gap_frac_df$method <- case_when(
   TRUE ~ "tls")
 
 # Write to .csv
-write.csv(gap_frac_df, "../dat/hemi_photos/gap_frac.csv", row.names = FALSE)
+write.csv(gap_frac_df, "../dat/gap_frac.csv", row.names = FALSE)
 
 # Compare gap fraction and LAI between hemi and TLS
 gap_frac_gather <- gap_frac_df %>%

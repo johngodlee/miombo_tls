@@ -1,7 +1,7 @@
 // User inputs
 ///////////////////////////////////
-input_path = "/Users/johngodlee/google_drive/phd/thesis/lidar/dat/hemi_photos/jpg/";
-output_path = "/Users/johngodlee/google_drive/phd/thesis/lidar/dat/hemi_photos/png/";
+input_path = "/Users/johngodlee/google_drive/phd/thesis/lidar/dat/raw/hemi_photos/jpg/";
+output_path = "/Users/johngodlee/google_drive/phd/thesis/lidar/dat/hemi_png/";
 algorithm = "Default"
 ///////////////////////////////////
 // END user inputs

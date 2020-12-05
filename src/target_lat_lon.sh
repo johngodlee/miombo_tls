@@ -10,5 +10,5 @@ awk -v subplot="$1" ' BEGIN {
 }
 {
 	if ($5 ~ subplot && $14 == "TRUE") {printf "%f\n%f\n", $6, $7}
-}' ../dat/target_coords/target_coords.csv
+}' ../dat/target_coords.csv
 
