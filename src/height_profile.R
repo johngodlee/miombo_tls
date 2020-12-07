@@ -33,14 +33,16 @@ layer_vol <- pi * cylinder_radius^2 * voxel_dim
 # For each subplot:
 profile_stat_list <- lapply(datname, function(x) {
 
-  # create normalised coordinates from target location
+  # Read file
   dat <- fread(x)
 
   # Get names of subplots from filenames
   subplot_id <- basename(gsub("_hag.csv", "", x))
 
+  # Round Z coords to cm
   dat$z_round <- round(dat$Z, digits = 2)
 
+  # Calculate volume and gap fraction
   bin_tally <- dat %>% 
     group_by(z_round) %>%
     filter(z_round > 0) %>%

@@ -16,7 +16,7 @@ _Need to probably combine all of this into one pipeline to aid batch processing 
 
 ## Canopy height profile //
 
-1. Starting from `hag.sh`, subset to 10 m radius cylindrical subplot - `cylinder.sh`
+1. Starting from `hag.sh`, subset to 10 m radius cylindrical subplot - `cylinder_crop.sh`
 2. Convert .laz to .csv - `laz_txt.sh`
 3. Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R`
 
@@ -24,7 +24,7 @@ _Need to probably combine all of this into one pipeline to aid batch processing 
 
 1. Starting from `hag.sh`, subset points above 1.3 m - `height_crop.sh`
 2. Centre point cloud on target - `centre.sh`
-3. Subset to 20 m radius cylindrical subplot centre - `cylinder.sh`
+3. Subset to 20 m radius cylindrical subplot centre - `cylinder_crop.sh`
 4. Convert .laz to .csv - `laz_txt.sh`
 5. Convert point cloud to POV-ray object - `txt_pov.sh`
 6. Render POV-ray image - `ray_trace.sh`
@@ -41,7 +41,10 @@ _Need to probably combine all of this into one pipeline to aid batch processing 
 
 ## Grassy biomass 
 
-1. Starting from `hag.sh`, subset points below 2 m - `height_crop.sh`
-2. Remove ground points - `ground_filter.sh`
-3. Subset to 4 circles NESW of 41 cm diameter - `dpm_crop.sh`
-
+1. Starting from `cylinder_crop.sh`, subset points below 2 m - `height_crop.sh`
+2. Subset to separate files of 4 circular quadrats 2 m NESW of 45.8 cm (0.458 m) diameter - `dpm_crop.sh`
+3. Convert .laz to .csv - `laz_txt.sh`
+4. For each circle: - `grass.R`
+	* Bin points into 2 cm square cells along x,y plane
+	* Take mean height of all points within each square cell
+	* Calculate grass volume by taking the product of the mean height and the cell dimensions, then summing across quadrat

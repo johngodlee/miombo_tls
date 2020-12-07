@@ -71,25 +71,36 @@ for i in $@ ; do
 		# 9. Centre on subplot centre
 		./centre.sh ${noext}_canopy.laz ${sublatlon[0]} ${sublatlon[1]} ${noext}_centre.laz
 
-		# 9. Subset to 20 m cylinder around subplot centre
-		./cylinder.sh ${noext}_centre.laz 0 0 20 ${noext}_cylinder20.laz
+		# 10. Subset to 20 m cylinder around subplot centre
+		./cylinder_crop.sh ${noext}_centre.laz 0 0 20 ${noext}_cylinder20.laz
 
-		# 11. Convert to .csv
+		# 11. Subset to DPM circles
+		./height_crop.sh ${noext}_centre.laz 2 below ${noext}_grass.laz
+		./dpm_centres.sh ${noext}_grass.laz 0 0 0.458 
+		
+		dpmsplit=$(find ${pathonly} -type f -regex ".*/${noext}_dpm_*.laz")
+
+		for j in ${dpmsplit} ; do
+			jnoext="${j%.laz}"
+			./laz_txt.sh $j ${jnoext}.csv
+		done
+
+		# 12. Convert to .csv
 		./laz_txt.sh ${noext}_centre.laz ${noext}_cylinder20.csv
 
-		# 12. Convert to POV-ray object
+		# 13. Convert to POV-ray object
 		./txt_pov.sh ${noext}_cylinder20.csv ${noext}.pov
 
-		# 13. Render POV-ray image, ready for gap fraction calculations
+		# 14. Render POV-ray image, ready for gap fraction calculations
 		./ray_trace.sh ${noext}.pov ${pathonly}/hemi/${base}.png
 
-		# 14. Reduce size of cylinder to 10 m
-		./cylinder.sh ${noext}_centre.laz 0 0 10 ${noext}_cylinder10.laz
+		# 15. Reduce size of cylinder to 10 m
+		./cylinder_crop.sh ${noext}_centre.laz 0 0 10 ${noext}_cylinder10.laz
 
-		# 15. Convert to .csv, ready for height profile calculations
+		# 16. Convert to .csv, ready for height profile calculations
 		./laz_txt.sh ${noext}_cylinder10.laz ${pathonly}/height_profile/${base}_cylinder10.csv
 
-		# 16. Remove intermediary files
+		# 17. Remove intermediary files
 		rm ${lazsplit}
 		rm ${ptxsplit}
 		rm ${noext}_vox.laz
@@ -102,7 +113,7 @@ for i in $@ ; do
 		rm ${noext}_cylinder10.laz
    	fi  
 
-	# 17. Move de-noised .laz to directory ready for canopy height variation processing
+	# 18. Move de-noised .laz to directory ready for canopy height variation processing
 	mv ${noext}_noise.laz ${pathonly}/denoise_laz/${base}_noise.laz
 	mv ${noext}.laz ${pathonly}/raw_laz/${base}.laz
 
