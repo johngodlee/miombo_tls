@@ -16,4 +16,4 @@ camera {
 
 background { White }
 
-#include "../dat/tls/P15S2.pov"
+#include "../dat/tls/denoise_laz/P15S2.pov"

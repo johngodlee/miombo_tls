@@ -7,10 +7,10 @@ fi
 
 # Calculate location of dpm centres from centre of subplot
 dpm=()
-dpm+=($(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon,   lat+2 }'))
-dpm+=($(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon+2, lat   }'))
-dpm+=($(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon,   lat-2 }'))
-dpm+=($(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon-2, lat   }'))
+dpm+=("$(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon,   lat+2 }')")
+dpm+=("$(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon+2, lat   }')")
+dpm+=("$(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon,   lat-2 }')")
+dpm+=("$(awk -v lon="$1" -v lat="$2" 'BEGIN{printf "POINT(%.2f %.2f)\n", lon-2, lat   }')")
 
 # Get input name with no extension
 noext=${1%.laz}
@@ -31,7 +31,7 @@ while [ $i -lt ${#dpm[*]} ]; do
 	# Run pipeline
 	pdal pipeline pipelines/cylinder.json\
 		--readers.las.filename=$1 --writers.las.filename=$outname\
-		--filters.crop.point="${dpm[$i]}" --filters.crop.distance=0.458
+		--filters.crop.point="${dpm[$i]}" --filters.crop.distance=$4
 
 	# Increment counter
     i=$(( $i + 1));

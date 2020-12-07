@@ -48,7 +48,7 @@ out <- lapply(file_list, function(x) {
   dat_bin_canopy <- dat_bin %>%
     filter(q99 > 3) 
 
-  # Calculate mean, median, stdev of distribution
+  # Calculate mean, median, stdev of distribution (canopy rugosity)
   summ <- dat_bin_canopy %>%
     ungroup() %>%
     summarise(
@@ -69,6 +69,23 @@ out <- lapply(file_list, function(x) {
                 decreasing = TRUE)[1]))))) %>%
     gather() %>% 
     mutate(plot_id = plot_id)
+
+  # Calculate effective number of layers in canopy
+  ## Assign to n XY slices
+
+  ## Count number of points within each slice
+
+  ## Count maximum number of points within a slice
+
+  ## Proportion of points filled per slice vs. total points
+
+  ## Calculate Shannon diversity index on those proportions
+  exp(-sum(props * log(props)))
+
+  ######
+  ###### UNFINISHED
+  ######
+
 
   # Histogram of distribution
   pdf(file = file.path("../img/canopy_height_hist", 
