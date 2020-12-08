@@ -54,7 +54,7 @@
 
 ## Analysis
 
-* Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R`
+* Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `subplot_height_profile.R`
 * Calculate gap fraction, also hemispherical photos - `hemi_calc.R` 
 * Grassy biomass volume estimation: - `grass.R`
-* Canopy height variation - `canopy_height.R`
+* Plot canopy height variation - `canopy_height.R`

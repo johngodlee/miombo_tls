@@ -1,4 +1,4 @@
-# Analyse height profiles
+# Analyse height profiles within a subplot
 # John Godlee (johngodlee@gmail.com)
 # 2020-11-23
 
@@ -14,13 +14,9 @@ datname <- list.files(path = "../dat/tls/height_profile", pattern = "*.csv",
   full.names = TRUE)
 
 # Check for output directories
-hist_dir <- "../img/foliage_hist"
+hist_dir <- "../img/foliage_profile"
 if (!dir.exists(hist_dir)) {
   dir.create(hist_dir, recursive = TRUE)
-}
-density_map_dir <- "../img/xy_density_map"
-if (!dir.exists(density_map_dir)) {
-  dir.create(density_map_dir, recursive = TRUE)
 }
 
 # Define parameters 
@@ -37,7 +33,7 @@ profile_stat_list <- lapply(datname, function(x) {
   dat <- fread(x)
 
   # Get names of subplots from filenames
-  subplot_id <- basename(gsub("_hag.csv", "", x))
+  subplot_id <- gsub("_.*.csv", "", basename(x))
 
   # Round Z coords to cm
   dat$z_round <- round(dat$Z, digits = 2)
@@ -52,7 +48,7 @@ profile_stat_list <- lapply(datname, function(x) {
       gap_frac = vol / layer_vol)
 
   # Plot gap fraction histogram
-  pdf(file = paste0(hist_dir, "/", subplot_id, "_foliage_hist.pdf"), 
+  pdf(file = paste0(hist_dir, "/", subplot_id, "_foliage_profile.pdf"), 
     width = 8, height = 6)
     print(
       ggplot(bin_tally, aes(x = z_round, y = gap_frac)) +
@@ -63,20 +59,8 @@ profile_stat_list <- lapply(datname, function(x) {
     )
   dev.off()
 
-  # Plot 2D density map
-  pdf(file = paste0(density_map_dir, "/", subplot_id, "_xy_density_map.pdf"), 
-    width = 8, height = 8)
-    print(
-      ggplot(dat, aes(x = X, y = Y)) + 
-        geom_bin2d(binwidth = 0.1) + 
-        scale_fill_scico( palette = "batlow") + 
-        theme_bw() + 
-        coord_equal()
-      )
-  dev.off()
-
   # Subset canopy material
-  dat_canopy <- dat[dat$z_round > 2,]
+  dat_canopy <- dat[dat$z_round > 1.3,]
 
   # Calculate area under curve 
   den <- density(dat_canopy$z_round)
@@ -90,4 +74,5 @@ profile_stat_list <- lapply(datname, function(x) {
 
   return(list(auc_canopy, dens_peak_height))
 })
+
 
