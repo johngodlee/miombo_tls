@@ -8,11 +8,15 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(scico)
-library(raster)
 
 # List files
 file_list <- list.files(path = "../dat/tls/plot_canopy_height", 
   pattern = "*.csv", full.names = TRUE)
+
+out_dir <- "../dat/canopy_height"
+if (!dir.exists(out_dir)) {
+  dir.create(out_dir, recursive = TRUE)
+}
 
 # 10x10 cm XY bin width
 xy_width = 0.1
@@ -80,7 +84,7 @@ out <- lapply(file_list, function(x) {
     tally() %>%
     summarise(value = exp(-sum(n / sum(n) * log(n / sum(n))))) %>%
     mutate(key = "entropy", 
-      plot_id = subplot_id) %>%
+      plot_id = plot_id) %>%
     dplyr::select(key, value, plot_id) %>%
     bind_rows(., summ)
 
@@ -111,22 +115,15 @@ out <- lapply(file_list, function(x) {
   )
   dev.off()
 
-  return(list(dat_bin, summ))
-})
-
-# Clean up summary statistics
-summ_all <- do.call(rbind, lapply(out, function(x) { x[[2]] })) %>%
-  spread(key, value)
-
-# Calculate ratio of median height to 
-
-# Write statistics to file
-write.csv(summ_all, "../dat/canopy_height_summ.csv", row.names = FALSE)
-
-# Write quantile distribution to file
-lapply(out, function(x) {
-  write.csv(x[[1]], 
-    file.path("../dat/canopy_height", paste0(plot_id, "_q99.csv")),
+  # Write statistics to file
+  write.csv(dat_xy_bin_summ, 
+    file.path(out_dir, paste0(plot_id, "_canopy_bins.csv")),
     row.names = FALSE)
+  
+  write.csv(summ,
+    file.path(out_dir, paste0(plot_id, "_canopy_summ.csv")),
+    row.names = FALSE)
+
+  return(list(dat_xy_bin_summ, summ))
 })
 

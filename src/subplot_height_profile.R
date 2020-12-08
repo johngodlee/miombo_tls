@@ -29,11 +29,11 @@ layer_vol <- pi * cylinder_radius^2 * voxel_dim
 # For each subplot:
 profile_stat_list <- lapply(datname, function(x) {
 
-  # Read file
-  dat <- fread(x)
-
   # Get names of subplots from filenames
   subplot_id <- gsub("_.*.csv", "", basename(x))
+
+  # Read file
+  dat <- fread(x)
 
   # Round Z coords to cm
   dat$z_round <- round(dat$Z, digits = 2)
@@ -59,11 +59,8 @@ profile_stat_list <- lapply(datname, function(x) {
     )
   dev.off()
 
-  # Subset canopy material
-  dat_canopy <- dat[dat$z_round > 1.3,]
-
   # Calculate area under curve 
-  den <- density(dat_canopy$z_round)
+  den <- density(dat$z_round)
 
   den_df <- data.frame(x = den$x, y = den$y)
 
