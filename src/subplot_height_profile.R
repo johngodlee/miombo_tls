@@ -10,7 +10,7 @@ library(scico)
 library(zoo)
 
 # Import data
-datname <- list.files(path = "../dat/tls/height_profile", pattern = "*.csv", 
+file_list <- list.files(path = "../dat/tls/height_profile", pattern = "*.csv", 
   full.names = TRUE)
 
 # Check for output directories
@@ -19,18 +19,26 @@ if (!dir.exists(hist_dir)) {
   dir.create(hist_dir, recursive = TRUE)
 }
 
+out_dir <- "../dat/subplot_profile"
+if (!dir.exists(out_dir)) {
+  dir.create(out_dir, recursive = TRUE)
+}
+
 # Define parameters 
 voxel_dim <- 0.01
+z_width <- 1
 cylinder_radius <- 10
 
 # Calculate maximum 1 voxel layer volume
 layer_vol <- pi * cylinder_radius^2 * voxel_dim
 
 # For each subplot:
-profile_stat_list <- lapply(datname, function(x) {
+profile_stat_list <- lapply(file_list, function(x) {
 
   # Get names of subplots from filenames
   subplot_id <- gsub("_.*.csv", "", basename(x))
+  plot_id <- gsub("(^[A-Z][0-9]+).*", "\\1", subplot_id)
+  subplot <- gsub("^[A-Z][0-9]+(.*)", "\\1", subplot_id)
 
   # Read file
   dat <- fread(x)
@@ -47,7 +55,7 @@ profile_stat_list <- lapply(datname, function(x) {
     mutate(vol = n * voxel_dim,
       gap_frac = vol / layer_vol)
 
-  # Plot gap fraction histogram
+  # Plot gap fraction density plot 
   pdf(file = paste0(hist_dir, "/", subplot_id, "_foliage_profile.pdf"), 
     width = 8, height = 6)
     print(
@@ -59,6 +67,9 @@ profile_stat_list <- lapply(datname, function(x) {
     )
   dev.off()
 
+  # Calculate effective number of layers
+  layer_div <- enl(dat$Z, z_width)
+
   # Calculate area under curve 
   den <- density(dat$z_round)
 
@@ -69,7 +80,16 @@ profile_stat_list <- lapply(datname, function(x) {
   # Calculate height of max peak
   dens_peak_height <- den_df[den_df$y == max(den_df$y), "x"]
 
-  return(list(auc_canopy, dens_peak_height))
+  # Create dataframe from stats
+  out <- data.frame(plot_id, subplot, layer_div, auc_canopy, dens_peak_height)
+
+  # Write to file
+  write.csv(out,
+    file.path(out_dir, 
+      paste0(paste(plot_id, subplot, sep = "_"), "_summ.csv")),
+    row.names = FALSE)
+
+  return(out)
 })
 
 

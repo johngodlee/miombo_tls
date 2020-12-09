@@ -9,6 +9,8 @@ library(dplyr)
 library(tidyr)
 library(scico)
 
+source("functions.R")
+
 # List files
 file_list <- list.files(path = "../dat/tls/plot_canopy_height", 
   pattern = "*.csv", full.names = TRUE)
@@ -21,7 +23,6 @@ if (!dir.exists(out_dir)) {
 # 10x10 cm XY bin width
 xy_width = 0.1
 z_width = 1
-
 
 # For each file
 out <- lapply(file_list, function(x) {
@@ -48,7 +49,7 @@ out <- lapply(file_list, function(x) {
       max = max(Z, na.rm = TRUE)
       )
 
-  # Calculate mean, median, stdev of distribution (canopy rugosity)
+  # Calculate mean, median, stdev of distribution (canopy top rugosity)
   summ <- dat_xy_bin_summ %>%
     ungroup() %>%
     summarise(across(c(q95, q99, max), 
@@ -70,23 +71,11 @@ out <- lapply(file_list, function(x) {
                     decreasing = TRUE)[1]))))
           ))) %>%
     gather() %>% 
-    mutate(plot_id = plot_id)
+    mutate(plot_id = plot_id) %>%
+    dplyr::select(plot_id, key, value)
 
-  # Calculate effective number of layers in canopy
-  ## Assign to Z slices
-  ## Count number of points within each slice
-  ## Calculate shannon diversity index (entropy) on vertical layer occupancy
-  summ <- dat %>% 
-    mutate(
-      bin_z = cut(.$Z, include.lowest = TRUE, labels = FALSE,
-        breaks = seq(floor(min(.$Z)), ceiling(max(.$Z)), by = z_width))) %>%
-    group_by(bin_z) %>%
-    tally() %>%
-    summarise(value = exp(-sum(n / sum(n) * log(n / sum(n))))) %>%
-    mutate(key = "entropy", 
-      plot_id = plot_id) %>%
-    dplyr::select(key, value, plot_id) %>%
-    bind_rows(., summ)
+  summ <- rbind(summ, 
+    data.frame(plot_id = plot_id, key = "entropy", value = enl(dat$Z, z_width)))
 
   # Histogram of distribution
   pdf(file = file.path("../img/canopy_height_hist", 

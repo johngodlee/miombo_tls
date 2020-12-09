@@ -19,7 +19,7 @@ if (!dir.exists(out_dir)) {
 }
 
 # For each file
-vol_df <- do.call(rbind, lapply(file_list, function(x) {
+lapply(file_list, function(x) {
 
   # Read file
   dat <- fread(x)
@@ -41,12 +41,16 @@ vol_df <- do.call(rbind, lapply(file_list, function(x) {
   vol <- sum(summ$volume, na.rm = TRUE)
 
   # Get names of subplots from filenames
-  quad_id <- paste(strsplit(basename(gsub(".csv", "", x)), "_")[[1]][c(1,4)], collapse = "_")
+  quad_id <- strsplit(basename(gsub(".csv", "", x)), "_")[[1]][c(1,4)]
 
-  # Return dataframe
-  return(data.frame(vol, quad_id))
-}))
+  # Tidy dataframe 
+  out <- data.frame(subplot = quad_id[1], direction = quad_id[2], vol)
 
-# Write to .csv
-write.csv(vol_df, file.path(out_dir, "grass_vol.csv"), row.names = FALSE)
+  # Write to .csv
+  write.csv(out, 
+    file.path(out_dir, 
+      paste0(paste(quad_id, collapse = "_"), "_grass_vol.csv")), 
+      row.names = FALSE)
+})
+
   
