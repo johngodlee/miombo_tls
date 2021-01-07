@@ -33,7 +33,6 @@ out <- lapply(file_list, function(x) {
 
   # Assign each point to a 2D bin, 
   # 10x10 cm bins
-  # Quantiles of height in each bin
   dat_xy_bin <- dat %>% 
     mutate(
       bin_x = cut(.$X, include.lowest = TRUE, labels = FALSE,
@@ -41,6 +40,7 @@ out <- lapply(file_list, function(x) {
       bin_y = cut(.$Y, include.lowest = TRUE, labels = FALSE,
         breaks = seq(floor(min(.$Y)), ceiling(max(.$Y)), by = xy_width)))
 
+  # Quantiles of height in each bin
   dat_xy_bin_summ <- dat_xy_bin %>%
     group_by(bin_x, bin_y) %>%
     summarise(
@@ -72,10 +72,11 @@ out <- lapply(file_list, function(x) {
           ))) %>%
     gather() %>% 
     mutate(plot_id = plot_id) %>%
-    dplyr::select(plot_id, key, value)
+    dplyr::select(plot_id, key, value) %>%
+    bind_rows(., 
+      data.frame(plot_id = plot_id, key = "entropy", 
+        value = enl(dat$Z, z_width)))
 
-  summ <- rbind(summ, 
-    data.frame(plot_id = plot_id, key = "entropy", value = enl(dat$Z, z_width)))
 
   # Histogram of distribution
   pdf(file = file.path("../img/canopy_height_hist", 
