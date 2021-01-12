@@ -5,10 +5,9 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-awk -v plot="$1" ' BEGIN {
+awk -v PLOT="\"$1\"" 'BEGIN {
 	FPAT = "([^,]+)|(\"[^\"]+\")"
 }
-{
-	if ($1 == plot) {printf "%s\n", $2}
-}' ../dat/raw/plot_id_lookup.csv
+$1 == PLOT { gsub("\"", ""); printf "%s", $2 }
+' ../dat/raw/plot_id_lookup.csv
 
