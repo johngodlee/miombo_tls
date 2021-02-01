@@ -70,9 +70,6 @@ all_subs <- scan_count_all_subs %>%
   mutate(subplot_id = paste(plot_id, subplot, sep = "_")) %>%
   pull(subplot_id)
 
-
-
-
 # Clean target coordinates dataframe
 ## Bind list to dataframe
 coords <- do.call(rbind, coord_list)
@@ -105,14 +102,10 @@ coords_clean <- coords %>%
 write.csv(coords_clean, "../dat/target_coords.csv", 
   row.names = FALSE)
 
-
-
 # Create dataframe with just subplot centre coordinates
 centre_df <- coords_clean %>%
-  dplyr::select(plot_id, subplot, lon, lat, centre) %>%
-  filter(centre == TRUE)
-
-
+  filter(centre == TRUE) %>%
+  dplyr::select(plot_id, subplot, lon, lat)
 
 # Find which subplots don't have centre target coordinates 
 no_centre <- all_subs[which(!all_subs %in% 
@@ -123,17 +116,16 @@ no_centre <- all_subs[which(!all_subs %in%
 ##' These subplots should have centre positions of 0,0,0, 
 ##' can't stitch together for plot canopy height.
 no_gnss <- data.frame(plot_id = no_centre[grepl("ABG_3|ABG_12|ABG_14", no_centre) |
-  no_centre %in% paste0("ABG_11_S", seq(4,9))], lon = 0, lat = 0, centre = TRUE)
+  no_centre %in% paste0("ABG_11_S", seq(4,9))], lon = 0, lat = 0)
 
 no_gnss$subplot <- gsub(".*_", "", no_gnss$plot_id)
 no_gnss$plot_id <- gsub("_S[0-9]", "", no_gnss$plot_id)
 
-no_gnss <- no_gnss[,c(1,5,2,3,4)]
+no_gnss <- no_gnss[,c(1,4,2,3)]
 
 ##' Subplots where scan was at centre and we do have GNSS, get 
 ##' coordinates for scanner position and use those as centering coordinates
 centre_scan_coords_clean <- centre_scan_coords %>%
-  mutate(centre = TRUE) %>%
   dplyr::select(-elev)
 
 # Bind dataframes
@@ -146,7 +138,19 @@ poss_subs[which(!poss_subs %in%
 stopifnot(all(all_subs %in% 
     paste(all_centres_df$plot_id, all_centres_df$subplot, sep = "_")))
 
+# Add point IDs for searching
+all_centres_df_clean <- left_join(all_centres_df, 
+  coords_clean[coords_clean$centre == TRUE, c("plot_id", "subplot", "point_id")], 
+  by = c("plot_id" = "plot_id", "subplot" = "subplot")) %>% 
+  left_join(., plot_id_lookup, by = c("plot_id" = "seosaw_id")) %>%
+  mutate(point_id = case_when(
+      is.na(point_id) ~ paste0(plot_id.y, subplot),
+      TRUE ~ point_id)) %>%
+  dplyr::select(plot_id, subplot, point_id, lon, lat)
+
+stopifnot(all(!is.na(all_centres_df_clean)))
+
 # Write 
-write.csv(all_centres_df, "../dat/subplot_centre_coords.csv", 
+write.csv(all_centres_df_clean, "../dat/subplot_centre_coords.csv", 
   row.names = FALSE)
 

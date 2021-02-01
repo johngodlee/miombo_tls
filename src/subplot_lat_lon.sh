@@ -6,5 +6,5 @@ if [ $# -lt 1 ]; then
 fi
 
 awk -v SUBPLOT="$1" 'BEGIN { FPAT = "([^,]+)|(\"[^\"]+\")" }
-$5 ~ SUBPLOT && $14 == "TRUE" {printf "%f\n%f\n", $6, $7}' ../dat/target_coords.csv
+$3 ~ SUBPLOT {printf "%f\n%f\n", $4, $5}' ../dat/subplot_centre_coords.csv
 
