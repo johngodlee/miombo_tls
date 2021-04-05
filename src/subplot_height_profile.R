@@ -9,9 +9,13 @@ library(data.table)
 library(scico)
 library(zoo)
 
+source("functions.R")
+
 # Import data
-file_list <- list.files(path = "../dat/tls/height_profile", pattern = "*.csv", 
+file_list <- list.files(path = "../dat/tls/height_profile", pattern = "*.rds", 
   full.names = TRUE)
+
+plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 
 # Check for output directories
 hist_dir <- "../img/foliage_profile"
@@ -36,12 +40,13 @@ layer_vol <- pi * cylinder_radius^2 * voxel_dim
 profile_stat_list <- lapply(file_list, function(x) {
 
   # Get names of subplots from filenames
-  subplot_id <- gsub("_.*.csv", "", basename(x))
+  subplot_id <- gsub("_.*.rds", "", basename(x))
   plot_id <- gsub("(^[A-Z][0-9]+).*", "\\1", subplot_id)
+  plot_id_new <- plot_id_lookup[plot_id_lookup$plot_id == plot_id, "seosaw_id"] 
   subplot <- gsub("^[A-Z][0-9]+(.*)", "\\1", subplot_id)
 
   # Read file
-  dat <- fread(x)
+  dat <- readRDS(x)
 
   # Round Z coords to cm
   dat$z_round <- round(dat$Z, digits = 2)
@@ -81,12 +86,13 @@ profile_stat_list <- lapply(file_list, function(x) {
   dens_peak_height <- den_df[den_df$y == max(den_df$y), "x"]
 
   # Create dataframe from stats
-  out <- data.frame(plot_id, subplot, layer_div, auc_canopy, dens_peak_height)
+  out <- data.frame(plot_id = plot_id_new, subplot, layer_div, auc_canopy, 
+    dens_peak_height)
 
   # Write to file
   write.csv(out,
     file.path(out_dir, 
-      paste0(paste(plot_id, subplot, sep = "_"), "_summ.csv")),
+      paste0(paste(plot_id_new, subplot, sep = "_"), "_summ.csv")),
     row.names = FALSE)
 
   return(out)
