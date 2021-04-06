@@ -6,7 +6,8 @@
     {
         "type" : "filters.crop",
         "point" : "POINT(0 0 0)",
-        "distance" : 10 
+        "distance" : 10,
+        "outside" : "true"
     },
     {
         "type" : "writers.las",

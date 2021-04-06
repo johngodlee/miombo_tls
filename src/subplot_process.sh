@@ -76,7 +76,7 @@ for i in $@ ; do
 	mv ${tmpnoext}_noise.laz ../dat/tls/denoise_laz/
 	mv ${tmpnoext}.laz ../dat/tls/raw_laz/
 
-	# 10. Remove tmp dir 
+	# 10. Remove temp dir 
 	rm -r $tmpdir 
 
 	printf "Finished processing: ${plot}${subplot} : ${plot_new}\n---\n"
