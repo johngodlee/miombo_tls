@@ -30,32 +30,32 @@ for i in $@ ; do
 	if [ ${#sublatlon[*]} -eq 2 ]; then
 		# 2. Centre on subplot centre
 		printf "Centering coordinates on subplot centre\n"
-		./centre.sh $i ${sublatlon[0]} ${sublatlon[1]} $tmpdir/${base}_centre.laz
+		./centre.sh $i ${sublatlon[0]} ${sublatlon[1]} ${tmpdir}/${base}_centre.laz
 
 		# 3. Subset to 10 m cylinder around subplot centre
 		printf "Subset to 10 m cylinder around subplot centre\n"
-		./cylinder_crop.sh $tmpdir/${base}_centre.laz 0 0 10 $tmpdir/${base}_cylinder10.laz
+		./cylinder_crop.sh ${tmpdir}/${base}_centre.laz 0 0 10 ${tmpdir}/${base}_cylinder10.laz
 
 		# 4. Classify ground points and re-calculate height 
 		printf "Removing ground points\n"
-		./hag.sh $tmpdir/${base}_cylinder10.laz $tmpdir/${base}_hag.laz
+		./hag.sh ${tmpdir}/${base}_cylinder10.laz ${tmpdir}/${base}_hag.laz
 
 		# 5. Convert to .csv
 		printf "Convert to .csv\n"
-		./laz_txt.sh $tmpdir/${base}_hag.laz $tmpdir/${base}_cylinder10.csv
+		./laz_txt.sh ${tmpdir}/${base}_hag.laz ${tmpdir}/${base}_cylinder10.csv
 
 		# Convert to .rds 
 		printf "Compress to .rds\n"
-		Rscript csv_compress.R $tmpdir/${base}_cylinder10.csv $tmpdir/${base}_cylinder10.rds
+		Rscript csv_compress.R ${tmpdir}/${base}_cylinder10.csv ${tmpdir}/${base}_cylinder10.rds
 
-		# 6. Move .csv to dir for further analysis
-		mv $tmpdir/${base}_cylinder10.rds $outdir
+		# 6. Move .rds to dir for further analysis
+		mv ${tmpdir}/${base}_cylinder10.rds $outdir
 	else
 		printf "Latitude and longitude of subplot centre not found, skipping\n"
 	fi
 
 	# 7. Remove tmp dir 
-	rm -r $tmpdir
+	rm -r ${tmpdir}
 	
 	printf "Finished processing: ${base}\n---\n"
 

@@ -46,7 +46,7 @@ for i in $@ ; do
 	./height_crop.sh ${tmpdir}/${base}_hag.laz 1.3 "above" ${tmpdir}/${base}_canopy.laz
 
 	# 6. Remove points close to scanner
-	printf "Removing points close to scanner"
+	printf "Removing points close to scanner\n"
 	./sphere_neg_crop.sh ${tmpdir}/${base}_canopy.laz 0 0 1.3 1 ${tmpdir}/${base}_sphere.laz
 
 	# 7. Convert to .csv
@@ -70,4 +70,3 @@ for i in $@ ; do
 
 	printf "Done: ${base} : ${plot_new}\n---\n"
 done
-
