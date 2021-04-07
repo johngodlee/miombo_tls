@@ -6,7 +6,7 @@
 * Clean target location data - `target_calc.R`
 
 
-## TLS pre-processing - `subplot_process.sh`
+## TLS pre-processing - `subplot_process.sh` //
 
 1. Split scans into individual .ptx files - `ptx_split.sh`
 2. Convert to .laz with affine transformation of coordinates - `ptx_laz.sh`
@@ -23,7 +23,7 @@
 4. Convert .laz to .csv - `laz_txt.sh`
 
 
-## Gap fraction - `subplot_gap_frac.sh`
+## Gap fraction - `subplot_gap_frac.sh` //
 
 1. Starting from `noise.sh`, centre on subplot - `centre.sh`
 2. Subset to 20 m radius cylindrical subplot centre - `cylinder_crop.sh`
@@ -34,7 +34,7 @@
 7. Render POV-ray image - `ray_trace.sh`
 
 
-## Grassy biomass - `subplot_grass.sh`
+## Grassy biomass - `subplot_grass.sh` 
 
 1. Starting from `noise.sh`, centre subplot - `centre.sh`
 2. Subset to 5 m radius cylindrical subplot - `cylinder_crop.sh`

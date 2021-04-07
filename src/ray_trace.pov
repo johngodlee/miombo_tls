@@ -16,4 +16,4 @@ camera {
 
 background { White }
 
-#include "/var/folders/_n/c5rvw2g9535118h_2t8bmhvh0000gn/T/tmp.JsrnqTMOCx/W26S4.pov"
+#include "/var/folders/_n/c5rvw2g9535118h_2t8bmhvh0000gn/T/tmp.FOAipISwZH/W26S9.pov"

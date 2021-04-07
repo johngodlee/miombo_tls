@@ -53,13 +53,13 @@ gap_frac <- function(x) {
   if (grepl("DSC", img_id)) {
     img_info <- subplot_lookup_clean[subplot_lookup_clean$file == img_id & 
       !is.na(subplot_lookup_clean$file),] %>%
-      dplyr::select(plot_id, plot_name, subplot, date, longitude, latitude, file)
+      dplyr::select(plot_id, plot_name, subplot, date, lon, lat, file)
   } else {
     img_info <- subplot_lookup_clean[subplot_lookup_clean$tls == img_id,] %>%
-      dplyr::select(plot_id, plot_name, subplot, date, longitude, latitude, file = tls)
+      dplyr::select(plot_id, plot_name, subplot, date, lon, lat, file = tls)
   }
-  img_lon <- img_info$longitude
-  img_lat <- img_info$latitude
+  img_lon <- img_info$lon
+  img_lat <- img_info$lat
   img_doy <- as.integer(strftime(img_info$date, format = "%j"))
   out[1] <- img_info$plot_id
   out[2] <- img_info$subplot
@@ -133,11 +133,11 @@ gap_frac_gather <- gap_frac_df %>%
 pdf(file = "../img/tls_hemi_compare.pdf", width = 12, height = 8)
 ggplot() + 
   geom_point(data = gap_frac_gather, aes(x = hemi, y = tls)) + 
+  geom_smooth(data = gap_frac_gather, method = "lm", aes(x = hemi, y = tls)) + 
   geom_abline(intercept = 0, slope = 1) +
   facet_wrap(~var, scales = "free") + 
   labs(x = "Hemispherical photo", y = "Terrestrial LiDAR") +
-  theme_bw() + 
-  coord_equal()
+  theme_bw() 
 dev.off()
   
 
