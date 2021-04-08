@@ -7,7 +7,7 @@ library(data.table)
 library(dplyr)
 
 # Import data
-file_list <- list.files(path = "../dat/tls/grass", pattern = "*.csv", full.names = TRUE)
+file_list <- list.files(path = "../dat/tls/dpm", pattern = "*.csv", full.names = TRUE)
 
 # Define parameters 
 voxel_dim <- 0.02
@@ -24,8 +24,14 @@ lapply(file_list, function(x) {
   # Read file
   dat <- fread(x)
 
+  # Find zero points and remove, then recentre on minimum
+  dat_clean <- dat %>% 
+    filter(Z > 0.01) %>%
+    mutate(Z = Z - min(Z)) %>%
+    filter(Z < 2)
+
   # Bin into x,y cells
-  dat_xy_bin <- dat %>%
+  dat_xy_bin <- dat_clean %>%
     mutate(
       bin_x = cut(.$X, include.lowest = TRUE, labels = FALSE,
         breaks = seq(floor(min(.$X)), ceiling(max(.$X)), by = voxel_dim)),

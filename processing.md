@@ -15,7 +15,7 @@
 5. Exclude noise (95% CI of mean of 8 nearest neighbour dist) - `noise.sh` 
 
 
-## Canopy height profile - `subplot_height_profile.sh`
+## Canopy height profile - `subplot_height_profile.sh` //
 
 1. Starting from `noise.sh`, centre on subplot - `centre.sh`
 2. Subset to 10 m radius cylindrical subplot - `cylinder_crop.sh`
