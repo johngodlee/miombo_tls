@@ -17,13 +17,7 @@ file_list <- list.files(path = "../dat/tls/height_profile", pattern = "*.rds",
 
 plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 
-# Check for output directories
-hist_dir <- "../img/foliage_profile"
-if (!dir.exists(hist_dir)) {
-  dir.create(hist_dir, recursive = TRUE)
-}
-
-out_dir <- "../dat/subplot_profile"
+out_dir <- "../dat"
 if (!dir.exists(out_dir)) {
   dir.create(out_dir, recursive = TRUE)
 }
@@ -37,7 +31,7 @@ cylinder_radius <- 10
 layer_vol <- pi * cylinder_radius^2 * voxel_dim
 
 # For each subplot:
-profile_stat_list <- lapply(file_list, function(x) {
+profile_stat_list <- lapply(file_list[1:10], function(x) {
 
   # Get names of subplots from filenames
   subplot_id <- gsub("_.*.rds", "", basename(x))
@@ -57,20 +51,11 @@ profile_stat_list <- lapply(file_list, function(x) {
     filter(z_round > 0) %>%
     tally() %>% 
     as.data.frame() %>%
-    mutate(vol = n * voxel_dim,
+    mutate(
+      plot_id = plot_id_new,
+      subplot = subplot,
+      vol = n * voxel_dim,
       gap_frac = vol / layer_vol)
-
-  # Plot gap fraction density plot 
-  pdf(file = paste0(hist_dir, "/", subplot_id, "_foliage_profile.pdf"), 
-    width = 8, height = 6)
-    print(
-      ggplot(bin_tally, aes(x = z_round, y = gap_frac)) +
-        geom_line() +
-        theme_bw() + 
-        labs(x = "Elevation (m)", y = "Gap fraction") + 
-        coord_flip()
-    )
-  dev.off()
 
   # Calculate effective number of layers
   layer_div <- enl(dat$Z, z_width)
@@ -86,16 +71,33 @@ profile_stat_list <- lapply(file_list, function(x) {
   dens_peak_height <- den_df[den_df$y == max(den_df$y), "x"]
 
   # Create dataframe from stats
-  out <- data.frame(plot_id = plot_id_new, subplot, layer_div, auc_canopy, 
+  stats <- data.frame(plot_id = plot_id_new, subplot, layer_div, auc_canopy, 
     dens_peak_height)
 
-  # Write to file
-  write.csv(out,
-    file.path(out_dir, 
-      paste0(paste(plot_id_new, subplot, sep = "_"), "_summ.csv")),
-    row.names = FALSE)
-
-  return(out)
+  return(list(bin_tally, stats))
 })
 
+# Join dataframes
+stat_df <- do.call(rbind, lapply(profile_stat_list, "[[", 2))
 
+all_bins <- do.call(rbind, lapply(profile_stat_list, "[[", 1))
+
+# Write to csv
+write.csv(stat_df, file.path(out_dir, "height_profile_summ.csv"), 
+  row.names = FALSE)
+
+write.csv(all_bins, file.path(out_dir, "height_profile_bins.csv"), 
+  row.names = FALSE)
+
+# Plot all profiles together
+all_bins$plot_subplot <- paste(all_bins$plot_id, all_bins$subplot, sep = "_")
+
+pdf(file = "../img/height_profile.pdf", height = 8, width = 10)
+ggplot() + 
+  geom_line(data = all_bins, 
+    aes(x = z_round, y = gap_frac, group = plot_subplot, colour = plot_id), 
+    alpha = 0.9) +
+  theme_bw() + 
+  labs(x = "Elevation (m)", y = "Gap fraction") + 
+  coord_flip()
+dev.off()

@@ -13,13 +13,13 @@ file_list <- list.files(path = "../dat/tls/dpm", pattern = "*.csv", full.names =
 voxel_dim <- 0.02
 cylinder_radius <- 0.458
 
-out_dir <- "../dat/grass"
+out_dir <- "../dat"
 if (!dir.exists(out_dir)) {
   dir.create(out_dir, recursive = TRUE)
 }
 
 # For each file
-lapply(file_list, function(x) {
+out_df <- do.call(rbind, lapply(file_list, function(x) {
 
   # Read file
   dat <- fread(x)
@@ -48,15 +48,14 @@ lapply(file_list, function(x) {
 
   # Get names of subplots from filenames
   quad_id <- strsplit(basename(gsub(".csv", "", x)), "_")[[1]][c(1,4)]
+  plot_id <- gsub("(^[A-Z][0-9]+).*", "\\1", quad_id[1])
+  subplot <- gsub("^[A-Z][0-9]+(.*)", "\\1", quad_id[1])
 
   # Tidy dataframe 
-  out <- data.frame(subplot = quad_id[1], direction = quad_id[2], vol)
+  out <- data.frame(plot_id, subplot, direction = quad_id[2], vol)
 
-  # Write to .csv
-  write.csv(out, 
-    file.path(out_dir, 
-      paste0(paste(quad_id, collapse = "_"), "_grass_vol.csv")), 
-      row.names = FALSE)
-})
+  return(out)
+}))
 
-  
+# Write to .csv
+write.csv(out_df, file.path(out_dir, "grass_vol_summ.csv"), row.names = FALSE)

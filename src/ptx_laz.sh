@@ -5,8 +5,8 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
-# For each argument
-matrix=$(head -n 10 $1 | tail -4 | sed -r 's/0\s+?$/0.0/g' | awk -f transpose.awk)
+matrix=$(head -n 10 $1 | tail -4 | sed -r 's/0\s+?$/0.0/g' | dos2unix)
+mat_clean=$(Rscript transpose.R $matrix)
 
 pdal pipeline pipelines/ptx_laz.json --readers.text.filename=$1 \
 	--filters.transformation.matrix="${matrix}" \

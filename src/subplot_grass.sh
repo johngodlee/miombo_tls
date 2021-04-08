@@ -47,7 +47,7 @@ for i in $@ ; do
 	./dpm_crop.sh ${tmpdir}/${base}_hag.laz 0 0 0.458 
 
 	# 7. Find dpm circle files
-	printf "Finding dpm circle files"
+	printf "Finding dpm circle files\n"
 	dpmsplit=$(find ${tmpdir} -type f -regex ".*${base}_hag_dpm_[A-Z].laz")
 
 	# 8. For each file, convert to .csv
@@ -64,6 +64,7 @@ for i in $@ ; do
 	rm -r ${tmpdir}
 
 	printf "Done: ${base} : ${plot_new}\n---\n"
+
 done
 
 
