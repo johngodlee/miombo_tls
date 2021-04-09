@@ -241,7 +241,13 @@ tza_corners_clean <- tza_polys_coords %>%
       n == 3 ~ "SW",
       n == 4 ~ "NW",
       TRUE ~ as.character(n))) %>%
-  dplyr::select(-n)
+  dplyr::select(-n) %>% 
+  st_as_sf(., coords = c("lon", "lat")) %>%
+  st_set_crs(4326) %>%
+  st_transform(., 32737) %>%
+  bind_cols(., data.frame(st_coordinates(.))) %>%
+  st_drop_geometry() %>%
+  dplyr::select(plot_id, lon = X, lat = Y, corner)
 
 # Angola corners
 ago_corners_clean <- ago_corners %>%
@@ -256,7 +262,13 @@ ago_corners_clean <- ago_corners %>%
       corner == "E" ~ "NE",
       corner == "S" ~ "SE",
       corner == "W" ~ "SW",
-      TRUE ~ corner))
+      TRUE ~ corner)) %>%
+  st_as_sf(., coords = c("lon", "lat")) %>%
+  st_set_crs(4326) %>%
+  st_transform(., 32733) %>%
+  bind_cols(., data.frame(st_coordinates(.))) %>%
+  st_drop_geometry() %>%
+  dplyr::select(plot_id, lon = X, lat = Y, corner)
 
 # Bind
 corners_clean <- rbind(ago_corners_clean, tza_corners_clean)

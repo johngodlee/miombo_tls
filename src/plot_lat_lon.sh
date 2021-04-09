@@ -10,10 +10,10 @@ fi
 # 3: NE - longitude
 # 4: NE - latitude 
 
-awk -v plot="$1" ' BEGIN {
+gawk -v plot="\"$1\"" ' BEGIN {
 	FPAT = "([^,]+)|(\"[^\"]+\")"
 }
 {
-	if ($1 ~ plot && $4 ~ "SW") {printf "%f\n%f\n", $2, $3}
-	if ($1 ~ plot && $4 ~ "NE") {printf "%f\n%f\n", $2, $3}
+	if (match($1, plot) && $4 ~ "SW") {printf "%f\n%f\n", $2, $3}
+	if (match($1, plot) && $4 ~ "NE") {printf "%f\n%f\n", $2, $3}
 }' ../dat/plot_corners.csv

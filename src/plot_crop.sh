@@ -5,6 +5,6 @@ if [ $# -ne 6 ]; then
     exit 1
 fi
 
-bounds="([$2,$3],[$4,$5])"
+poly="([$2,$3],[$4,$5])"
 
-pdal pipeline pipelines/plot_crop.json --readers.las.filename=$1 --writers.las.filename=$6 --filters.crop.bounds="$point" 
+pdal pipeline pipelines/plot_crop.json --readers.las.filename=$1 --writers.las.filename=$6 --filters.crop.bounds="$poly" 
