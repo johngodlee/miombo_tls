@@ -34,7 +34,7 @@
 7. Render POV-ray image - `ray_trace.sh`
 
 
-## Grassy biomass - `subplot_grass.sh` 
+## Grassy biomass - `subplot_grass.sh` //
 
 1. Starting from `noise.sh`, centre subplot - `centre.sh`
 2. Subset to 5 m radius cylindrical subplot - `cylinder_crop.sh`
@@ -54,7 +54,13 @@
 
 ## Analysis
 
-* Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `subplot_height_profile.R`
-* Calculate gap fraction, also hemispherical photos - `hemi_calc.R` 
+* Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R`
+* Calculate gap fraction, also hemispherical photos - `hemi_calc.R` //
 * Grassy biomass volume estimation: - `grass.R`
-* Plot canopy height variation - `canopy_height.R`
+* Plot canopy height variation - `canopy_rough.R`
+
+## Models
+
+* Subplot height profiles - `height_profile.anal.R`
+* Grassy biomass volume - `grass_anal.R`
+* Plot canopy height variation - `canopy_rough_anal.R`
