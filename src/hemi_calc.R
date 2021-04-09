@@ -49,6 +49,8 @@ gap_frac <- function(x) {
   # Get image ID
   img_id <- gsub("\\..*", "", basename(x))
 
+  message(img_id)
+
   # Define parameters based on location
   if (grepl("DSC", img_id)) {
     img_info <- subplot_lookup_clean[subplot_lookup_clean$file == img_id & 
@@ -58,6 +60,7 @@ gap_frac <- function(x) {
     img_info <- subplot_lookup_clean[subplot_lookup_clean$tls == img_id,] %>%
       dplyr::select(plot_id, plot_name, subplot, date, lon, lat, file = tls)
   }
+
   img_lon <- img_info$lon
   img_lat <- img_info$lat
   img_doy <- as.integer(strftime(img_info$date, format = "%j"))
@@ -76,7 +79,7 @@ gap_frac <- function(x) {
 
   # Amount of direct light used as diffuse light in Uniform Ovecast Sky (UOC)
   # Default 0.15, 0.2-0.4 may be better in hazy tropical skies
-  loc_uoc <- 0.25
+  loc_uoc <- 0.2
 
   # convert image to hemi
   img <- Image2Hemiphot(img)
@@ -130,7 +133,7 @@ gap_frac_gather <- gap_frac_df %>%
       labels = c("LAI", "Gap fraction")))
 
 # Create plot
-pdf(file = "../img/tls_hemi_compare.pdf", width = 12, height = 8)
+pdf(file = "../img/tls_hemi_compare.pdf", width = 16, height = 8)
 ggplot() + 
   geom_point(data = gap_frac_gather, aes(x = hemi, y = tls)) + 
   geom_smooth(data = gap_frac_gather, method = "lm", aes(x = hemi, y = tls)) + 
@@ -139,6 +142,3 @@ ggplot() +
   labs(x = "Hemispherical photo", y = "Terrestrial LiDAR") +
   theme_bw() 
 dev.off()
-  
-
-
