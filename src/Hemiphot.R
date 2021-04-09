@@ -1,6 +1,6 @@
 ##########          Hemiphot.R         ##########
 # a script to calculate light indeces and more from hemispherical images
-# read the manual and helfile to use this script.
+# read the manual and help file to use this script.
 # HemiphotTest.R provides examples of all single calculations
 # HemiphotBatch.R provides examples of batch calculations for a 
 # number of images in one directory
@@ -10,10 +10,6 @@
 # provided the script is foudn in our working directory
 #######END          Hemiphot.R         ##########
 
-
-
-
-
 ##########          How to cite the use of Hemiphot         ##########
 #If you use Hemiphot.R for your research or work please cite as:
 #Hans ter Steege (2018) Hemiphot.R: Free R scripts to analyse hemispherical 
@@ -22,25 +18,6 @@
 #Unpublished report. Naturalis Biodiversity Center, Leiden, The Netherlands
 #https://github.com/Hans-ter-Steege/Hemiphot
 #######END          How to cite the use of Hemiphot         ##########
-
-
-
-
-
-##########          set classes for this script         ##########
-
-
-#HemiphotImage = setClass("HemiphotImage",    ## this function is discontinued
-#                         representation(image = "numeric", 
-#                                        cx    = "numeric", 
-#                                        cy    = "numeric", 
-#                                        cr    = "numeric"))
-
-#######END          set classes for this script         ##########
-
-
-
-
 
 ##########          Image2Hemiphot         ##########
 
@@ -61,10 +38,6 @@ Image2Hemiphot = function(image = ""){
 
 #######END          Image2HemiphotImage         ##########
 
-
-
-
-
 ##########          SetCircle         ##########
 
 SetCircle = function(image = "", cx = 0, cy = 0, cr = 0){
@@ -75,10 +48,6 @@ SetCircle = function(image = "", cx = 0, cy = 0, cr = 0){
 }
 
 #######END          SetCircle         ##########
-
-
-
-
 
 ##########          Plot image         ##########
 
@@ -105,10 +74,6 @@ PlotHemiImage = function(image = "", draw.circle = T, channel = ""){
 
 #######END          Plot image         ##########
 
-
-
-
-
 ##########          select a RGB channel         ##########
 
 SelectRGB = function(image = "", channel = ""){
@@ -126,10 +91,6 @@ SelectRGB = function(image = "", channel = ""){
 
 #######END          select an RGB channel         ##########
 
-
-
-
-
 ##########          threshold image         ##########
 
 ThresholdImage = function(image = "", th = 0.5, draw.image = F){
@@ -140,10 +101,6 @@ ThresholdImage = function(image = "", th = 0.5, draw.image = F){
 }
 
 #######END          threshold image         ##########
-
-
-
-
 
 ##########          draw a red circle on image          ##########
 
@@ -168,10 +125,6 @@ DrawCircle = function(cx = 100, cy = 100, radius = 50){
 
 #######END          draw a red circle on image          ##########
 
-
-
-
-
 ##########          draw circles         ##########
 
 DrawCircles = function(fisheye.cx, fisheye.cy, fisheye.cr){
@@ -185,10 +138,6 @@ DrawCircles = function(fisheye.cx, fisheye.cy, fisheye.cr){
 }
 
 #######END          draw circles         ##########
-
-
-
-
 
 ##########          calculate gap fractions on 89 circles         ##########
 
@@ -210,10 +159,6 @@ CalcGapFractions = function(image = ""){
 
 #######END          calculate gap fractions on 89 circles         ##########
 
-
-
-
-
 ##########          calculate canopy openness         ##########
 
 CalcOpenness = function(fractions){
@@ -228,33 +173,43 @@ CalcOpenness = function(fractions){
 
 #######END          calculate canopy openess         ##########
 
-
-
-
-
 ##########          calculate Leaf Area Index         ##########
 ## note that calc.LAI can only be executed if calc.gap.fractions has been called
 
 CalcLAI = function(fractions, width = 6){
   if(dim(fractions)[1] != 89) return("incorrect dimensions for fractions") 
   deg2rad = pi/180
-  angle    = c(7, 23, 38, 53, 68)                  # angles of LAI2000
-  wi       = c(0.034, 0.104, 0.160, 0.218, 0.494)  # weights given by Licor canopy analyzer manual
+  angle = c(7, 23, 38, 53, 68)  # angles of LAI2000
+  wi = c(0.034, 0.104, 0.160, 0.218, 0.494)  # weights given by Licor canopy analyzer manual
 
-  if(width < 0 | width > 6) width = 6
+  if (width < 0 | width > 6) {
+    width = 6
+  }
+
   T = rep(0,5)
-  for(i in -width:width) T = T + fractions[angle + i]
+  for (i in -width:width) { 
+    T = T + fractions[angle + i]
+  }
+
   T = T/(2*width +1)
 
-  LAI      = 2 * sum(-log(T) * wi * cos(angle*deg2rad))
+  T_log <- -log(T) 
+
+  T_noinf <- T[!is.infinite(T_log)]
+  T_log_noinf <- T_log[!is.infinite(T_log)]
+
+  mod <- lm(T_log_noinf ~ T_noinf)
+
+  T_inf <- predict(mod, newdata = data.frame(T_noinf = 0))
+
+  T_log <- ifelse(is.infinite(T_log), T_inf, T_log)
+
+  LAI = 2 * sum(T_log * wi * cos(angle * deg2rad))
+
   return(LAI)
 }
 
 #######END          calculate Leaf Area Index         ##########
-
-
-
-
 
 ##########          ShowSolarTracks          ##########
 
@@ -359,9 +314,6 @@ DrawSolarTracks = function(image ="", lat = 0, lon = 0, time.zone = 0,
 }
 
 #######END          ShowSolarTracks          ##########
-
-
-
 
 ##########          Calculate PAR by Day         ##########
 
@@ -507,9 +459,6 @@ CalcPAR.Day = function(image = "", lat = 0, lon = 0, time.zone = 0,
 
 #######END          Calculate PAR by day          ##########
 
-
-
-
 ##########          Plot PAR by Day         ##########
 
 ## plot the dayly values of PPFD
@@ -534,10 +483,6 @@ PlotPAR.Day = function(radiation = "", real.time = F){
 }
 
 #######END          Plot PAR by Day         ##########
-
-
-
-
 
 ##########          Calculate PAR by Year         ##########
 
@@ -669,10 +614,6 @@ CalcPAR.Year = function(image = "", lat = 0, tau = 0.6,
 
 #######END          Calculate PAR by day          ##########
 
-
-
-
-
 ##########          Plot PAR by Year         ##########
 
 ## plot the dayly values of PPFD of a full year
@@ -690,3 +631,4 @@ PlotPAR.Year = function(radiation = ""){
   }
 }
 
+#######END          Plot PAR by Year         ##########
