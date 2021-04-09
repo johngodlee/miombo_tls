@@ -10,10 +10,23 @@ fi
 # 3: NE - longitude
 # 4: NE - latitude 
 
-gawk -v plot="\"$1\"" ' BEGIN {
+gawk -v plot="\"$1\"" '
+BEGIN {
 	FPAT = "([^,]+)|(\"[^\"]+\")"
+	lon_min = 10000000
+	lon_max = 0
+	lat_min = 10000000
+	lat_max = 0
 }
 {
-	if (match($1, plot) && $4 ~ "SW") {printf "%f\n%f\n", $2, $3}
-	if (match($1, plot) && $4 ~ "NE") {printf "%f\n%f\n", $2, $3}
+	if (match($1, plot) && $2>lon_max) lon_max=$2 
+	if (match($1, plot) && $3>lat_max) lat_max=$3 
+	if (match($1, plot) && $2<lon_min) lon_min=$2 
+	if (match($1, plot) && $3<lat_min) lat_min=$3
+} 
+END {
+	print lon_min
+	print lon_max
+	print lat_min
+	print lat_max
 }' ../dat/plot_corners.csv

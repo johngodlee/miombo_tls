@@ -25,13 +25,17 @@ printf "Processing ${plot} : ${plot_new}\nTemp dir: ${tmpdir}\n"
 printf "Merging .laz files\n"
 ./laz_merge.sh $@ ${tmpdir}/${plot}_merge.laz
 
+# 2. Decimate to improve processing time
+printf "Decimating file by factor of 10\n"
+./decimate.sh ${tmpdir}/${plot}_merge.laz 10 ${tmpdir}/${plot}_dec.laz
+
 # 2. Get latitude and longitude of plot bounding box
 printf "Getting plot bounding box coordinates\n"
 plotlatlon=($(./plot_lat_lon.sh ${plot_new}))
 
 # 3. Crop to plot bounding box
 printf "Cropping point cloud to plot outline\n"
-./plot_crop.sh ${tmpdir}/${plot}_merge.laz ${plotlatlon[0]} ${plotlatlon[1]} ${plotlatlon[2]} ${plotlatlon[3]} ${tmpdir}/${plot}_crop.laz
+./plot_crop.sh ${tmpdir}/${plot}_dec.laz ${plotlatlon[0]} ${plotlatlon[1]} ${plotlatlon[2]} ${plotlatlon[3]} ${tmpdir}/${plot}_crop.laz
 
 # 4. Define ground and re-classify height
 printf "Defining ground height\n"

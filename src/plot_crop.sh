@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if [ $# -ne 6 ]; then
-	printf "Must supply six arguments:\n  [1] input.laz\n  [2] bottom-left longitude\n  [3] bottom-left latitude\n  [4] top-right longitude\n  [5] top-right latitude\n  [6] output.laz\n"
+	printf "Must supply six arguments:\n  [1] input.laz\n  [2] Min. longitude\n  [3] Max. longitude \n  [4] Min. latitude\n  [5] Max. latitude\n  [6] output.laz\n"
     exit 1
 fi
 
