@@ -5,17 +5,55 @@
 # Packages
 library(dplyr)
 library(lme4)
+library(ggplot2)
 
-# Import subplot height profile summaries 
-file_list <- list.files(path = "../dat/subplot_profile", pattern = "*.csv", 
-  full.names = TRUE)
+# Import data
+all_bins <- read.csv("../dat/height_profile_bins.csv")
 
-subplot_profiles <- do.call(rbind, lapply(file_list, read.csv))
-
-# Bind subplot height profile summaries 
-
-# Import subplot trees
 subplot_trees <- read.csv("../dat/subplot_trees.csv")
+
+# Plot all profiles together
+all_bins$plot_subplot <- paste(all_bins$plot_id, all_bins$subplot, sep = "_")
+all_bins$site <- gsub("_.*", "", all_bins$plot_id)
+
+pdf(file = "../img/height_profile.pdf", height = 8, width = 10)
+ggplot() + 
+  geom_line(data = all_bins, 
+    aes(x = z_round, y = gap_frac, group = plot_subplot), 
+    alpha = 0.6) +
+  theme_bw() + 
+  labs(x = "Elevation (m)", y = "Gap fraction") + 
+  coord_flip()
+dev.off()
+
+pdf(file = "../img/height_profile_plot_facet.pdf", height = 15, width = 15)
+ggplot() + 
+  geom_line(data = all_bins, 
+    aes(x = z_round, y = gap_frac, group = plot_subplot)) + 
+  facet_wrap(~plot_id) + 
+  theme_bw() + 
+  labs(x = "Elevation (m)", y = "Gap fraction") + 
+  coord_flip()
+dev.off()
+
+pdf(file = "../img/height_profile_site.pdf", height = 15, width = 15)
+ggplot() + 
+  geom_line(data = all_bins, 
+    aes(x = z_round, y = gap_frac, group = plot_subplot, colour = site)) + 
+  theme_bw() + 
+  labs(x = "Elevation (m)", y = "Gap fraction") + 
+  coord_flip()
+dev.off()
+
+pdf(file = "../img/height_profile_site_facet.pdf", height = 15, width = 15)
+ggplot() + 
+  geom_line(data = all_bins, 
+    aes(x = z_round, y = gap_frac, group = plot_subplot)) + 
+  theme_bw() + 
+  facet_wrap(~site) + 
+  labs(x = "Elevation (m)", y = "Gap fraction") + 
+  coord_flip()
+dev.off()
 
 # Add some extra columns to subplot trees
 subplot_trees$crown_area <- pi * subplot_trees$x_dim * subplot_trees$y_dim

@@ -44,7 +44,7 @@
 4. Convert .laz to .csv - `laz_txt.sh`
 
 
-## Canopy height variation - `plot_canopy_height.sh`
+## Canopy height variation - `canopy_rough.sh` //
 
 1. Starting from `noise.sh`, merge all subplots in a plot - `laz_merge.sh`
 2. Subset to plot boundary - `plot_crop.sh`
@@ -52,15 +52,16 @@
 4. Convert .laz to .csv - `laz_txt.sh`
 
 
-## Analysis
+## Data preparation 
 
-* Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R`
-* Calculate gap fraction, also hemispherical photos - `hemi_calc.R` //
-* Grassy biomass volume estimation: - `grass.R`
+* Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R` //
+* Calculate gap fraction, also hemispherical photos - `hemi.R` //
+* Grassy biomass volume estimation: - `grass.R` //
 * Plot canopy height variation - `canopy_rough.R`
 
-## Models
+## Analysis 
 
 * Subplot height profiles - `height_profile.anal.R`
 * Grassy biomass volume - `grass_anal.R`
 * Plot canopy height variation - `canopy_rough_anal.R`
+* Hemispherical photos - `hemi_anal.R`
