@@ -45,14 +45,15 @@ ggplot() +
   coord_flip()
 dev.off()
 
-pdf(file = "../img/height_profile_site_facet.pdf", height = 15, width = 15)
+pdf(file = "../img/height_profile_site_facet.pdf", height = 12, width = 10)
 ggplot() + 
   geom_line(data = all_bins, 
     aes(x = z_round, y = gap_frac, group = plot_subplot)) + 
   theme_bw() + 
   facet_wrap(~site) + 
   labs(x = "Elevation (m)", y = "Gap fraction") + 
-  coord_flip()
+  lims(x = c(0,25)) +
+  coord_flip() 
 dev.off()
 
 # Add some extra columns to subplot trees

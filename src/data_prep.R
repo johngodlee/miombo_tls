@@ -150,7 +150,7 @@ tza_dpm_clean <- tza_dpm %>%
     plot_id = seosaw_id,
     subplot,
     direction = cardinal_direction,
-    dpm_height = dpm_cm,
+    dpm = dpm_cm,
     sampled,
     date,
     dry_mass = dry_mass_g)
@@ -163,7 +163,7 @@ ago_dpm_clean <- ago_dpm %>%
     plot_id = seosaw_id,
     subplot,
     direction = dpm_nesw,
-    dpm_height = dpm_cm,
+    dpm = dpm_cm,
     sampled,
     date,
     dry_mass = dry_weight_g)
