@@ -92,7 +92,7 @@ profile_stat_list <- lapply(file_list, function(x) {
     point_cov <- sd(bin_fil$n, na.rm = TRUE) / mean(bin_fil$n, na.rm = TRUE)
 
     # Calculate upper quantiles of max height
-    height_q <- quantile(dat$z_round, c(0.95, 0.99))
+    height_q <- quantile(dat$z_round, c(0.95, 0.99, 0.999, 1))
 	
 	# Compute Ripley's L function for uniformity of distribution
 	ripley_l <- lRipley(bin_fil$n_loess)
