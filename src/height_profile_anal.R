@@ -7,8 +7,12 @@ library(dplyr)
 library(lme4)
 library(ggplot2)
 
+source("functions.R")
+
 # Import data
 all_bins <- read.csv("../dat/height_profile_bins.csv")
+
+profile_stats <- read.csv("../dat/height_profile_summ.csv")
 
 ripley_list <- readRDS("../dat/height_profile_ripley.rds")
 
@@ -85,6 +89,7 @@ ripley_pred_df$plot_id <- factor(ripley_pred_df$plot_id,
     paste0("W", c(9,11,18,26))))
 
 # Create envelope simulations from uniform distributions
+n <- 100
 envelope <- replicate(999, {
   lRipley(runif(n))(pred)
 }, simplify = FALSE)
@@ -116,7 +121,7 @@ subplot_trees_summ <- subplot_trees %>%
     ba = sum(pi * (diam/2)^2, na.rm = TRUE),
     cum_height = sum(height, na.rm = TRUE),
     crown_area = sum(crown_area, na.rm = TRUE)) %>%
-  left_join(., subplot_profiles, c("plot_id", "subplot"))
+  left_join(., profile_stats, c("plot_id", "subplot"))
 
 # Layer diversity vs. richness model
 rich_layer_div_mod <- lmer(layer_div ~ rich + ba + (rich | plot_id | subplot), 

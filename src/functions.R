@@ -104,3 +104,295 @@ lRipley <- function(x) {
     }
   )
 }
+
+# Functions to ascertain crop angles and pixel radii for equisolid projection fisheye camera lenses
+# John Godlee (johngodlee@gmail.com)
+# 2018_09_11
+
+#' Calculate the pixel radius for cropping an image to a given angular field of view
+#'
+#' @param deg_theta desired radius to be cropped to, in degrees
+#' @param focal_length_mm focal length of the camera lens combo
+#' @param pixel_pitch_um pixel pitch, i.e. the number of micrometres per px
+#'
+#' @return integer value of pixel length of crop radius
+#' 
+#' @examples
+#' fov.px(60, 8, 5.95)
+#' 
+#' @importFrom NISTunits NISTdegTOradian
+#' 
+fov.px <- function(deg_theta, focal_length_mm, pixel_pitch_um){
+  # Convert degrees of theta to radians
+  rads_theta <- NISTunits::NISTdegTOradian(deg_theta) 
+  
+  # Calculate radius of circle drawn by angle of view (rads_theta and max_rads_theta) in mm projected onto the sensor plane
+  R <-  2 * focal_length_mm * sin(rads_theta / 2)
+  
+  # Calculate the px per mm on the sensor, i.e. the pixel pitch
+  sensor_px_per_mm_flat <- 1/pixel_pitch_um * 1000
+  
+  # Multiply the mm radius of the desired circle by the number of pixels per mm on the sensor, to get the number of pixels radius of the desired circle
+  pixels_for_theta <- round(R * sensor_px_per_mm_flat, 0)
+  
+  return(pixels_for_theta)
+}
+
+#' Back calculate theta given the percentage radius crop and other camera info 
+#'
+#' @param prop_crop percentage of projected circular image radius that has been cropped
+#' @param full_circle_radius_px Radius of the full uncropped circle in pixels
+#' @param focal_length_mm focal length of the camera lens combo
+#' @param pixel_pitch_um the pixel pitch, i.e. the number of micrometres per px
+#'
+#' @return numeric value of theta angular field of view
+#' 
+#' @examples
+#' fov.theta(0.59, 1962, 8, 5.95)
+#' 
+#' @importFrom NISTunits NISTradianTOdeg
+#'
+fov.theta <- function(prop_crop, full_circle_radius_px, focal_length_mm, pixel_pitch_um){
+  # Calculate number of pixels in the radius of the crop
+  px_crop <- full_circle_radius_px * prop_crop
+  
+  # Calculate radius
+  theta <- 2 * asin(((pixel_pitch_um * px_crop) / (2 * focal_length_mm * 1000)))
+  
+  deg_theta <- round(NISTradianTOdeg(theta), 2)
+  
+  return(deg_theta)
+}
+
+#' von Gadow's spatial mingling index
+#'
+#' @param x vector of individual x axis coordinates
+#' @param y vector of individual y axis coordinates
+#' @param sp vector of individual species names
+#' @param k number of neighbours to consider
+#' @param adj logical, if TRUE the basic spatial mingling index is multiplied 
+#'     by Si/nmax, where Si is the number of species in the neighbourhood of 
+#'     the focal tree, and nmax is the total number of species in the data.
+#'
+#' @return 
+#' 
+#' @references von Gadow, K., Hui, G. Y. (2001). Characterising forest spatial 
+#' structure and diversity. Sustainable Forestry in Temperate Regions. Proc. of 
+#' an international workshop organized at the University of Lund, Sweden. 
+#' Pages 20- 30.
+#' 
+#' @export
+#' 
+spatialMingling <- function(x, y, sp, k = 4, adj = FALSE) {
+
+  dat_sf <- sf::st_as_sf(data.frame(x,y,sp), coords = c("x", "y"))
+
+  dists <- nngeo::st_nn(dat_sf, dat_sf, k = k+1)
+
+  mi <- unlist(lapply(dists, function(i) {
+    1/k * sum(sp[i[1]] != sp[i[-1]])
+  }))
+
+  if (adj) {
+    si <- unlist(lapply(dists, function(i) {
+      length(unique(sp[i[-1]]))
+    }))
+    nmax <- length(unique(sp))
+
+    out <- mi * (si/nmax)
+  } else {
+    out <- mi
+  }
+
+  return(out)
+}
+
+#' Winkelmass (spatial regularity of trees)
+#'
+#' @param x vector of individual x axis coordinates
+#' @param y vector of individual y axis coordinates
+#' @param k number of neighbours to consider
+#'
+#' @return 
+#' 
+#' @references von Gadow, K., Hui, G. Y. (2001). Characterising forest spatial 
+#' structure and diversity. Sustainable Forestry in Temperate Regions. Proc. of 
+#' an international workshop organized at the University of Lund, Sweden. 
+#' Pages 20- 30.
+#' 
+#' @export
+#' 
+winkelmass <- function(x, y, k = 4) {
+
+  dat_sf <- sf::st_as_sf(data.frame(x,y), coords = c("x", "y"))
+
+  dists <- nngeo::st_nn(dat_sf, dat_sf, k = k+1)
+
+  a0 <- 360 / k
+
+  wi <- unlist(lapply(dists, function(i) {
+    focal_sfg <- sf::st_geometry(dat_sf[i[1],])[[1]]
+    nb_sfg <- sf::st_geometry(dat_sf[i[-1],])
+    nb_angles <- sort(unlist(lapply(nb_sfg, function(j) {
+      angleCalc(focal_sfg, j)
+    })))
+    aj <- nb_angles - lag(nb_angles)
+    aj[1] <- nb_angles[k] - nb_angles[1]
+    aj <- ifelse(aj > 180, 360 - aj, aj)
+    sum(aj > a0)
+  }))
+
+  out <- 1 / k * wi
+
+  return(out)
+}
+
+
+#' Calculate angle between two sf point objects
+#'
+#' @param x point feature of class 'sf'
+#' @param y point feature of class 'sf'
+#'
+#' @return azimuthal from x to y, in degrees
+#' 
+#' @examples
+#' p1 <- st_point(c(0,1))
+#' p2 <- st_point(c(1,2))
+#' angleCalc(p1, p2)
+#' 
+#' @export
+#' 
+angleCalc <- function(x, y) {
+  dst_diff <- as.numeric(x - y)
+  return((atan2(dst_diff[1], dst_diff[2]) + pi) / 0.01745329)
+}
+
+#' Find nearest neighbours within a radius
+#'
+#' @param x vector of individual x axis coordinates
+#' @param y vector of individual y axis coordinates
+#' @param id vector of individual IDs. If NULL, vector indices are used.
+#' @param radius radius to look for nearest neighbours, in units of XY coordinates
+#' @param zones number of zones of equal arc angle, e.g. zones == 4 results in 
+#'     four zones each with 90deg arc. If NULL, no zones are defined. If zones
+#'     are defined, the nearest competitor within each zone is returned.
+#'
+#' @return list of dataframes per focal tree, of neighbours, their distances 
+#'     and angles. If no competitors are found within the radius of a focal 
+#'     tree, NA is returned for all columns except focal ID.
+#' 
+#' @importFrom sf st_as_sf
+#' 
+#' @export
+#' 
+nearNeighb <- function(x, y, id = NULL, radius, zones = NULL) {
+  # Add IDs if missing
+  if (is.null(id)) {
+    id <- seq_along(x)
+  }
+
+  # Are IDs unique?
+  if (any(duplicated(id))) {
+    stop("ID values are not unique")
+  }
+
+  # Convert coordinates to sf object
+  dat_sf <- sf::st_as_sf(data.frame(x,y,id), coords = c("x", "y"))
+
+  # Distance matrix
+  dist_mat <- sf::st_distance(dat_sf)
+  colnames(dist_mat) <- id
+  rownames(dist_mat) <- id
+
+  # Find neighbours within radius
+  nb <- lapply(seq_len(nrow(dist_mat)), function(z) {
+    # Get focal tree 
+    focal <- row.names(dist_mat)[z]
+
+    # Convert focal tree to sfg geometry
+    focal_sfg <- sf::st_geometry(dat_sf[dat_sf$id == focal,])[[1]]
+
+    # Get IDs of neighbours
+    ids <- colnames(dist_mat)[dist_mat[z,] <= radius]
+    ids <- ids[ids != focal]
+    out <- dist_mat[z, c(ids)]
+
+    # Create dataframe
+    if (length(out) > 0) {
+      out_df <- data.frame(focal, nb = ids, nb_dist = out)
+
+      # Add angle
+      out_df$nb_angle <- unlist(lapply(sf::st_geometry(dat_sf[dat_sf$id %in% ids,]), function(i) {
+        angleCalc(focal_sfg, i)
+      }))
+    } else {
+      out_df <- data.frame(focal, nb = NA_character_, nb_dist = NA_real_)
+      out_df$nb_angle <- NA_real_
+    }
+
+    # If zones
+    if (!is.null(zones)) {
+      if (length(out) > 0) {
+        # Find zones for each neighbour
+        zone_vec <- c(0, seq(360 / zones, 360, length.out = zones))
+        out_df$nb_zone <- cut(out_df$nb_angle, breaks = zone_vec)
+
+        # Get nearest neighbour in each zone
+        out_df <- do.call(rbind, by(out_df, out_df$nb_zone, function(i) {
+          i[which.min(i$nb_dist), ] 
+        }))
+      } else {
+        out_df$nb_zone <- NA
+      }
+    }
+    row.names(out_df) <- NULL
+    out_df 
+  })
+
+  names(nb) <- rownames(dist_mat)
+
+  return(nb)
+}
+
+#' Lorimer's Competition Zone Radius - Lorimer 1983
+#'
+#' @param k constant, usually 0.4
+#' @param n number of trees per hectare
+#'
+#' @return atomic vector of competition zone radius
+#' 
+#' @details Estimates the competition zone radius, based on the number of 
+#' trees per hectare in the plot multiplied by a constant (\eqn{k}).
+#' 
+#' @references Lorimer, C. G. (1983). Tests of age-independent competition 
+#' indices for individual trees in natural hardwood stands. Forest Ecology and 
+#' Management. Volume 6. Pages 343-360.
+#' 
+#' @export
+#' 
+lorimerCZR <- function(k, n) {
+  k * sqrt(10000 / n)
+}
+
+#' Hegyi index - Hegyi 1974
+#'
+#' @param dbh vector of DBH (diameter at breast height) measurements of competitor trees
+#' @param dist vector of distances from focal tree to competitor trees
+#' @param focal_dbh DBH of focal tree
+#'
+#' @return atomic vector of competition index for focal tree
+#' 
+#' @details A spatially explicit competition index which takes into account DBH
+#' and distance of competitor trees. The iterative Hegyi index is a variant 
+#' which picks competitors based on minimum distance of neighbouring trees 
+#' within arc zones around the focal tree.
+#' 
+#' @references Hegyi, F., 1974. A simulation model for managing jack-pine 
+#' stands. In: Fries, J. (Ed.), Growth Models for Tree and Stand Simulation. 
+#' Royal College of Forestry, Stockholm, pages. 74–90.
+#' 
+#' @export
+#'
+hegyi <- function(dbh, dist, focal_dbh) {
+	sum((dbh / focal_dbh) / dist)
+}
