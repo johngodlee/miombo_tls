@@ -1,0 +1,36 @@
+> summary(vol_best_mod)
+Linear mixed model fit by REML ['lmerMod']
+Formula: vol ~ layer_div_std + point_cov_std + rich_std + tree_dens_std +  
+    (1 | site) + (1 | site:plot_id) + (1 | site:plot_id:subplot)
+   Data: grass_lai
+
+REML criterion at convergence: -778.2
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+-2.144 -0.617 -0.216  0.416  4.558 
+
+Random effects:
+ Groups               Name        Variance Std.Dev.
+ site:plot_id:subplot (Intercept) 0.00284  0.0533  
+ site:plot_id         (Intercept) 0.00028  0.0167  
+ site                 (Intercept) 0.00252  0.0502  
+ Residual                         0.01712  0.1308  
+Number of obs: 746, groups:  
+site:plot_id:subplot, 186; site:plot_id, 22; site, 2
+
+Fixed effects:
+              Estimate Std. Error t value
+(Intercept)    0.24792    0.03634    6.82
+layer_div_std -0.01541    0.00765   -2.01
+point_cov_std  0.02512    0.00659    3.82
+rich_std       0.01210    0.00862    1.40
+tree_dens_std -0.01972    0.00866   -2.28
+
+Correlation of Fixed Effects:
+            (Intr) lyr_d_ pnt_c_ rch_st
+layr_dv_std  0.012                     
+pont_cv_std  0.004 -0.099              
+rich_std    -0.022 -0.175  0.021       
+tre_dns_std  0.018 -0.224  0.120 -0.563
+> sink()
