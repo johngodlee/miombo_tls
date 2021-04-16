@@ -63,5 +63,5 @@
 
 * Subplot height profiles - `height_profile.anal.R` //
 * Grassy biomass volume - `grass_anal.R` //
-* Plot canopy height variation - `canopy_rough_anal.R`
+* Plot canopy height variation - `canopy_rough_anal.R` //
 * Hemispherical photos - `hemi_anal.R` //

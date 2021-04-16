@@ -7,7 +7,9 @@ library(dplyr)
 library(tidyr)
 library(broom)
 library(ggplot2)
+library(ggeffects)
 library(lme4)
+library(MuMIn)
 
 # Import data
 canopy <- read.csv("../dat/plot_canopy_stats.csv")
@@ -61,4 +63,71 @@ bivar_summ <- do.call(rbind, lapply(seq_along(bivar_mod_list), function(x) {
 
 # Mixed effects model - What predicts canopy rugosity?
 rug_lmer <- lmer(rc ~ tree_shannon + tree_dens + cov_diam + (1 | site), 
-  data = dat)
+  data = dat, na.action = "na.fail")
+
+rug_dredge <- as.data.frame(dredge(rug_lmer, evaluate = TRUE, rank = "AIC"))
+
+mod_pred <- get_model_data(rug_lmer, type = "est") %>%
+  mutate(psig = case_when(
+      p.value <= 0.05 ~ "*",
+      p.value <= 0.01 ~ "**",
+      p.value <= 0.001 ~ "***",
+      TRUE ~ NA_character_))
+
+# Plot model fixed effect slopes
+pdf(file = "../img/rugosity_mod_slopes.pdf", height = 8, width = 5)
+ggplot() +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_errorbarh(data = mod_pred, 
+    aes(xmin = conf.low, xmax = conf.high, y = term, colour = group),
+    height = 0) + 
+  geom_point(data = mod_pred,
+    aes(x = estimate, y = term, fill = group),
+    shape = 21, colour = "black") + 
+  geom_text(data = mod_pred,
+    aes(x = estimate, y = term, colour = group, label = psig),
+    size = 8, nudge_y = 0.1) + 
+  theme_bw() + 
+  theme(legend.position = "none") + 
+  labs(x = "Estimate", y = "")
+dev.off()
+
+pred_names <- c("tree_shannon", "tree_dens", "cov_diam")
+
+# Look at model predicted values and random effects
+re_df <- do.call(rbind, lapply(pred_names, function(x) {
+  out <- as.data.frame(ggpredict(rug_lmer, 
+      terms = c(x, "site"), type = "re"))
+  out$pred <- x
+  return(out) 
+}))
+
+pdf(file = "../img/rugosity_mod_re.pdf", height = 8, width = 12)
+ggplot() + 
+  geom_line(data = re_df, 
+    aes(x = x, y = predicted, colour = group)) + 
+  facet_wrap(~pred, scales = "free_x") + 
+  theme_bw() + 
+  labs(x = "", y = "Canopy rugosity")
+dev.off()
+
+fe_df <- do.call(rbind, lapply(pred_names, function(x) {
+  out <- as.data.frame(ggpredict(rug_lmer, terms = x, type = "fe"))
+  out$pred <- x
+  return(out)
+}))
+
+pdf(file = "../img/rugosity_mod_fe.pdf", height = 8, width = 12)
+ggplot() + 
+  geom_ribbon(data = fe_df, aes(x = x, ymin = conf.low, ymax = conf.high), 
+    alpha = 0.5) +
+  geom_line(data = fe_df, aes(x = x, y = predicted)) + 
+  facet_wrap(~pred, scales = "free_x") + 
+  theme_bw() + 
+  labs(x = "", y = "Canopy rugosity")
+dev.off()
+
+# Output best model stats
+sink("../out/rugosity_mod_summ.txt")
+summary(rug_lmer)
+sink()

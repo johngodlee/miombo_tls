@@ -1,0 +1,30 @@
+> summary(rug_lmer)
+Linear mixed model fit by REML ['lmerMod']
+Formula: rc ~ tree_shannon + tree_dens + cov_diam + (1 | site)
+   Data: dat
+
+REML criterion at convergence: 203.6
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.5617 -0.5144  0.0189  0.6464  1.8904 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ site     (Intercept)  6195     78.7   
+ Residual             18225    135.0   
+Number of obs: 18, groups:  site, 2
+
+Fixed effects:
+             Estimate Std. Error t value
+(Intercept)  1179.685    190.704    6.19
+tree_shannon  -10.708     86.702   -0.12
+tree_dens      -0.417      0.214   -1.95
+cov_diam       -1.589      2.551   -0.62
+
+Correlation of Fixed Effects:
+            (Intr) tr_shn tr_dns
+tree_shannn -0.271              
+tree_dens   -0.102 -0.571       
+cov_diam    -0.679 -0.357  0.169
+> sink()
