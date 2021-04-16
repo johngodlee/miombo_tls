@@ -4,9 +4,13 @@
 
 # Packages
 library(dplyr)
+library(tidyr)
 library(lme4)
+library(MuMIn)
+library(sjPlot)
 library(ggplot2)
-library(emmeans)
+library(ggeffects)
+library(gridExtra)
 
 source("functions.R")
 
@@ -110,6 +114,34 @@ ggplot() +
   theme(legend.position = "none")
 dev.off()
 
+
+# Bivariate plots of  various response variables 
+profile_stats$site <- ifelse(grepl("ABG", profile_stats$plot_id), "AGO", "TZA")
+
+bivar_names <- names(profile_stats)[-which(names(profile_stats) %in% c("plot_id", "subplot", "site"))]
+
+bivar_mat <- t(combn(bivar_names, 2))
+
+bivar_list <- apply(bivar_mat, 1, function(x) {
+  out <- profile_stats[,x]
+  names(out) <- c("x", "y")
+  out$xvar <- x[1]
+  out$yvar <- x[2]
+  return(out)
+    })
+
+bivar_plot_list <- lapply(bivar_list, function(x) {
+  ggplot(x, aes(x = x, y = y)) + 
+    geom_point(colour = "black", fill = "grey", shape = 21) + 
+    geom_smooth(method = "lm") + 
+    labs(x = x$xvar, y = x$yvar) + 
+    theme_bw()
+    })
+
+pdf(file = "../img/height_profile_stat_bivar.pdf", width = 15, height = 12)
+grid.arrange(grobs = bivar_plot_list)
+dev.off()
+
 # Add some extra columns to subplot trees
 subplot_trees$crown_area <- pi * subplot_trees$x_dim * subplot_trees$y_dim
 
@@ -133,7 +165,7 @@ layer_div_mod <- lmer(layer_div ~ rich_std + ba_std +
 
 # Area under curve (AUC) vs. richness model
 auc_canopy_div_mod <- lmer(auc_canopy ~ rich_std + ba_std + 
-  (rich_std | plot_id), 
+  (rich_std | plot_id),
   data = subplot_trees_summ)
 
 # Peak density height vs. richness model
@@ -151,5 +183,97 @@ cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + ba_std +
   (rich_std | plot_id), 
   data = subplot_trees_summ)
 
+# Make list of models
+mod_list <- list(layer_div_mod, auc_canopy_div_mod, dens_peak_height_div_mod,
+  q99_height_div_mod, cum_lm_se_div_mod)
 
-plot(ggpredict(layer_div_mow, c("rich_std", "plot_id")))
+# Look at model predicted values and random effects
+fe_df <- do.call(rbind, lapply(mod_list, function(x) {
+  out <- as.data.frame(ggpredict(x,
+      terms = "rich_std", type = "fe"))
+  out$resp <- names(x@frame)[1]
+  return(out)
+  }))
+
+pdf(file = "../img/height_profile_mods_fe.pdf", height = 8, width = 12)
+ggplot(fe_df) + 
+  geom_ribbon(aes(x = x, ymin = conf.low, ymax = conf.high), alpha = 0.5) +
+  geom_smooth(aes(x = x, y = predicted), colour = "black") + 
+  facet_wrap(~resp, scales = "free") + 
+  theme_bw() + 
+  labs(x = "Species richness", y = "")
+dev.off()
+
+re_df <- do.call(rbind, lapply(mod_list, function(x) {
+  out <- as.data.frame(ggpredict(x,
+      terms = c("rich_std", "plot_id"), type = "re"))
+  out$site <- ifelse(grepl("ABG", auc_canopy_re$group), "AGO", "TZA")
+  out$resp <- names(x@frame)[1]
+  return(out)
+  }))
+
+pdf(file = "../img/height_profile_mods_re.pdf", height = 8, width = 12)
+ggplot(re_df) + 
+  geom_line(aes(x = x, y = predicted, group = group, colour = site)) + 
+  facet_wrap(~resp, scales = "free") + 
+  theme_bw() + 
+  labs(x = "Species richness", y = "")
+dev.off()
+
+# Check richness models better or worse than model with only basal area
+layer_null_mod <- lmer(layer_div ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+auc_canopy_null_mod <- lmer(auc_canopy ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+dens_peak_height_null_mod <- lmer(dens_peak_height ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+q99_height_null_mod <- lmer(height_q99 ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+cum_lm_se_null_mod <- lmer(cum_lm_se ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+
+null_mod_list <- list(layer_null_mod, auc_canopy_null_mod,
+  dens_peak_height_null_mod, q99_height_null_mod, cum_lm_se_null_mod)
+
+stopifnot(length(mod_list) == length(null_mod_list))
+
+# Dataframe of model fit statistics
+mod_stat_df <- do.call(rbind, lapply(seq_along(mod_list), function(x) {
+  data.frame(
+    resp = names(mod_list[[x]]@frame)[1],
+    daic = AIC(null_mod_list[[x]]) - AIC(mod_list[[x]]),
+    dbic = BIC(null_mod_list[[x]]) - BIC(mod_list[[x]]),
+    rsq = r.squaredGLMM(mod_list[[x]]),
+    rsqm = rsq[1],
+    rsqc = rsq[2],
+    nullrsq = r.squaredGLMM(null_mod_list[[x]]),
+    logl = logLik(mod_list[[x]]),
+    nulllogl = logLik(null_mod_list[[x]])
+  )
+}))
+
+write.csv(mod_stat_df, "../out/height_profile_mod_stat_df.csv", row.names = FALSE)
+
+# Get fixed effects slopes
+mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
+  get_model_data(x, type = "est") %>%
+  mutate(psig = case_when(
+      p.value <= 0.05 ~ "*",
+      p.value <= 0.01 ~ "**",
+      p.value <= 0.001 ~ "***",
+      TRUE ~ NA_character_), 
+    resp = names(x@frame)[1])
+  }))
+
+pdf(file = "../img/height_profile_mod_rich_slopes.pdf", height = 8, width = 5)
+ggplot() +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_errorbarh(data = mod_pred, 
+    aes(xmin = conf.low, xmax = conf.high, y = term, colour = group),
+    height = 0) + 
+  geom_point(data = mod_pred,
+    aes(x = estimate, y = term, fill = group),
+    shape = 21, colour = "black") + 
+  geom_text(data = mod_pred,
+    aes(x = estimate, y = term, colour = group, label = psig),
+    size = 8, nudge_y = 0.1) + 
+  facet_wrap(~resp, scales = "free_x", nrow = 1) + 
+  theme_bw() + 
+  theme(legend.position = "none") + 
+  labs(x = "Estimate", y = "")
+dev.off()
