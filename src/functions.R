@@ -21,7 +21,7 @@ pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "grey", "#E0E0E0")
 #' Martin Ehbrecht, Peter Schall, Julia Juchheim, Christian Ammer, & 
 #'     Dominik Seidel (2016). Effective number of layers: A new measure for 
 #'     quantifying three-dimensional stand structure based on sampling with 
-#'     terrestrial LiDARForest Ecology and Management, 380, 212–223.
+#'     terrestrial LiDAR. Forest Ecology and Management, 380, 212–223.
 #' 
 #' @examples 
 #' x <- rnorm(10000)
