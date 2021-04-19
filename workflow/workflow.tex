@@ -12,6 +12,7 @@
 
 \usepackage{amssymb}  % Symbols
 \usepackage{amsmath}
+\usepackage{siunitx}
 
 \linespread{1.25}  % Linespacing
 
@@ -66,22 +67,23 @@ The project aimed to understand the effects of tree species diversity and compos
 
 \section{Field methods}
 
-Fieldwork was conducted at two sites, the first in Bicuar National Park, southwest Angola (LATLONG), and the second in Kilwa District, southeast Tanzania (LATLOPNG). 
+Fieldwork was conducted at two sites, the first in Bicuar National Park, southwest Angola (S15.1$^\circ$, E14.8$^\circ$), and the second in Kilwa District, southeast Tanzania (S9.0$^\circ$, E39.0$^\circ$). 
 
 The two sites have similar climatic conditions.
 
-TABLE OF CLIMATE
+\input{inc/clim.tex}
 
 Fieldwork was conducted during the peak growth period of each site, in order to capture the highest leafy volume in the canopy and the largest grassy volume in the understorey.
 
-At each site, 1 ha permanent plots were sampled. In Angola, 15 plots were used, while in Tanzania, only seven were used, following the curtailment of fieldwork due to COVID-19 travel restrictions.
+At each site, 1 ha permanent plots were sampled. In Angola, 15 plots were sampled, while in Tanzania, only seven were sampled, following the curtailment of fieldwork due to COVID-19 travel restrictions.
 
-Each permanent plot was further subdivided into nine 10 m diameter circular subplots arranged in a regular grid, with a buffer from the plot edge (FIGURE).
+Each permanent plot was further subdivided into nine 10 m diameter circular subplots arranged in a regular grid, with a buffer from the plot edge (\autoref{subplot}).
 
 Within each subplot, a variable number of scans were recorded using a Leica HDS6100 phase-shift terrestrial laser scanner (TLS). The number and position of scans within a subplot was determined by the arrangement and density of canopy material in the subplot. Scan positions were arranged to minimise shadows within the canopy, and to maximise canopy penetration. Number of scans per subplot ranged between one and five in both Angola and Tanzania (\autoref{scan_settings}).
 
-Five Leica 6" planar tilt and turn targets were used at each subplot to align scans. To allow for registration of scans among subplots, the location of each target was registered using a Leica VIVA GS10 GNSS unit, set up in post-processed kinematic (PPK) configuration with a base-station located \textasciitilde{}100 m from the edge of each 1 ha plot. The location of each target was measured for at least 4 minutes. MORE ABOUT DIALLING IN THE GNSS values. 
+Five Leica 6" planar tilt and turn targets were used at each subplot to align scans. To allow for registration of scans among subplots, the location of each target was registered using a Leica VIVA GS10 GNSS unit, set up in post-processed kinematic (PPK) configuration with a base-station located \textasciitilde{}100 m from the edge of each 1 ha plot. The location of each target was measured for at least 4 minutes. 
 
+We used SOME KIND OF GLOBAL SATELLITE MATCHING TO MAKE THE GNSS BETTER.
 
 \begin{table}[H] \centering 
   \caption{Description of scan settings used for each scan.} 
@@ -116,20 +118,17 @@ Duration of scan & 6 minutes 44 seconds \\
 	\label{subplot}
 \end{figure}
 
-
 \section{Registration}
 
-Scan registration for each subplot was conducted in Leica Cyclone version XXXX. Targets from each scan were aligned using Cyclone's automatic target acquisition. 
-
-We used SOME KIND OF GLOBAL SATELLITE MATCHING TO MAKE THE GNSS BETTER.
+Scan registration for each subplot was conducted in Leica Cyclone (version 9.1). Targets from each scan were aligned using Cyclone's automatic target acquisition. 
 
 After registration, scan scenes were exported from Cyclone as PTX files, one per subplot.
 
-\section{Voxelization}
+\section{Voxelisation}
 
 PTX files were converted to compressed LAZ files using PDAL \citep{}. The exact code used to extract and apply the PTX rotation matrix to each point in the PTX file can be found IN THIS APPENDIX HERE. 
 
-LAZ files were voxelised to different voxel sizes depending on the application of the data. For grassy biomass estimation, I used XXX cm\textsuperscript{3} cubic voxels, while for subplot height profile estimation I used XXX cm\textsuperscript{3} voxels, and for whole plot canopy rugosity I used XXX cm\textsuperscript{3} voxels. WHY THO
+LAZ files were voxelised to different voxel sizes depending on the application of the data. For grassy biomass estimation, we used 2 cm\textsuperscript{3} cubic voxels, while for subplot height profile estimation we used 5 cm\textsuperscript{3} voxels, and for whole plot canopy rugosity we used 10 cm\textsuperscript{3} voxels. WHY THO
 
 \section{Noise reduction}
 
@@ -173,13 +172,103 @@ To describe the uniformity of the foliage density distribution we used Ripley's 
 	\widehat{L}(t) &= \left(\frac{\widehat{K}(t)}{\pi}\right)^{1/2}
 \end{align}
 
-Finally, we calculated the Shannon diversity index on gap fraction of 50 cm bins
+Finally, we calculated the Shannon diversity index on the gap fraction of 50 cm bins:
+
+\begin{equation}
+	H^{\prime{}} = - \sum_{i=1}^{N} p_{i} \text{ln} p_{i}
+\end{equation}
+
+Where $N$ is the number of 50 cm bins in the height profile, and $p_{i}$ is the proportion of filled voxels in layer $i$ (gap fraction).
 
 \section{Canopy gap fraction}
 
+Simple canopy gap fraction as seen from the ground was measured using two methods: 1) hemispherical photography and 2) terrestrial LiDAR. 
+
+\subsection{Hemispherical photography}
+
+At the centre of each subplot a single photograph was taken with a Nikon D750 full-frame DSLR camera, with a circular fisheye lens. The lens had an equisolid (equal area) projection, which avoids image distortion. The projection function is given as:
+
+\begin{equation}
+	R = 2f \sin{(\theta{}/2)}
+\end{equation}
+
+Where $R$ is the radial position of a point on the image on the sensor, $f$ is the focal length of the lens, and $\theta{}$ is the angle in radians of the desired angular radius of the cropped image. 
+
+The photo was taken facing directly to zenith, with the top of the camera facing to magnetic north, at a height of 1.3 m or above understorey vegetation, whichever was higher. \autoref{camera_settings} shows describes the camera settings for each hemispherical photo:
+
+\begin{table}[H] \centering 
+  \caption{Description of camera settings used for each hemispherical photo. Note that the values of shutter speed and ISO are deliberately variable within sensible thresholds to adapt to light conditions.} 
+  \label{camera_settings} 
+\begin{tabular}{@{\extracolsep{0pt}} rl} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+{Setting} & {Value} \\
+\hline \\[-1.8ex] 
+Camera model & Nikon D750 \\
+Lens model & Sigma 8 mm f/3.5 EX DG Circular Fisheye \\
+Pixel pitch & \SI{5.95}{\micro\meter} \\
+Sensor resolution & 24.3 MP \\
+Shutter speed & >1/60s \\
+Aperture & 5-7 \\
+ISO & 100-200 \\
+Exposure compensation & -0.7 \\
+Focus & $\infty$ \\
+Image size & Large Fine JPEG 6016x4016 px \\
+Orientation & Landscape \\
+\hline
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
+
+Photos were captured under uniform light conditions as much as possible, either under overcast skies or early in the day before direct sunlight could be seen on the photo. 
+
+ImageJ (Fiji, version XXX) was used to binarize hemispherical photos \citep{}. We first split each image into red, green and blue channels. We used the Huang algorithm \cite{} to automatically threshold images to separate sky from plant material, using the blue channel only, under the assumption that plant material reflects little blue light, while the sky reflects much more \citep{}. Images were saved as PNG at the original pixel resolution.
+
+\subsection{Terrestrial LiDAR}
+
+Due to terrestrial LiDAR measurement locations being spread over the subplot to avoid occlusion of canopy material, we simulated a scan position at the centre of the subplot using the point cloud data from all scans per subplot. Similar to the processing chain for the foliage density profiles, PDAL was used to crop the point cloud to a 20 m cylinder around the subplot centre, then used \texttt{filters.hag\_nn} to classify ground points and recalculate height above ground. We cropped the point cloud to points above 1.3 m, with a 50 cm exclusion sphere around the scan position at 1.3 m above the ground. The point cloud was converted to a POV-Ray object, where each point was transformed to a 1 cm\textsuperscript{3} cube. POV-Ray was then used to produce a ray-traced image. As with the hemispherical photos, we used a fisheye lens with an equisolid projection and a view angle of 180\textdegree, located at the subplot centre, at the same height as the hemispherical photo, with the top of the camera facing magnetic north and the camera facing straight up. Each cube was set as a non-reflective object, and the sky had an equal gamma of 1.0. POV-Ray produced an image of 4016x4016 px, identical to the cropped circular dimensions of the image produced by the hemispherical photo.
+
+\subsection{Gap fraction estimation}
+
+Hemiphot \citep{} was used to estimate gap fraction from both the hemispherical photos and the TLS POV-Ray simulation. Hemiphot calculates canopy gap fractions in 90 evenly sized concentric rings. To obtain the total gap fraction of an image:
+
+\begin{equation}
+	G_{\text{tot}} = \sum_{\alpha{} = 0.5}^{\alpha{} = 89.5}(G_{\alpha{}} A_{\alpha{}} / A_{\text{tot}})
+\end{equation}
+
+Where $G_{\alpha{}}$ is the fraction of unfilled pixels in ring $\alpha{}$, $A_{\alpha{}}$ is the sky area of the ring segment, and $A_{\text{tot}}$ is the total sky area of the hemisphere.
+
 \section{Grassy biomass estimation}
 
+Grassy volume and biomass within each subplot was estimated from four sample points located 2 m from the subplot centre in cardinal directions (\autoref{subplot}). At each point, a disc-pasture measurement was taken with a 45.8 cm radius disc weighing exactly 1.5 kg. Small woody stems were removed from disc-pasture sample points before the disc-pasture measurement was taken. Within each 1 ha plot, biomass harvesting was conducted at nine randomly allocated disc-pasture sample points. Tree leaf litter was removed from biomass samples. Grass samples in Angola were dried until the mass remained constant ($\pm$5 g) for more than 48 hours, then weighed to ascertain the grassy biomass. Grass samples from Tanzania could not be processed due to curtailment of fieldwork due to COVID-19 travel restrictions. 
+
+An allometric model was developed to estimate grassy biomass at every disc-pasture sample point using the grassy biomass sample masses. This model was only developed for Angola where grassy biomass samples were weighed. The model consisted of a linear mixed effects regression testing the relationship between disc-pasture height (independent) and grassy biomass (dependent), with a random slope term for each 1 ha plot. 
+
+Grassy volume was measured from TLS point cloud data following the methodology of \citet{}. First the point cloud was cropped to points below 2 m. The point cloud was then aggregated to cubic voxels of 2 cm\textsuperscript{3}. Within each vertical 2 cm\textsuperscript{2} column, the mean height of points was calculated, then the volume below the mean was assumed to be entirely filled with grassy material.
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{grass}
+	\caption{Point cloud with mean heights for each 2 cm\textsuperscript{2} column labelled and the estimated grassy volume below.}
+	\label{grass}
+\end{figure}
+
 \section{Canopy rugosity}
+
+The canopy rugosity of each 1 ha plot was estimated. All scans from each plot were merged to a single point cloud, and noise reduction was performed as described above and the cloud was voxelised to 10 cm\textsuperscript{3} cubic voxels. The point cloud was cropped to the plot boundaries, which were located with dGPS similar to the LiDAR targets. 
+
+A canopy height model was produced to describe the upper canopy surface. The 99th percentile of height in each 10 cm\textsuperscript{2} vertical column was extracted. The maximum height was not used as this occasionally constituted a severe outlier which skewed further 
+canopy height model smoothing. We used the pit-filling algorithm described in \citet{Khosravipour2014} to smooth the canopy height profile by removing gaps within trees caused by incomplete penetration of the LiDAR beam.
+
+From the canopy height profile we extracted a number of statistics for use in statistical modelling. We calculated the mean and coefficient of variation of canopy height across the plot (canopy rugosity), following \citep{Parker2004}. We calculated the Topographic Ruggedness Index (TRI) as the mean of absolute differences between the heights of each column and the height of its eight surrounding cells \citep{Wilson2007}. From this we estimated the plot level mean TRI and coefficient of variation. 
+
+We also calculated a second measure of canopy rugosity ($R_{c}$) following \citet{Hardiman2011}, using all point cloud data rather than just the top surface:
+
+\begin{equation}
+	R_{c} = \sigma{}(\sigma{}G_{z})_{x}
+\end{equation}
+
+Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation.
 
 \printbibliography
 

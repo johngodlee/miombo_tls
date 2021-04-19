@@ -1,4 +1,10 @@
-# Estimate grassy biomass volume from TLS John Godlee (johngodlee@gmail.com) 2020-12-07 Packages library(dplyr) library(ggplot2)
+# Estimate grassy biomass volume from TLS
+# John Godlee (johngodlee@gmail.com)
+# 2020-12-07
+
+# Packages
+library(dplyr)
+library(ggplot2)
 
 # Import data
 dpm <- read.csv("../dat/dpm.csv")

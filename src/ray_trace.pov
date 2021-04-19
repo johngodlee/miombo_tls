@@ -10,7 +10,7 @@ camera {
     fisheye	
 	angle 180
     right  x*image_width/image_height
-	location <0,0,1.8>
+	location <0,0,1.3>
 	look_at <0,0,200>
 }
 
