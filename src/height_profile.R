@@ -17,8 +17,8 @@ file_list <- list.files(path = "../dat/tls/height_profile", pattern = "*.rds",
 plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 
 # Define parameters 
-voxel_dim <- 0.01
-z_width <- 1
+voxel_dim <- 0.05
+z_width <- 0.5
 cylinder_radius <- 1000
 
 # Calculate maximum 1 voxel layer volume
@@ -39,7 +39,7 @@ profile_stat_list <- lapply(file_list, function(x) {
   dat <- readRDS(x)
 
   # Round Z coords to cm
-  dat$z_round <- round(dat$Z, digits = 2)
+    dat$z_round <- round(dat$Z/voxel_dim)*voxel_dim
 
   if (nrow(dat) > 0) {
     
@@ -73,12 +73,12 @@ profile_stat_list <- lapply(file_list, function(x) {
     bin_fil$gap_frac_loess <- bin_fil$vol_loess / layer_vol 
 
     # Re-calculate peaks and troughs
-    peaks50 <- bin_fil$z_round[findPeaks(bin_fil$n_loess, m = 50)]
-    troughs50 <- bin_fil$z_round[findPeaks(-bin_fil$n_loess, m = 50)]
-
+    peaks50 <- bin_fil$z_round[findPeaks(bin_fil$n_loess, m = 25)]
+    troughs50 <- bin_fil$z_round[findPeaks(-bin_fil$n_loess, m = 25)]
+      
     # Calculate effective number of layers
     layer_div <- enl(dat$z_round, z_width)
-    
+  
     # Calculate area under curve of foliage density
     auc_canopy <- sum(diff(bin_fil$z_round) * rollmean(bin_fil$vol, 2))
 
@@ -100,7 +100,7 @@ profile_stat_list <- lapply(file_list, function(x) {
     # Shannon entropy of 50 cm bins
     shannon <- bin_fil %>%
       mutate(z_r50 = cut(z_round, 
-      breaks = seq(0, max(z_round), 0.5))) %>%
+      breaks = seq(0, max(z_round), z_width))) %>%
       group_by(z_r50) %>%
       summarise(n = sum(n)) %>%
       pull(n) %>%
