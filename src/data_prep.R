@@ -181,7 +181,7 @@ dpm_merge <- rbind(ago_dpm_clean, tza_dpm_clean)
 # Hemi photos
 tza_hemi_photos_clean <- tza_hemi_photos %>%
   left_join(., plot_id_lookup, by = c("mcdi_plot_id" = "plot_id")) %>%
-  left_join(., tza_seosaw_plots[,c("plot_id", "longitude_of_centre", "latitude_of_centre")], 
+  left_join(., distinct(tza_seosaw_plots[,c("plot_id", "longitude_of_centre", "latitude_of_centre")]), 
     by = c("seosaw_id" = "plot_id")) %>%
   mutate(file = gsub("\\.jpg", "", photo_filename),
     subplot = paste0("S", subplot)) %>%

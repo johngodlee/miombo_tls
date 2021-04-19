@@ -55,7 +55,8 @@ gap_frac_mod <- lmer(tls_gap_frac ~ hemi_gap_frac + (hemi_gap_frac | plot_id),
   data = gap_frac_spread)
 
 gap_frac_re <- as.data.frame(ggpredict(gap_frac_mod, 
-    terms = c("hemi_gap_frac", "plot_id"), type = "re"))
+    terms = c("hemi_gap_frac", "plot_id"), type = "re")) %>%
+  mutate(site = if_else(grepl("ABG", group), "AGO", "TZA"))
 
 gap_frac_fe <- as.data.frame(ggpredict(gap_frac_mod, 
     terms = c("hemi_gap_frac"), type = "fe"))
@@ -63,7 +64,8 @@ gap_frac_fe <- as.data.frame(ggpredict(gap_frac_mod,
 pdf(file = "../img/tls_hemi_mod_fe_re.pdf", width = 8, height = 5)
 grid.arrange(grobs = list(
   ggplot() + 
-    geom_line(data = gap_frac_re, aes(x = x, y = predicted, group = group)) + 
+    geom_line(data = gap_frac_re, 
+      aes(x = x, y = predicted, group = group, colour = site)) + 
     theme_bw() + 
     theme(axis.title.y = element_blank(), axis.title.x = element_blank()), 
   ggplot(gap_frac_fe) + 
