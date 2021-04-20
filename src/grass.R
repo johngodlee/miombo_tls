@@ -31,15 +31,20 @@ out_df <- do.call(rbind, lapply(file_list, function(x) {
     # Bin into x,y cells
     dat_xy_bin <- dat_clean %>%
       mutate(
-        bin_x = cut(.$X, include.lowest = TRUE, labels = FALSE,
+        bin_x = cut(.$X, include.lowest = TRUE,
           breaks = seq(floor(min(.$X)), ceiling(max(.$X)), by = voxel_dim)),
-        bin_y = cut(.$Y, include.lowest = TRUE, labels = FALSE,
-          breaks = seq(floor(min(.$Y)), ceiling(max(.$Y)), by = voxel_dim)))
+        bin_y = cut(.$Y, include.lowest = TRUE,
+          breaks = seq(floor(min(.$Y)), ceiling(max(.$Y)), by = voxel_dim))) %>%
+      mutate(
+        bin_x = as.numeric(gsub("\\(", "", gsub(",.*", "", bin_x))),
+        bin_y = as.numeric(gsub("\\(", "", gsub(",.*", "", bin_y))))
 
     # Take mean height of points within a column, then estimate volume
     summ <- dat_xy_bin %>%
       group_by(bin_x, bin_y) %>%
-      summarise(volume = mean(Z, na.rm = TRUE) * voxel_dim^2)
+      summarise(mean_height = mean(Z, na.rm = TRUE)) %>%
+      mutate(volume = mean_height * voxel_dim^2) %>%
+      arrange(bin_x, bin_y)
 
     # Sum of volumes
     vol <- sum(summ$volume, na.rm = TRUE)
