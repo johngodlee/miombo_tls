@@ -71,7 +71,7 @@ clim_xtab <- xtable(clim_df_clean,
   align = "rrcccc",
   display = c("s","s","s","s","s","s"),
   digits = c(0,0,0,0,0,0),
-  caption = "Climatic data for each site, extracted from WorldClim at 2.5 minute resolution. Values are the mean and standard deviation (in brackets) of all pixels intersecting each protected area.")
+  caption = "Climatic data for each site, extracted from WorldClim at 2.5 minute resolution. Values are the mean and standard deviation (in brackets) of all pixels intersecting each protected area. MAT = Mean Annual Temperature. MAP = Mean Annual Precipitation. Temp. range = Temperature range, calculated as the mean of annual difference between highest temperature of hottest month and lowest temperature of coldest month. CWD = Climatic Water Deficit, calculated as the sum of the difference between monthly rainfall and monthly evapotranspiration when the difference is negative, sensu \\citet{Chave2014}.")
 
 # Export table
 fileConn <- file("../out/clim.tex")

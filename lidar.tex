@@ -64,51 +64,54 @@
 
 \section{Introduction}
 
-Assessments of woodland canopy structure are most often conducted using indirect techniques limited to a two-dimensional perspective. Terrestrial Laser Scanning (TLS) technology offers a means of assessing canopy structure in three dimensions. This text should hard wrap at 80 columns, wll does it?
+The characterization of tree canopy structure in wooded ecosystems constitutes a long-standing field of research that has been fundamental to interpreting, modelling, and improving understanding of ecosystem function \citep{Watt1947, WhittakerWoodwell1969, Horn1971}. Variation in canopy structure describes the spatial distribution and density of canopy foliage. Tree canopy foliage comprises the primary interface between trees, the atmosphere and sunlight. It is therefore essential to understand the drivers of variation in canopy structure to improve modelling efforts of earth-atmosphere carbon fluxes and community assembly \citep{}. 
 
-canopy space filling increases with tree species richness
+At continental scales, variation in canopy height and canopy cover, two coarse measures of canopy structure both of which have been shown to affect woody productivity \citep{}, can largely be explained by climate and edaphic data \citep{SOME-GEDI}. At the scale of a single tree community however, where variation in climate and soil may be negligible, variation in canopy structure is thought to be affected principally by the tree canopy species assemblage \citep{}, and community history \citep{}. However, empirical testing of these mechanisms thought to drive canopy structure in natural wooded ecosystems remains sparse \citep{}.
 
-The characterization of forest structure is a long-standing (Watt, 1947; Whittaker & Woodwell, 1969) research area fundamental to interpreting, modelling, and improving the understanding of eco- system functions. 
+Following established biodiversity-ecosystem function theory, the spatial complementarity of individual tree canopies, the niche partitioning of canopy space (hereafter `crown complementarity'), is thought to be a key mechanism underlying positive biodiversity-productivity effects in forests \citep{Pretzsch2014, Barry2019}. Biodiversity-ecosystem function theory predicts that canopy space occupation and thus canopy complexity and foliage density should increase with tree diversity, thus increasing standing biomass and woody productivity, as coexisting species must occupy non-identical niche space to avoid competitive exclusion \citep{}. 
 
-Previous studies have attempted to identify the relative contribution of niche complementarity, selection effects, and facilitation effects \citep{Scherer-Lorenzen2014}. These studies have found wide variation in the strength and direction of the BEFR depending on experimental design, the ecosystem being studied, and the environmental conditions \citep{Vila2005}. A focus on functional diversity in BEFR research allows intra-species and inter-species functional variation to be captured and provides reasons why specific species assemblages may exhibit niche complementarity and facilitation effects, while others do not. It also provides a more mechanistic basis for assessing the effect of environmental variation on the BEFR, by exploring how species' functional traits vary across environmental gradients and therefore how their contribution to ecosystem functionality also varies. 
+In addition to driving variation in woody productivity and biomass, canopy structure is also expected to affect understorey biomass. A more open tree canopy which provides more light to the ground can encourage understorey growth. In mesic savannas an open tree canopy is maintained via a positive feedback where increased grassy biomass as a result of a more open canopy increases the frequency and intensity of fires which serve to maintain the open canopy \citep{}. To elucidate the tipping points which determine when savanna becomes forest, it is necessary to understand how canopy structure affects grassy biomass.
 
-One possible mechanism explaining the observed niche complementarity effect of tree species richness and woody biomass in woodland ecosystems is the diversity of different species' crown architectures. \citet{Solbrig1996} suggest that while trees in SAWs are relatively species poor compared to other biomes, they maintain a high structural/functional diversity. \textit{I.e.} functional redundancy is low. A high diversity of crown shapes at the plot level may allow more efficient use of available light through niche complementarity effects, and possibly direct facilitation by providing low light environments for water limited saplings to prevent drought induced damage such as cavitation, and damage from high temperatures on leaf surfaces. It is unknown however, whether this effect exists in southern African woodlands. Crown packing dynamics in SAWs have been understudied, possibly due to the assumption that adult trees don't interact due to low tree density. Miombo woodlands however often feature relatively high stem densities with tree canopies that clearly interact \citep{Campbell2002}.
+Canopy structure is multi-dimensional and has previously been explained using a plethora of metrics that originated in forest and community ecology \citep{}. Assessments of canopy structure in the dry tropical have most often modelled tree canopies as a series of ellipses (2D) or ellipsoids (3D) \citep{}. While measurements of this kind are time consuming they still present a gross oversimplification of canopy structure. Alternatively, canopy cover is often measured using indirect optical methods which partition sky from canopy material, i.e. with hemispherical photography or the commonly used LAI-2000, providing a 2D representation of the canopy that is a simplification in other ways. In recent years, particularly in temperate and boreal forests, LiDAR (Light Detection And Ranging) has emerged as a suitable technology for rapidly and precisely assessing canopy structure in 3D, while conserving the complexity of the canopy. Applications of LiDAR can be classified into three principal groups based on the spatial resolution of the resulting data. In order from lowest to highest spatial resolution: 1) satellite LiDAR, 2) airborne LiDAR, and 3) terrestrial LiDAR.
 
-As well as horizontal crown packing dynamics, separation of the canopy into distinct vertical layers may also affect plot level woody biomass. In forests, different species may occupy different canopy layers as adult trees, either as an acclimatory/adaptational response to avoid competition with other species, or from being coppiced, via various methods of disturbance \citep{Syampungani2017}. The loss of large trees due to selective logging or reduced competition between trees in low density plots in SAWs may result in forests with simpler vertical structure, which may reduce potential biomass stocks \citep{Mograbi2015}. Disturbance regime may also affect canopy stratification. If fire intensity is low and fires are frequent, the upper canopy may consist mainly of similarly sized old trees that have escaped mortality by fire. In wet tropical forests and temperate forests this vertical canopy differentiation has been well studied \citep{Lowman2004} \citep{Trofymow1998}, but less so in SAWs, perhaps due to the perception that the canopy profile of the woodlands is simplistic. It seems clear however, from observation of woodlands in Angola and Mozambique that vertical canopy stratification does occur, though this remains untested. Individuals of the same species at different growth stages also occupy different canopy layers, with potential for intra-species competition or facilitation effects that may affect woody biomass stocks.
-
-Tree height distribution affects the presence of distinct canopy layers. In SAWs tree size distribution is affected primarily by the degree of disturbance. In the absence of disturbance, a negative exponential tree size distribution naturally occurs due to age dependent mortality \citep{Lehmann2009, Rubin2006}, with departures from that distribution indicating variation in age dependent mortality and recruitment rates over time. Tree size distribution affects spatial heterogeneity of the light environment and distribution of leaf area through the canopy profile \citep{Stark2015}, which in turn is predicted to affect niche differentiation and resource use efficiency. 
-
-Many studies of the biodiversity-ecosystem function relationship in woodlands/forests have focussed on woody biomass stocks and net primary productivity of woody species, while the biomass dynamics of the herbaceous understorey have not received the same level of attention. This is despite understorey strata in woodlands holding the majority of the species richness in a plot \citep{Frost1996}, and performing important ecosystem functions such as regulating forest soil carbon and nutrient pools \citep{Gilliam2007, Nilsson2005}. Understorey species also provide important ecosystem services such as providing grazing fodder for herbivores, provision of thatching grass as a building material, and provision of rare forbs for medicinal purposes \citep{Ryan2016c}. While the biomass held in understorey herbaceous plants may not be significant as a percentage of the total plot biomass, it is important as the principal fuel source for fires, which heavily structure the woodland landscape. Fire promotes further grass growth by maintaining open woodlands via increased mortality among tree saplings \citep{Higgins2007, Hoffmann2012}. 
-
-\citet{Shirima2015a} conducted a small study in Tanzania, comparing Miombo woodland and moist forest plots to investigate the role of canopy structure (measured via Leaf Area Index (LAI) and maximum tree height) on understorey conditions and above-ground herbaceous biomass. They found that higher LAI in Miombo woodlands did not lead to significant variation in herbaceous biomass, while maximum tree height positively correlated with herbaceous biomass. They suggest that canopy cover ameliorates harsh environmental conditions, allowing herbaceous growth. However, they also maintain that the relationships between environmental factors, canopy structure and herbaceous biomass are complex and should be investigated further in other woodlands in eastern and southern Africa.
-
-Understanding mechanisms which trigger tipping points leading to positive feedbacks between fire and grass growth will contribute to the existing debate on alternative stable states in savanna systems. \citet{Hirota2011} argued that there are climatic determinants of tree cover which influence grass growth and therefore disturbance regime through fire, the most influential being mean annual precipitation \citep{Sankaran2005}. I suggest that some of the un-explained variation surrounding the effect of climate on tree cover and therefore grass biomass can be explained by the functional diversity of tree species in the woodland, the diversity of crown shapes and canopy positions that different species occupy. There may also be interactions between the effect of canopy cover on herbaceous biomass and precipitation. In arid, warm savannas, herbaceous growth under trees may benefit from a micro-climate effect which maintains humidity and soil moisture, while in wet savannas this facilitation is unlikely to occur \citep{Dohn2013}. 
-
-I aim to quantify canopy architectural variation across a number of plots in the SEOSAW network to investigate whether greater complementarity in crown packing and greater canopy complexity, in both the vertical and horizontal profile, leads to greater biomass stocks. I will assess whether measures of tree structural diversity improve BEFR models in SAWs. I will also investigate how woody biomass is stratified vertically according to canopy layer and tree position in the canopy. I will include measures of environmental variation between sites to understand how canopy architecture is affected by these variables both within and between species and how this affects woody biomass. 
-
-
+In this study we applied terrestrial LiDAR techniques to mesic savannas at two sites in southern Africa, with the aim of increasing our understanding of how tree canopy structure is affected by tree neighbourhood composition and stand structure. We also investigated how this variation in canopy structure affects understorey grassy biomass. 
 
 \section{Materials and methods}
 
-\subsection{Study site}
+\subsection{Study sites}
+
+Measurements were conducted at two sites, the first in Bicuar National Park, southwest Angola (S15.1$^\circ$, E14.8$^\circ$), and the second in Kilwa District, southeast Tanzania (S9.0$^\circ$, E39.0$^\circ$) (\autoref{map}).
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{map}
+	\caption{Location of study sites within southern Africa (a), and of 1 ha plots within each site. The blue polygons denote the boundaries of protected areas which encompass the majority of study sites, Bicuar National Park in Angola (b), and Mtarure Forest Reserve in Tanzania (c).}
+	\label{map}
+\end{figure}
 
 \subsection{Field measurements}
 
+Fieldwork was conducted between February and April at both sites, during the peak growth period of each site, in order to capture the highest leafy volume in the canopy and the largest grassy volume in the understorey.
+
+At each site, 1 ha permanent plots were sampled. In Angola, 15 plots were sampled, while in Tanzania, seven were sampled, following the curtailment of fieldwork due to COVID-19 travel restrictions.
+
+Each permanent plot was further subdivided into nine 10 m diameter circular subplots arranged in a regular grid, with a buffer from the plot edge (\autoref{subplot}).
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{subplot}
+	\caption{The layout of 10 m diameter subplots within each 1 ha square plot. Each subplot is situated inside a 15 m buffer from the plot edge, with 35 m between subplot centres. Subplots are arranged in a 3x3 grid. Disc-pasture measurements and biomass samples are located in cardinal directions 2 m from the centre of the subplot. All distances are in metres.}
+	\label{subplot}
+\end{figure}
+
+For each subplot, we measured all woody stems >5 cm trunk diameter with canopy material inside the subplot. We identified each stem to species and measured trunk diameter (diameter at breast height - 1.3 m), height to top of canopy material, canopy area calculated as an ellipse of two perpendicular crown diameter measurements, distance and direction from subplot centre.
+
+At the centre of each subplot a photograph was taken with a Nikon D750 full-frame DSLR camera, with a Sigma 8 mm f/3.5 EX DG circular fisheye lens. This lens has an equisolid (equal area) projection, which avoids image distortion. The photo was taken facing directly to zenith, with the top of the camera facing to magnetic north, at a height of 1.3 m or above understorey vegetation, whichever was higher. Photos were captured under uniform light conditions as much as possible, either under overcast skies or early in the day before direct sunlight could be seen on the photo. 
+
 \subsection{Terrestrial laser scanning}
 
-We used a Leica HDS6100 Terrestrial Laser Scanner, with an angular resolution of x. This produces a point density of approximately x at x m. Wave length of x nm.
+Within each subplot, a variable number of scans were recorded using a Leica HDS6100 phase-shift terrestrial laser scanner (TLS). The number and position of scans within a subplot was determined by the arrangement and density of canopy material in the subplot. Scan positions were arranged to minimise shadows within the canopy, and to maximise canopy penetration. Number of scans per subplot ranged between one and five in both Angola and Tanzania (\autoref{scan_settings}).
 
-Phase shift
-
-Point clouds within each subplot were registered and unified.
-
-We validated our measurements with traditional digital hemispherical photography (DHP), with one image taken at the centre point of each subplot.
-
-Acquired our images at the maximum foliage volume in the wet season.
-
-Partial interceptions with phase-shift laser scanners can produce erroneous results and must be accounted for. I did this by removing noise from the point cloud.
-
-FROM SEIDEL ET AL. 2013 > We did not adopt a fixed scan de- sign (e.g. a ‘corner’ or ‘diamond’ setup), as proposed by Van der Zande et al. (2006, 2008). Instead we preferred a ‘circular’ scheme of scanner positions with no fixed distances or angles to the center scan in order to cope with the irregular patterns of stem distribu- tion and understory vegetation in the Hainich forest.
 
 \subsection{Data analysis}
 
@@ -116,11 +119,12 @@ Registration of multiple scans from different locations allows us to minimise th
 
 \subsubsection{Scan processing}
 
-Open source methods
-
-Filtering
+Point clouds from scans in each subplot were registered and unified using Leica Cyclone (version 9.1). Targets from each scan were aligned using Cyclone's automatic target acquisition. 
 
 Voxelisation: Points don't have an area or defined volume and so are unsuitable for estimating hemispherical points \citep{Seidel2012}.
+
+Partial interceptions with phase-shift laser scanners can produce erroneous results and must be accounted for. I did this by removing noise from the point cloud.
+
 
 Objects located closer to the instrument will be represented by a higher density of points, resulting in an imbalanced representation of the measured 3D space.
 

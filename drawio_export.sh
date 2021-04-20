@@ -6,3 +6,4 @@ drawio() {
 
 drawio drawio/subplot.drawio img/subplot.pdf
 drawio drawio/tls.drawio img/tls.pdf
+drawio drawio/crown.drawio img/crown.pdf
