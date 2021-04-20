@@ -9,6 +9,7 @@ library(ggnewscale)
 library(dplyr)
 library(sf)
 library(readxl)
+library(raster)
 
 source("functions.R")
 
@@ -78,7 +79,9 @@ plot_centre_fix$TZA <- plot_centre_split$TZA %>%
 plot_centre_wgs <- do.call(rbind, plot_centre_fix)
 
 # Get GlobCover for Bicuar
-glob_bicuar <- crop(glob, bicuar)
+glob_bicuar <- crop(glob, 
+  extent(14.22 - 0.02, 15.30 + 0.02, -15.69 -0.02, -14.88 + 0.02)
+)
 
 glob_bicuar_spdf <- as(glob_bicuar, "SpatialPixelsDataFrame")
 glob_bicuar_df <- as.data.frame(glob_bicuar_spdf)
@@ -119,6 +122,59 @@ ggplot() +
     shape = 21, colour = "black", size = 3, fill = pal[1], 
     position = "jitter") + 
   scale_fill_manual(name = "GlobCover", values = glob_bicuar_pal) +
+  theme_classic() + 
+  labs(x = "", y = "")
+dev.off()
+
+# Get GlobCover for Mtarure
+
+glob_mtarure <- crop(glob, 
+  extent(38.83 - 0.02, 39.17 + 0.02, -9.269 - 0.02, -8.832 + 0.02)
+)
+
+glob_mtarure_spdf <- as(glob_mtarure, "SpatialPixelsDataFrame")
+glob_mtarure_df <- as.data.frame(glob_mtarure_spdf)
+colnames(glob_mtarure_df) <- c("value", "x", "y")
+glob_mtarure_df$value <- as.character(glob_mtarure_df$value)
+
+glob_leg$col <- apply(glob_leg, 1, function(x) {
+  rgb(x[3], x[4], x[5], 255, max = 255)
+    })
+
+glob_mtarure_leg_fil <- glob_leg %>% 
+  filter(Value %in% glob_mtarure_df$value) %>%
+  mutate(label_short = case_when(
+      Value == 14 ~ "Cropland (14)",
+      Value == 20 ~ "Mosaic cropland (20)",
+      Value == 30 ~ "Mosaic grass/shrub/forest (30)",
+      Value == 40 ~ "Semi-deciduous forest (40)",
+      Value == 50 ~ "Closed broadleaf deciduous forest (50)",
+      Value == 60 ~ "Open broadleaf deciduous forest (60)",
+      Value == 90 ~ "Evergreen forest (90)",
+      Value == 110 ~ "Mosaic forest/shrub (110)",
+      Value == 120 ~ "Mosaic grassland (120)",
+      Value == 130 ~ "Shrubland (130)",
+      Value == 140 ~ "Grassland (140)",
+      Value == 160 ~ "Regularly flooded broadleaved forest (160)",
+      Value == 210 ~ "Water (210)",
+      TRUE ~ NA_character_)) %>%
+    mutate(label_short = forcats::fct_reorder(label_short, Value)) %>%
+    mutate(Value = as.character(Value)) %>%
+  dplyr::select(Value, label_short, col)
+
+glob_mtarure_pal <- c(glob_mtarure_leg_fil$col)
+names(glob_mtarure_pal) <- glob_mtarure_leg_fil$label_short
+
+glob_mtarure_df_clean <- left_join(glob_mtarure_df, glob_mtarure_leg_fil, by = c("value" = "Value"))
+
+pdf(file = "../img/mtarure_glob_map.pdf", width = 10, height = 5)
+ggplot() + 
+  geom_tile(data = glob_mtarure_df_clean, aes(x = x, y = y, fill = label_short)) +
+  geom_sf(data = mtarure, colour = pal[3], size = 1, fill = NA) + 
+  geom_point(data = plot_centre_fix$TZA, aes(x = X, y = Y), 
+    shape = 21, colour = "black", size = 3, fill = pal[1], 
+    position = "jitter") + 
+  scale_fill_manual(name = "GlobCover", values = glob_mtarure_pal) +
   theme_classic() + 
   labs(x = "", y = "")
 dev.off()
