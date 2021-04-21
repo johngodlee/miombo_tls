@@ -10,6 +10,7 @@ library(dplyr)
 library(sf)
 library(readxl)
 library(raster)
+library(gridExtra)
 
 source("functions.R")
 
@@ -21,30 +22,28 @@ glob <- raster("/Volumes/john/Globcover2009_V2.3_Global_/GLOBCOVER_L4_200901_200
 glob_leg <- read_xls("/Volumes/john/Globcover2009_V2.3_Global_/Globcover2009_Legend.xls")
 plots <- read.csv("../dat/plot_corners.csv")
 
+# Join shapes
+pa <- list(bicuar, mtarure)
+
 # Southern African countries
 saf <- africa %>%
   filter(iso3 %in% c("ZAF", "COD", "NAM", "ZMB", "BWA", "ZWE", "MOZ", "MWI", 
       "AGO", "TZA", "COG", "RWA", "BDI", "UGA", "KEN", "SWZ"))
 
 # Centroids of sites
-bicuar_cnt <- as.data.frame(st_coordinates(st_centroid(bicuar))) %>%
-  mutate(
-    site = "AGO",
-    name = "Bicuar")
-mtarure_cnt <- as.data.frame(st_coordinates(st_centroid(mtarure))) %>%
-  mutate(
-    site = "TZA", 
-    name = "Mtarure")
-
-site_loc <- rbind(bicuar_cnt, mtarure_cnt)
+pa_cnt <- do.call(rbind, lapply(pa, function(x) {
+  as.data.frame(st_coordinates(st_centroid(x)))
+}))
+pa_cnt$site <- c("AGO", "TZA")
+pa_cnt$name <- c("Bicuar", "Mtarure")
 
 # Contintental site map
 pdf(file = "../img/site_map.pdf", width = 4, height = 5.5)
 ggplot() + 
   geom_sf(data = saf, colour = "black", fill = "lightgrey") +
-  geom_point(data = site_loc, aes(x = X, y = Y, fill = name), 
+  geom_point(data = pa_cnt, aes(x = X, y = Y, fill = name), 
     size = 2, shape = 21, colour = "black") + 
-  geom_label_repel(data = site_loc, 
+  geom_label_repel(data = pa_cnt, 
     aes(x = X, y = Y, fill = name, label = name), colour = "black") + 
   scale_fill_manual(values = pal[1:2]) + 
   ylim(-34, 5) +
@@ -60,6 +59,8 @@ plot_centre <- plots %>%
     lon = mean(lon, na.rm = TRUE),
     lat = mean(lat, na.rm = TRUE)) %>%
   mutate(site = if_else(grepl("ABG", plot_id), "AGO", "TZA"))
+
+stopifnot(nrow(plot_centre) == 22)
 
 plot_centre_split <- split(plot_centre, plot_centre$site)
 
@@ -78,103 +79,112 @@ plot_centre_fix$TZA <- plot_centre_split$TZA %>%
 
 plot_centre_wgs <- do.call(rbind, plot_centre_fix)
 
-# Get GlobCover for Bicuar
-glob_bicuar <- crop(glob, 
-  extent(14.22 - 0.02, 15.30 + 0.02, -15.69 -0.02, -14.88 + 0.02)
-)
-
-glob_bicuar_spdf <- as(glob_bicuar, "SpatialPixelsDataFrame")
-glob_bicuar_df <- as.data.frame(glob_bicuar_spdf)
-colnames(glob_bicuar_df) <- c("value", "x", "y")
-glob_bicuar_df$value <- as.character(glob_bicuar_df$value)
-
 glob_leg$col <- apply(glob_leg, 1, function(x) {
   rgb(x[3], x[4], x[5], 255, max = 255)
     })
 
-glob_bicuar_leg_fil <- glob_leg %>% 
-  filter(Value %in% glob_bicuar_df$value) %>%
-  mutate(label_short = case_when(
-      Value == 30 ~ "Mosaic grass/shrub/forest (30)",
-      Value == 50 ~ "Closed broadleaf deciduous forest (50)",
-      Value == 60 ~ "Open broadleaf deciduous forest (60)",
-      Value == 110 ~ "Mosaic forest/shrub (110)",
-      Value == 120 ~ "Mosaic grassland (120)",
-      Value == 130 ~ "Shrubland (130)",
-      Value == 140 ~ "Grassland (140)",
-      Value == 200 ~ "Bare (200)",
-      TRUE ~ NA_character_)) %>%
-    mutate(label_short = forcats::fct_reorder(label_short, Value)) %>%
+# Maps for each PA
+site_maps <- lapply(pa, function(x) {
+
+  if (any(grepl("Bicuar", unlist(x)))) { 
+    plot_centre_fix_fil <- plot_centre_fix$AGO
+  } else {
+    plot_centre_fix_fil <- plot_centre_fix$TZA 
+  }
+
+  plot_extent <- extent(plot_centre_fix_fil)
+  pa_extent <- extent(x)
+  ext_test <- as.vector(plot_extent) > as.vector(pa_extent)
+
+  max_extent <- c()
+  for (i in 1:4) {
+    if (i %in% c(2,4)) {
+      if (ext_test[i]) {
+        max_extent[i] <- plot_extent[i]
+      } else {
+        max_extent[i] <- pa_extent[i]
+      }
+    } else {
+      if (ext_test[i]) {
+        max_extent[i] <- pa_extent[i]
+      } else {
+        max_extent[i] <- plot_extent[i]
+      }
+    }
+  }
+
+  glob_x <- crop(glob, extent(max_extent) + c(-0.02, 0.02, -0.02, 0.02))
+  glob_x_spdf <- as(glob_x, "SpatialPixelsDataFrame")
+  glob_x_df <- as.data.frame(glob_x_spdf)
+  colnames(glob_x_df) <- c("value", "x", "y")
+  glob_x_df$value <- as.character(glob_x_df$value)
+
+  glob_x_leg_fil <- glob_leg %>% 
+    filter(Value %in% glob_x_df$value) %>%
     mutate(Value = as.character(Value)) %>%
-  dplyr::select(Value, label_short, col)
+    dplyr::select(Value, Label, col)
 
-glob_bicuar_pal <- c(glob_bicuar_leg_fil$col)
-names(glob_bicuar_pal) <- glob_bicuar_leg_fil$label_short
+  glob_x_pal <- c(glob_x_leg_fil$col)
+  names(glob_x_pal) <- glob_x_leg_fil$Label
 
-glob_bicuar_df_clean <- left_join(glob_bicuar_df, glob_bicuar_leg_fil, by = c("value" = "Value"))
+  glob_x_df_clean <- left_join(glob_x_df, glob_x_leg_fil, 
+    by = c("value" = "Value"))
 
-# GlobCover Bicuar map
-pdf(file = "../img/bicuar_glob_map.pdf", width = 10, height = 5)
-ggplot() + 
-  geom_tile(data = glob_bicuar_df_clean, aes(x = x, y = y, fill = label_short)) +
-  geom_sf(data = bicuar, colour = pal[3], size = 1, fill = NA) + 
-  geom_point(data = plot_centre_fix$AGO, aes(x = X, y = Y), 
-    shape = 21, colour = "black", size = 3, fill = pal[1], 
-    position = "jitter") + 
-  scale_fill_manual(name = "GlobCover", values = glob_bicuar_pal) +
-  theme_classic() + 
-  labs(x = "", y = "")
-dev.off()
 
-# Get GlobCover for Mtarure
+  # GlobCover Bicuar map
+  p <- ggplot() + 
+    geom_tile(data = glob_x_df_clean, aes(x = x, y = y, fill = Label)) +
+    geom_sf(data = x, colour = "black", size = 1, fill = NA) + 
+    geom_point(data = plot_centre_fix_fil, aes(x = X, y = Y), 
+      shape = 21, size = 3, fill = "grey", colour = "black", 
+      position = "jitter") + 
+    scale_fill_manual(name = "GlobCover", values = glob_x_pal) +
+    theme_classic() + 
+    theme(legend.position = "none") + 
+    labs(x = "", y = "")
+  
+  return(list(p, unique(glob_x_df_clean$value)))
+})
 
-glob_mtarure <- crop(glob, 
-  extent(38.83 - 0.02, 39.17 + 0.02, -9.269 - 0.02, -8.832 + 0.02)
-)
+names(site_maps) <- c("Bicuar", "Mtarure")
 
-glob_mtarure_spdf <- as(glob_mtarure, "SpatialPixelsDataFrame")
-glob_mtarure_df <- as.data.frame(glob_mtarure_spdf)
-colnames(glob_mtarure_df) <- c("value", "x", "y")
-glob_mtarure_df$value <- as.character(glob_mtarure_df$value)
+lapply(seq_along(site_maps), function(x) {
+  pdf(file = paste0("../img/", names(site_maps)[x], "_site_map.pdf"), 
+    width = 8, height = 8)
+  print(site_maps[[x]][[1]])
+  dev.off()
+})
 
-glob_leg$col <- apply(glob_leg, 1, function(x) {
-  rgb(x[3], x[4], x[5], 255, max = 255)
-    })
+# Make plot with just the legend
+glob_leg_fil <- glob_leg %>% 
+  filter(Value %in% unique(unlist(lapply(site_maps, "[[", 2)))) %>%
+  mutate(label_new = case_when(
+    Value == "14" ~ "Rainfed cropland (14)",
+    Value == "20" ~ "Mosaic cropland (20)",
+    Value == "30" ~ "Mosaic grass/shrub/forest (30)",
+    Value == "40" ~ "Evergreen/deciduous broadleaf forest (40)",
+    Value == "50" ~ "Deciduous broadleaf forest (50)",
+    Value == "60" ~ "Deciduous broadleaf open woodland (60)",
+    Value == "90" ~ "Evergreen forest (90)",
+    Value == "110" ~ "Mosaic shrub/forest (110)",
+    Value == "120" ~ "Mosaic grassland (120)",
+    Value == "130" ~ "Shrubland (130)",
+    Value == "140" ~ "Grassland (140)",
+    Value == "160" ~ "Flooded broadleaf forest (160)",
+    Value == "200" ~ "Bare (200)",
+    Value == "210" ~ "Water (210)",
+    TRUE ~ NA_character_))
 
-glob_mtarure_leg_fil <- glob_leg %>% 
-  filter(Value %in% glob_mtarure_df$value) %>%
-  mutate(label_short = case_when(
-      Value == 14 ~ "Cropland (14)",
-      Value == 20 ~ "Mosaic cropland (20)",
-      Value == 30 ~ "Mosaic grass/shrub/forest (30)",
-      Value == 40 ~ "Semi-deciduous forest (40)",
-      Value == 50 ~ "Closed broadleaf deciduous forest (50)",
-      Value == 60 ~ "Open broadleaf deciduous forest (60)",
-      Value == 90 ~ "Evergreen forest (90)",
-      Value == 110 ~ "Mosaic forest/shrub (110)",
-      Value == 120 ~ "Mosaic grassland (120)",
-      Value == 130 ~ "Shrubland (130)",
-      Value == 140 ~ "Grassland (140)",
-      Value == 160 ~ "Regularly flooded broadleaved forest (160)",
-      Value == 210 ~ "Water (210)",
-      TRUE ~ NA_character_)) %>%
-    mutate(label_short = forcats::fct_reorder(label_short, Value)) %>%
-    mutate(Value = as.character(Value)) %>%
-  dplyr::select(Value, label_short, col)
-
-glob_mtarure_pal <- c(glob_mtarure_leg_fil$col)
-names(glob_mtarure_pal) <- glob_mtarure_leg_fil$label_short
-
-glob_mtarure_df_clean <- left_join(glob_mtarure_df, glob_mtarure_leg_fil, by = c("value" = "Value"))
-
-pdf(file = "../img/mtarure_glob_map.pdf", width = 10, height = 5)
-ggplot() + 
-  geom_tile(data = glob_mtarure_df_clean, aes(x = x, y = y, fill = label_short)) +
-  geom_sf(data = mtarure, colour = pal[3], size = 1, fill = NA) + 
-  geom_point(data = plot_centre_fix$TZA, aes(x = X, y = Y), 
-    shape = 21, colour = "black", size = 3, fill = pal[1], 
-    position = "jitter") + 
-  scale_fill_manual(name = "GlobCover", values = glob_mtarure_pal) +
-  theme_classic() + 
-  labs(x = "", y = "")
+pdf(file = "../img/site_map_legend.pdf", width = 5, height = 4)
+plot.new()
+par(xpd = NA)
+legend("center", 
+  legend = glob_leg_fil$label_new, 
+  pt.bg = glob_leg_fil$col, 
+  col = "black",
+  pch = 22, 
+  bty = "n", 
+  pt.cex = 2.5, 
+  cex = 1.2, 
+  text.col = "black")
 dev.off()
