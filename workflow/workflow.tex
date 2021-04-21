@@ -45,7 +45,7 @@
 	\def\subsectionautorefname{section} \def\subsubsectionautorefname{section}
 
 % Variables
-\title{Terrestrial LiDAR processing workflow}
+\title{Estimation of woodland canopy structure with terrestrial LiDAR: expanded methods}
 \author{John L. Godlee}
 \date{}
 
@@ -58,7 +58,7 @@
 
 \section{Introduction}
 
-This document provides detailed field and analytical methods for the study of tree canopy structure in southern African woodlands. The study aimed to understand the effects of tree species diversity and composition on tree canopy structure and grassy biomass.
+This document provides detailed field and analytical methods for the study of tree canopy structure in southern African woodlands. The study aimed to understand the effects of tree species diversity and composition on tree canopy structure and grassy biomass. Chapter XXX contains these methods in brief.
 
 \section{Sampling}
 
@@ -251,6 +251,8 @@ To describe the uniformity of the foliage density distribution we used Ripley's 
 	\widehat{L}(t) &= \left(\frac{\widehat{K}(t)}{\pi}\right)^{1/2}
 \end{align}
 
+We also used the standard error of a linear model of foliage density and height as a simple single number method of describing the uniformity of foliage density.
+
 \section{Canopy gap fraction}
 
 Due to terrestrial LiDAR measurement locations being spread over the subplot to avoid occlusion of canopy material, we simulated a scan position at the centre of the subplot using the point cloud data from all scans per subplot. Similar to the processing chain for the foliage density profiles, PDAL was used to crop the point cloud to a 20 m cylinder around the subplot centre, then used \texttt{filters.hag\_nn} to classify ground points and recalculate height above ground. We cropped the point cloud to points above 1.3 m, with a 50 cm exclusion sphere around the scan position at 1.3 m above the ground. The point cloud was converted to a POV-Ray object, where each point was transformed to a 1 cm\textsuperscript{3} cube. POV-Ray was then used to produce a ray-traced image. As with the hemispherical photos, we used a fisheye lens with an equisolid projection and a view angle of 180\textdegree, located at the subplot centre, at the same height as the hemispherical photo, with the top of the camera facing magnetic north and the camera facing straight up. Each cube was set as a non-reflective object, and the sky had an equal gamma of 1.0. POV-Ray produced an image of 4016x4016 px, identical to the cropped circular dimensions of the images produced by the hemispherical photos.
@@ -292,6 +294,32 @@ We also calculated a second measure of canopy rugosity ($R_{c}$) following \cite
 \end{equation}
 
 Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation.
+
+\section{Data analysis}
+
+All linear mixed effects models werre conducted using the \texttt{\{lmer\}} package in R version 4.0.2 \citep{R2021}.
+
+\subsection{Foliage density profiles}
+
+We conducted a number of linear mixed effects models to assess the effects of tree diversity and stand structure on various aspects of canopy structure. Linear mixed effects models were used to account for the nested sampling structure of subplots within plots, and plots within sites.
+
+For each subplot canopy structure measure, we created a linear mixed effects model with fixed effects for subplot species richness, stem density, and spatial mingling indices.
+
+\subsection{Canopy gap fraction}
+
+We conducted a linear mixed effects model to assess the fit between gap fraction estimates from hemispherical photos and the hemispherical photo simulation produced from the TLS data. We included random slope terms for each 1 ha nested within site. We also assessed the fit of LAI (Leaf Area index) measurements in the same way.
+
+\subsection{Grassy biomass}
+
+To estimate the correlation between grassy volume estimated by TLS and grass biomass estimated from the allometry of DPM height and grassy biomass samples, we conducted a linear mixed effects model of grass biomass vs. grassy volume, with nested random slope terms for each 1 ha plot nested within site. 
+
+We conducted a linear mixed effects model to assess the effects of canopy structure on grassy volume, with random slope terms for each 1 ha plot nested within site. We began with a maximal model which included subplot tree species richness, stem density, TLS gap fraction, layer diversity, height of maximum foliage density, standard deviation of the foliage density profile, and our simple measure of foliage density uniformity. We re-fitted the model with all possible combinations of fixed and random effects and compared AIC, BIC, and log-likelihood to determine which combination of explanatory variables best accounted for variation in grassy volume. Once this `best model' had been identified we extracted effect sizes for each fixed effect as standardized slopes. We also compared random effects for each fixed effect to understand how the two sites differed.
+
+\subsection{Canopy rugosity}
+
+To understand the effect of species composition and stand structure on whole-plot canopy rugosity, we conducted a linear mixed effects model with fixed effects for the shannon diversity index of tree species diversity, stem density, and the coefficient of variation of stem diameter, with random intercept terms for each site.
+
+We extracted slopes for each fixed effect to compare their effect sizes and compared our model with a null model which consisted only of the random effect of site and the fixed effect of stem density.
 
 \printbibliography
 
