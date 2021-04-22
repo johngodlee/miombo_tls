@@ -7,6 +7,8 @@ library(dplyr)
 library(tidyr)
 library(vegan)
 library(tibble)
+library(ggplot2)
+library(ggrepel)
 
 source("functions.R")
 
@@ -47,6 +49,35 @@ trees_all <- stems_all %>%
     x_grid = mean(x_grid, na.rm = TRUE),
     y_grid = mean(y_grid, na.rm = TRUE),
     species_name_clean = first(na.omit(species_name_clean)))
+
+# NMDS of plots
+nmds <- metaMDS(tree_ab)
+
+nmds_plots <- as.data.frame(nmds$points) %>%
+  rownames_to_column("plot_id") %>%
+  mutate(site = ifelse(grepl("P", plot_id), "Bicuar", "Mtarure"))
+
+nmds_species <- as.data.frame(nmds$species) %>%
+  rownames_to_column("species")
+
+pdf(file = "../img/nmds.pdf", width = 10, height = 8)
+ggplot() + 
+  geom_label(data = nmds_plots, 
+    aes(x = MDS1, y = MDS2, label = plot_id, colour = site)) +
+  scale_colour_manual(name = "Site", values = pal[1:2]) + 
+  geom_text_repel(data = nmds_species, 
+    aes(x = MDS1, y = MDS2, label = species), size = 2) + 
+  theme_bw()
+dev.off()
+
+bray <- vegdist(tree_ab)
+bray_clust <- hclust(bray, method = "average")
+
+nmds_plots$bray_clust <- cutree(bray_clust, 3)
+nmds_plots$man_clust <- case_when(
+  nmds_plots$plot_id %in% c("P9", "P13", "P15") ~ "2",
+  grepl("W|S", nmds_plots$plot_id) ~ "3",
+  TRUE ~ "1")
 
 # Split by plot
 trees_split <- split(trees_all, trees_all$plot_id)
@@ -120,6 +151,7 @@ plot_summ <- stems_all %>%
   left_join(., shannon, "plot_id") %>%
   left_join(., mi_sum, "plot_id") %>%
   left_join(., hegyi_sum, "plot_id") %>%
+  left_join(., nmds_plots, "plot_id") %>%
   left_join(., wi_sum, "plot_id") 
 
 # Write files
