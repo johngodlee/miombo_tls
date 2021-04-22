@@ -11,6 +11,7 @@ library(emmeans)
 library(ggeffects)
 library(MuMIn)
 library(sjPlot)
+library(piecewiseSEM)
 
 source("functions.R")
 
@@ -118,9 +119,24 @@ grass_lai <- grass %>%
   mutate(across(
       c("rich", "tree_dens", "gap_frac_tls", "layer_div", "dens_peak_height", 
         "point_cov", "cum_lm_se"), 
-      ~scale(.x), .names = "{.col}_std")) %>%
+      ~as.vector(scale(.x)), .names = "{.col}_std")) %>%
   mutate(site = ifelse(grepl("ABG", plot_id), "AGO", "TZA")) %>%
   filter(across(c("vol", ends_with("_std")), ~!is.na(.x)))
+
+
+# Path model of gap fraction, richness, and volume
+path_fit <- psem(
+  lmer(gap_frac_tls_std ~ rich_std + tree_dens_std + 
+    (1 | site) + (1 | site:plot_id),
+    data = grass_lai),
+  lmer(vol ~ gap_frac_tls_std + 
+    (1 | site) + (1 | site:plot_id), 
+    data = grass_lai),
+  data = grass_lai
+)
+
+summary(path_fit)
+plot(path_fit)
 
 # Mixed model of TLS gap fraction vs. grass volume
 vol_max_mod <- lmer(vol ~ rich_std + tree_dens_std + gap_frac_tls_std + 
