@@ -218,6 +218,13 @@ Outlier detection and noise reduction was conducted in PDAL using the \texttt{fi
 
 where $N$ is the number of points in the scene, $\overline{\mu}$ is the mean distance to nearest neighbour points, and $\sigma$ is the standard deviation of these distances. $t$ is the threshold distance used to define an outlier.
 
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{noise_vis}
+	\caption{2 m deep cross section of subplot showing the efficacy of the noise reduction and voxelisation process. Red points are points excluded by this cleaning process, while green points are used in further analysis.}
+	\label{noise_vis}
+\end{figure}
+
 \section{Foliage density profiles}
 
 To estimate subplot foliage density profiles, first the point cloud was cropped to a 10 m diameter cylinder of infinite height. Then the \texttt{filters.pmf} (Progressive Morphological Filter - PMF) PDAL function was used to identify ground points (sensu \citealt{Zhang2003}). The \texttt{filters.hag\_nn} (Nearest Neighbour) PDAL function was used to generate height above ground of each point within the cylinder. Points below ground level were then discarded. Height profile points were exported to a XYZ file then imported into R for further processing. 
@@ -263,6 +270,15 @@ Simple canopy gap fraction as seen from the ground was measured using two method
 
 Where $G_{\alpha{}}$ is the fraction of unfilled pixels in ring $\alpha{}$, $A_{\alpha{}}$ is the sky area of the ring segment, and $A_{\text{tot}}$ is the total sky area of the hemisphere.
 
+We compared gap fraction estimates from both the TLS and hemispherical photo using a linear mixed model which accounted for variation among plots and between the two sites. While plots in Mtarure had a marginally steeper slope, this difference was not significant. We found that hemispherical photography almost exclusively over-estimated gap fraction, except in the most open subplots. Additionally, at lower gap fractions (greater canopy cover) the over-estimation of gap fraction by hemispherical photography was larger (\autoref{tls_hemi_compare}).
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{tls_hemi_compare}
+	\caption{Comparison of gap fraction estimation from TLS and hemispherical photography. The black line of best fit is a linear model of all points $\pm$1 standard error, while the coloured lines are site specific linear models.}
+	\label{tls_hemi_compare}
+\end{figure}
+
 \section{Grassy biomass estimation}
 
 An allometric model was developed to estimate grassy biomass at every disc-pasture sample point using the grassy biomass sample masses. This model was only developed for Angola where grassy biomass samples were weighed. The model consisted of a linear mixed effects regression testing the relationship between disc-pasture height (independent) and grassy biomass (dependent), with a random slope term for each 1 ha plot. 
@@ -305,7 +321,7 @@ For each subplot canopy structure measure, we created a linear mixed effects mod
 
 \subsection{Canopy gap fraction}
 
-We conducted a linear mixed effects model to assess the fit between gap fraction estimates from hemispherical photos and the hemispherical photo simulation produced from the TLS data. We included random slope terms for each 1 ha nested within site. We also assessed the fit of LAI (Leaf Area index) measurements in the same way.
+We conducted a linear mixed effects model to assess the fit between gap fraction estimates from hemispherical photos and the hemispherical photo simulation produced from the TLS data. We included random slope terms for each 1 ha nested within site.
 
 \subsection{Grassy biomass}
 

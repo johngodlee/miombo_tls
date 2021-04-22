@@ -11,6 +11,8 @@ library(grid)
 library(gridtext)
 library(gridExtra)
 
+source("functions.R")
+
 # Import data
 gap_frac_df <- read.csv("../dat/gap_frac.csv")
 
@@ -24,10 +26,10 @@ gap_frac_gather <- gap_frac_df %>%
     var = factor(var, levels = c("lai", "gap_frac"), 
       labels = c("LAI", "Gap fraction")),
     plot_id = gsub("_S[0-9]$", "", subplot_id),
-    site = ifelse(grepl("ABG", subplot_id), "AGO", "TZA"))
+    site = ifelse(grepl("ABG", subplot_id), "Bicuar", "Mtarure"))
 
 # Create plot
-pdf(file = "../img/tls_hemi_compare.pdf", width = 16, height = 8)
+pdf(file = "../img/tls_hemi_compare_both.pdf", width = 16, height = 8)
 ggplot() + 
   geom_point(data = gap_frac_gather, aes(x = hemi, y = tls, fill = site), 
     colour = "black", shape = 21) + 
@@ -39,6 +41,25 @@ ggplot() +
   facet_wrap(~var, scales = "free") + 
   labs(x = "Hemispherical photo", y = "Terrestrial LiDAR") +
   theme_bw() 
+dev.off()
+
+pdf(file = "../img/tls_hemi_compare.pdf", width = 8, height = 8)
+ggplot() + 
+  geom_point(data = gap_frac_gather[gap_frac_gather$var == "Gap fraction",], 
+    aes(x = hemi, y = tls, fill = site), 
+    colour = "black", shape = 21) + 
+  geom_smooth(data = gap_frac_gather[gap_frac_gather$var == "Gap fraction",], 
+    method = "lm", aes(x = hemi, y = tls),
+    colour = "black") + 
+  geom_smooth(data = gap_frac_gather[gap_frac_gather$var == "Gap fraction",], 
+    method = "lm", se = FALSE,
+    aes(x = hemi, y = tls, colour = site)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  scale_colour_manual(name = "Site", values = pal[1:2]) + 
+  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  labs(x = "Hemispherical photo", y = "Terrestrial LiDAR") +
+  theme_bw() + 
+  coord_equal()
 dev.off()
 
 # Spread
@@ -77,3 +98,5 @@ grid.arrange(grobs = list(
   bottom = richtext_grob("Hemispherical photo")
 )
 dev.off()
+
+summary(gap_frac_mod)
