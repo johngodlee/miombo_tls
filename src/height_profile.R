@@ -39,7 +39,7 @@ profile_stat_list <- lapply(file_list, function(x) {
   dat <- readRDS(x)
 
   # Round Z coords to cm
-    dat$z_round <- round(dat$Z/voxel_dim)*voxel_dim
+  dat$z_round <- round(dat$Z/voxel_dim)*voxel_dim
 
   if (nrow(dat) > 0) {
     
@@ -107,7 +107,7 @@ profile_stat_list <- lapply(file_list, function(x) {
       diversity(.)
 
     # Fit Weibull distribution to smoothed profile
-    weib <- fitdistr(bin_fil$n_loess, "weibull")
+    weib <- fitdistr(bin_fil$n_loess[bin_fil$n_loess > 0], "weibull")
     weib_shape <- weib$estimate[1]
     weib_scale <- weib$estimate[2]
 
@@ -130,7 +130,7 @@ profile_stat_list <- lapply(file_list, function(x) {
       n_loess = NA_real_,
       vol_loess = NA_real_,
       gap_frac_loess = NA_real_,
-      n_cum <- NA_real_
+      n_cum = NA_real_
     )
 
     layer_div <- NA_real_
