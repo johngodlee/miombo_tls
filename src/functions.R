@@ -425,22 +425,78 @@ rgl_init <- function(new.device = FALSE, bg = "white", width = 640) {
   rgl.viewpoint(theta = 15, phi = 20, zoom = 1)
 }
 
-#' Point density - Purr 1962
-#' 
-#' @param dbh vector of DBH (diameter at breast height) measurements of 
-#'     competitor trees
-#' @param dist vector of distances from focal tree to competitor trees
+#' Hegyi index
 #'
-#' @return atomic vector of competition index for focal tree
+#' @param 
+#'
+#' @return 
 #' 
-#' @references Spurr, S. H. (1962). A measure of point density. Forest Science. 
-#' Volume 8. Issue 1. Pages 85–96.
+#' @examples
+#' 
 #' 
 #' @export
-#'
-pointDens <- function(dbh, dist) {
-  eq1 <- (dbh / dist)^2
-  ranks <- rank(dbh)
-  eq2 <- (0.25 * (ranks - 0.5) * eq1) / ranks
-  sum(eq2)
+#' 
+hegyi <- function(dbh, dist) {
+  eq1 <- 1 / dist * dbh
+  log(sum(eq1))
 }
+
+#' Format a plus-minus number combo
+#'
+#' @param x atomic vector
+#' @param y atomic vector
+#' @param dx number of decimal places of x
+#' @param dy number of decimal places of y
+#' @param pm LaTeX plus-minus symbol
+#' @param paren logical, should the measure of uncertainty be placed in 
+#'     parentheses?
+#'
+#' @return character string
+#' 
+pmFormat <- function(x, y, dx = 2, dy = dx + 1, pm = "$\\pm$", paren = FALSE) {
+  main <- numFormat(x, digits = dx)
+  uncert <- numFormat(y, digits = dy)
+
+  if (paren) {
+    uncert <- paste0("(", uncert, ")")
+  }
+
+  return(paste0(main, pm, uncert))
+}
+
+#' Format a number for LaTeX
+#'
+#' @param x atomic vector
+#' @param digits number of digits 
+#' @param method method of rounding, either "round" or "signif"
+#'
+#' @return character vector
+#' @export
+#' 
+numFormat <- function(x, digits = 2, method = "round"){
+  sprintf(paste0("%.",digits,"f"),
+    if (method == "round") {
+      round(x, digits = digits)
+    } 
+    else if (method == "signif") {
+      signif(x, digits = digits)
+    })
+}
+
+
+#' Generate a LaTeX command from R object
+#'
+#' @param stat atomic vector
+#' @param func character string with name of LaTeX function
+#'
+#' @return character string
+#' 
+#' @examples
+#' a <- 3.145
+#' texCmd(a, "pi")
+#' @export
+#' 
+texCmd <- function(stat, func){
+  paste0("\\newcommand{\\", func, "}{", stat, "}")
+}
+

@@ -25,7 +25,7 @@ subplot_trees <- read.csv("../dat/subplot_trees.csv")
 
 # Plot all profiles together
 all_bins$plot_subplot <- paste(all_bins$plot_id, all_bins$subplot, sep = "_")
-all_bins$site <- gsub("_.*", "", all_bins$plot_id)
+all_bins$site <- ifelse(grepl("ABG", all_bins$plot_id), "Bicuar", "Mtarure")
 
 pdf(file = "../img/height_profile.pdf", height = 8, width = 10)
 ggplot() + 
@@ -107,7 +107,7 @@ pdf(file = "../img/height_profile_ripley_facet.pdf", height = 12, width = 16)
 ggplot() + 
   geom_line(data = envelope_df, aes(x = x, y = y, group = group), alpha = 0.5) + 
   geom_line(data = ripley_pred_df, 
-    aes(x = x, y = y, group = group, colour = plot_id)) +
+    aes(x = x, y = y, group = group), colour = pal[1]) +
   facet_wrap(~plot_id) + 
   labs(x = "Normalized Distance", y = "Total Proportion") + 
   theme_bw() + 
@@ -115,8 +115,8 @@ ggplot() +
 dev.off()
 
 
-# Bivariate plots of  various response variables 
-profile_stats$site <- ifelse(grepl("ABG", profile_stats$plot_id), "AGO", "TZA")
+# Bivariate plots of various response variables 
+profile_stats$site <- ifelse(grepl("ABG", profile_stats$plot_id), "Bicuar", "Mtarure")
 
 bivar_names <- names(profile_stats)[-which(names(profile_stats) %in% c("plot_id", "subplot", "site"))]
 
@@ -153,36 +153,41 @@ subplot_trees_summ <- subplot_trees %>%
   group_by(plot_id, subplot) %>%
   summarise(
     point_dens = pointDens(diam, distance),
+    hegyi = hegyi(diam, distance),
     rich = length(unique(species)),
     ba = sum(pi * (diam/2)^2, na.rm = TRUE),
     cum_height = sum(height, na.rm = TRUE),
-    crown_area = sum(crown_area, na.rm = TRUE)) %>%
+    crown_area = sum(crown_area, na.rm = TRUE), 
+    diam_sd = sd(diam),
+    diam_mean = mean(diam)) %>%
+  mutate(diam_cov = diam_sd / diam_mean * 100) %>%
   left_join(., profile_stats, c("plot_id", "subplot")) %>%
-  mutate(across(c("rich", "ba"), ~scale(.x), .names = "{.col}_std")) %>%
-  mutate(site = ifelse(grepl("ABG", plot_id), "AGO", "TKW"))
+  mutate(across(c("rich", "diam_cov", "hegyi", "ba"), ~as.vector(scale(.x)), 
+      .names = "{.col}_std")) %>%
+  mutate(site = ifelse(grepl("ABG", plot_id), "Bicuar", "Mtarure"))
 
 # Layer diversity vs. richness model
-layer_div_mod <- lmer(layer_div ~ rich_std + ba_std + 
+layer_div_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std +  
   (rich_std | plot_id), 
   data = subplot_trees_summ)
 
 # Area under curve (AUC) vs. richness model
-auc_canopy_div_mod <- lmer(auc_canopy ~ rich_std + ba_std + 
+auc_canopy_div_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + 
   (rich_std | plot_id),
   data = subplot_trees_summ)
 
 # Peak density height vs. richness model
-dens_peak_height_div_mod <- lmer(dens_peak_height ~ rich_std + ba_std + 
+dens_peak_height_div_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + 
   (rich_std | plot_id), 
   data = subplot_trees_summ)
 
 # q99 height vs. richness model
-q99_height_div_mod <- lmer(height_q99 ~ rich_std + ba_std + 
+q99_height_div_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + 
   (rich_std | plot_id), 
   data = subplot_trees_summ)
 
 # Cumulative height profile linear model standard error vs richness model
-cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + ba_std + 
+cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + 
   (rich_std | plot_id), 
   data = subplot_trees_summ)
 
@@ -210,7 +215,7 @@ dev.off()
 re_df <- do.call(rbind, lapply(mod_list, function(x) {
   out <- as.data.frame(ggpredict(x,
       terms = c("rich_std", "plot_id"), type = "re"))
-  out$site <- ifelse(grepl("ABG", auc_canopy_re$group), "AGO", "TZA")
+  out$site <- ifelse(grepl("ABG", out$group), "Bicuar", "Mtarure")
   out$resp <- names(x@frame)[1]
   return(out)
   }))
@@ -237,11 +242,11 @@ stopifnot(length(mod_list) == length(null_mod_list))
 
 # Dataframe of model fit statistics
 mod_stat_df <- do.call(rbind, lapply(seq_along(mod_list), function(x) {
+  rsq = r.squaredGLMM(mod_list[[x]])
   data.frame(
     resp = names(mod_list[[x]]@frame)[1],
     daic = AIC(null_mod_list[[x]]) - AIC(mod_list[[x]]),
     dbic = BIC(null_mod_list[[x]]) - BIC(mod_list[[x]]),
-    rsq = r.squaredGLMM(mod_list[[x]]),
     rsqm = rsq[1],
     rsqc = rsq[2],
     nullrsq = r.squaredGLMM(null_mod_list[[x]]),
@@ -263,7 +268,7 @@ mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
     resp = names(x@frame)[1])
   }))
 
-pdf(file = "../img/height_profile_mod_rich_slopes.pdf", height = 8, width = 5)
+pdf(file = "../img/height_profile_mod_rich_slopes.pdf", height = 5, width = 8)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = mod_pred, 

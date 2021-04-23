@@ -23,3 +23,21 @@ ggplot() +
   theme_bw() + 
   labs(x = "", y = "N points")
 dev.off()
+
+summ <- dat_clean %>% 
+  group_by(type) %>%
+  summarise(
+    n_mean = mean(n),
+    n_sd = sd(n)) %>% 
+  as.data.frame()
+
+pretty_mean <- formatC(summ$n_mean, format = "e", digits = 1)
+
+
+write(
+  c(
+    texCmd(pretty_mean[1], "rawpt"),
+    texCmd(pretty_mean[2], "voxelpt"),
+    texCmd(pretty_mean[3], "subpt")
+  ),
+  file = "../out/ptn.tex")

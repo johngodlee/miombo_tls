@@ -16,9 +16,11 @@
 \usepackage{textcomp}
 \newcommand{\textapprox}{\raisebox{0.5ex}{\texttildelow}}  % Command for a good tilde
 
-\linespread{1.25}  % Linespacing
+\linespread{1.5}  % Linespacing
 
 \usepackage{xcolor} \newcommand{\todo}[1]{\textcolor{red}{\textbf{#1}}}   %
+
+\usepackage{lineno}
 
 % Tables
 \usepackage{multirow} \setlength{\tabcolsep}{4pt}
@@ -54,6 +56,7 @@
 }
      
 % Variables
+\include{out/ptn}
 
 \newcommand{\titletext}{Terrestrial laser scanning}
 
@@ -61,20 +64,21 @@
 
 {\Large{Title: \titletext{}}}
 
+\linenumbers
 
 \section*{Abstract}
 
 \section{Introduction}
 
-The characterization of tree canopy structure in wooded ecosystems constitutes a long-standing field of research that has been fundamental to interpreting, modelling, and improving understanding of ecosystem function \citep{Watt1947, Whittaker1969, Horn1971, Maarel1996}. Variation in canopy structure describes the spatial distribution and density of canopy foliage, which itself comprises the primary interface between trees, the atmosphere and sunlight. It is therefore essential to understand the drivers of variation in canopy structure to improve modelling efforts of earth-atmosphere carbon fluxes and community assembly \citep{}. 
+The characterization of tree canopy structure in wooded ecosystems constitutes a long-standing field of research that has been fundamental to interpreting, modelling, and improving understanding of ecosystem function \citep{Watt1947, Whittaker1969, Horn1971, Maarel1996}. Canopy structure describes the spatial distribution and density of canopy foliage, comprising the primary interface between trees, the atmosphere and sunlight. It is therefore essential to understand the drivers of variation in canopy structure to improve modelling efforts of earth-atmosphere carbon fluxes and community assembly \citep{}. 
 
 At continental scales, variation in canopy height and canopy cover, two coarse measures of canopy structure both of which have been shown to affect woody productivity and correlate with woody biomass \citep{}, can largely be explained by climate and edaphic data \citep{SOME-GEDI}. At the scale of a single tree community however, where variation in climate and soil may be negligible, variation in canopy structure is thought to be affected principally by the tree canopy species assemblage \citep{}, and community history \citep{}. However, empirical testing of these mechanisms thought to drive canopy structure in natural wooded ecosystems remains sparse across many biomes \citep{}.
 
-Following established biodiversity-ecosystem function theory, the niche partitioning of canopy space, i.e. the spatial complementarity of individual tree canopies, hereafter referred to as `crown complementarity', is thought to be a key mechanism underlying positive biodiversity-productivity effects in wooded ecosystems \citep{Pretzsch2014, Barry2019}. Biodiversity-ecosystem function theory predicts that canopy space occupation and thus canopy complexity and foliage density should increase with tree diversity, thus increasing standing biomass and woody productivity, as coexisting species must occupy non-identical niche space to avoid competitive exclusion \citep{}. 
+Following established biodiversity-ecosystem function theory, the niche partitioning of canopy space, i.e. the spatial complementarity of individual tree canopies, hereafter referred to as `crown complementarity', is thought to be a key mechanism underlying positive biodiversity-productivity effects in wooded ecosystems \citep{Pretzsch2014, Barry2019}. Biodiversity-ecosystem function theory predicts that canopy space occupation and thus canopy complexity and foliage density should increase with tree diversity in the local neighbourhood, thus increasing standing biomass and woody productivity, as coexisting species must occupy non-identical niche space to avoid competitive exclusion \citep{}. 
 
-While much work in the field of forest management has been done to test biotic drivers of tree canopy structure in temperate and boreal forests \citep{}, similar work in the tropics is comparatively scarce \citep{}. In dry tropical woodlands especially, tree canopy structure and its effect on ecosystem function has received little attention, possibly due to the misplaced assumption that woody productivity in these ecosystems does not represent a globally significant carbon flux \citep{}, or that tree canopies in these smaller stature woodlands do not interact and compete for resources to the same degree as in large stature forests \citep{}. In recent years however, it has been shown that dry tropical woodlands represent the largest uncertainty in our estimates of the terrestrial carbon cycle \citep{Quere2018, Ahlstrom2015}. \citet{Sitch2015} demonstrated the dominant role of the dry tropics in driving variability in the terrestrial carbon sink, and showed that the dry tropics are the fastest increasing component of the terrestrial carbon sink. Part of this uncertainty arises from our lacking a nuanced understanding of how species composition and structure affect ecosystem function in these ecosystems, which underpins the Dynamic Global Vegetation Models (DGVMs) fed into global carbon dynamics models. This knowledge gap prompts further research of the biotic drivers of variation in productivity in the dry tropics, of which variation in canopy structure is a constituent part \citep{}.
+While much work in the field of forest management has been done to test biotic drivers of tree canopy structure in temperate \citep{} and boreal forests \citep{}, similar work in the tropics is comparatively scarce \citep{}. In dry tropical woodlands especially, tree canopy structure and its effect on ecosystem function has received little attention, possibly due to the misplaced assumption that woody productivity in these ecosystems does not represent a globally significant carbon flux \citep{}, or that tree canopies in these smaller stature woodlands do not interact and compete for resources to the same degree as in large stature forests \citep{}. In recent years however, it has been shown that dry tropical woodlands represent the largest uncertainty in our estimates of the terrestrial carbon cycle \citep{Quere2018, Ahlstrom2015}. \citet{Sitch2015} demonstrated the dominant role of the dry tropics in driving variability in the terrestrial carbon sink, and showed that the dry tropics are the fastest increasing component of the terrestrial carbon sink. Part of this uncertainty arises from our lacking a nuanced understanding of how species composition and structure affect ecosystem function in these ecosystems, which underpins the Dynamic Global Vegetation Models (DGVMs) fed into global carbon dynamics models. This knowledge gap prompts further research of the biotic drivers of variation in productivity in the dry tropics, of which canopy structure is a constituent part \citep{}.
 
-In addition to driving variation in woody productivity and biomass, canopy structure is also expected to affect understorey biomass. A more open tree canopy which provides more light to the ground can encourage understorey growth. In mesic savannas an open tree canopy is maintained via a positive feedback where increased grassy biomass as a result of a more open canopy increases the frequency and intensity of fires which serve to maintain the open canopy \citep{}. To elucidate the tipping points which determine when open savanna becomes forest, it is necessary therefore to understand how canopy structure affects grassy biomass. This line of enquiry is pertinent as multiple studies have reported increases in woody biomass across tropical savannas \citep{}. 
+In addition to driving variation in woody productivity and biomass, canopy structure is also expected to affect understorey biomass. A more open tree canopy which provides more light to the ground can encourage understorey growth. In mesic savannas open tree canopies are maintained via a positive feedback where increased grassy biomass as a result of a more open canopy increases the frequency and intensity of fires, which serve to reduce stem density particularly of small stems, and maintain the open canopy \citep{}. While it is clear from observation that much of the dry tropics exists as a mosaic of closed canopy forest and open canopy savanna \citep{}, the complex mechanisms which determine whether a patch is savanna or forest are as yet unclear \cite{}. To find the tipping points which determine this ``alternative stable states'' phenomenon, it is necessary to understand both how canopy structure affects grassy biomass and how existing stand structure as a result of disturbance history influences canopy structure. 
 
 Canopy structure is multi-dimensional and has previously been explained using a plethora of metrics that originated in forest and community ecology \citep{}. Assessments of canopy structure in the dry tropical have most often modelled tree canopies as a series of ellipses (2D) or ellipsoids (3D) \citep{}. Measurements of this kind are time consuming and present a gross over-simplification of canopy structure \citep{}. Alternatively, canopy cover is often measured using indirect optical methods which partition sky from canopy material, i.e. with hemispherical photography or the commonly used LAI-2000, providing a 2D representation of the canopy that is a simplification in other ways. In recent years, particularly in temperate and boreal forests, LiDAR (Light Detection And Ranging) has emerged as a suitable technology for rapidly and precisely assessing canopy structure in 3D, conserving the complexity of the canopy that is required to understand it's multi-dimensional structure \citep{}.
 
@@ -126,7 +130,7 @@ Partial object interceptions caused by phase-shift laser scanners can produce er
 
 Ground points were classified using the Progressive Morphological Filter (PMF) from \citep{Zhang2003}. Point cloud height was then reclassified height based on this revised ground layer by measuring the vertical distance between the nearest ground point and each point.
 
-Resultant points clouds had ~points, ~points after filtering, ~voxels after voxelisation.
+Raw points clouds for each subplot had \textapprox{}\rawpt{} points, \textapprox{}\voxelpt{} points after voxelisation, and \textapprox{}\subpt{} points after noise reduction.
 
 We used ray-tracing (POV-ray) to calculate gap fraction from TLS scans at the centre of each subplot. Voxels were converted to cubes filling the voxel volume, with a ``camera'' placed at the subplot centre at 1.8 m height, at a height of 1.8 m. Used a fisheye lens with a view angle of 180 degrees, with matt black Cubes against a white background and no light source. The images produced by POV-ray were analysed using Hemiphot in an identical manner to the hemispherical photographs.
 
@@ -136,6 +140,8 @@ We used ray-tracing (POV-ray) to calculate gap fraction from TLS scans at the ce
 \section{Results}
 
 \subsection{Vertical canopy complexity}
+
+gg
 
 \subsection{Grassy biomass}
 
