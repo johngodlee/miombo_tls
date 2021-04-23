@@ -147,9 +147,12 @@ subplot_trees$crown_area <- pi * subplot_trees$x_dim * subplot_trees$y_dim
 
 # Summarise subplot tree data
 # Join with height profile data
+
 subplot_trees_summ <- subplot_trees %>%
+  filter(!is.na(diam), !is.na(distance)) %>% 
   group_by(plot_id, subplot) %>%
   summarise(
+    point_dens = pointDens(diam, distance),
     rich = length(unique(species)),
     ba = sum(pi * (diam/2)^2, na.rm = TRUE),
     cum_height = sum(height, na.rm = TRUE),
