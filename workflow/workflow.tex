@@ -18,7 +18,7 @@
 
 \linespread{1.5}  % Linespacing
 
-\usepackage{xcolor} \newcommand{\todo}[1]{\textcolor{red}{\textbf{#1}}}   %
+\usepackage{xcolor} \newcommand{\TODO}[1]{\textcolor{red}{\textbf{#1}}}   %
 
 \usepackage{lineno}
 
@@ -331,7 +331,7 @@ We compared gap fraction estimates from both the TLS and hemispherical photo usi
 	\label{tls_hemi_compare}
 \end{figure}
 
-\subsubsection{grass biomass estimation}
+\subsubsection{Grass biomass estimation}
 
 An allometric model was developed to estimate grass biomass at every disc-pasture sample point using the grass biomass sample masses. This model was only developed for Angola where grass biomass samples were weighed. The model consisted of a linear mixed effects regression testing the relationship between disc-pasture height (independent) and grass biomass (dependent), with a random slope term for each 1 ha plot. 
 
@@ -349,7 +349,14 @@ grass volume was measured from TLS point cloud data following the methodology of
 The canopy rugosity of each 1 ha plot was estimated. All scans from each plot were merged to a single point cloud, and noise reduction was performed as described above and the cloud was voxelised to 10 cm\textsuperscript{3} cubic voxels. The point cloud was cropped to the plot boundaries, which were located with dGPS similar to the LiDAR targets. 
 
 A canopy height model was produced to describe the upper canopy surface. The 99th percentile of height in each 10 cm\textsuperscript{2} vertical column was extracted. The maximum height was not used as this occasionally constituted a severe outlier which skewed further 
-canopy height model smoothing. We used the pit-filling algorithm described in \citet{Khosravipour2014} to smooth the canopy height profile by removing gaps within trees caused by incomplete penetration of the LiDAR beam.
+canopy height model smoothing. We used the pit-filling algorithm described in \citet{Khosravipour2014} to smooth the canopy height profile by removing gaps within trees caused by incomplete penetration of the LiDAR beam (\autoref{P1_both}).
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{P1_both}
+	\caption{Top-down view of a 1 ha plot in Bicuar National Park. a) shows the point cloud after voxelisation, noise reduction, and taking the 99th percentile of stem height in each 5 cm vertical bin. b) shows the same point cloud after pit filling to generate a smooth canopy height profile. Points are coloured according to point height from the ground.}
+	\label{P1_both}
+\end{figure}
 
 From the canopy height profile we extracted a number of statistics for use in statistical modelling. We calculated the mean and coefficient of variation of canopy height across the plot (canopy rugosity), following \citep{Parker2004}. We calculated the Topographic Ruggedness Index (TRI) as the mean of absolute differences between the heights of each column and the height of its eight surrounding cells \citep{Wilson2007}. From this we estimated the plot level mean TRI and coefficient of variation. 
 

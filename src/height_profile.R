@@ -56,7 +56,7 @@ profile_stat_list <- lapply(file_list, function(x) {
         plot_id = plot_id_new,
         subplot = subplot,
         vol = n * voxel_dim,
-        gap_frac = vol / layer_vol) %>%
+        gap_frac = 1 - vol / layer_vol) %>%
       as.data.frame()
 
     # Filter to above ground, find first local minima above 1.3 m

@@ -18,7 +18,7 @@
 
 \linespread{1.5}  % Linespacing
 
-\usepackage{xcolor} \newcommand{\todo}[1]{\textcolor{red}{\textbf{#1}}}   %
+\usepackage{xcolor} \newcommand{\TODO}[1]{\textcolor{red}{\textbf{#1}}}   %
 
 \usepackage{lineno}
 
@@ -62,7 +62,7 @@
 
 \begin{document}
 
-{\Large{Title: \titletext{}}}
+{\Large{\titletext{}}}
 
 \linenumbers
 
@@ -128,7 +128,7 @@ Point clouds were voxelised to different voxel sizes depending on the applicatio
 
 Partial object interceptions caused by phase-shift laser scanners can produce erroneous results and must be corrected for to accurately estimate canopy height, for example \citep{}. We used a noise reduction algorithm to discard points that appeared far from other points, which removed ghost points produced by partial interceptions and also removed many erroneous returns caused by airborne particles, which was common in our study site.
 
-Ground points were classified using the Progressive Morphological Filter (PMF) from \citep{Zhang2003}. Point cloud height was then reclassified height based on this revised ground layer by measuring the vertical distance between the nearest ground point and each point.
+Ground points were classified using the Progressive Morphological Filter (PMF) from \citet{Zhang2003}. Point cloud height was then reclassified height based on this revised ground layer by measuring the vertical distance between the nearest ground point and each point.
 
 Raw points clouds for each subplot had \textapprox{}\rawpt{} points, \textapprox{}\voxelpt{} points after voxelisation, and \textapprox{}\subpt{} points after noise reduction.
 
@@ -136,17 +136,52 @@ We used ray-tracing (POV-ray) to calculate gap fraction from TLS scans at the ce
 
 \subsection{Data analysis}
 
+Linear mixed effects models tested the effects of diversity and stand structural metrics on canopy structure, and the effect of canopy structure on grassy biomass.
+
 
 \section{Results}
 
 \subsection{Vertical canopy complexity}
 
-gg
+The linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across the measures of canopy structure (\autoref{height_profile_mods_fe}), but the effect sizes were not significant for any model (\autoref{height_profile_mod_rich_slopes}). On the other hand, stand physical structure had a much greater effect on canopy structure variables. The Hegyi index and coefficient of variation of stem diameter had positive significant effects on foliage density (AUC gap fraction), effective number of layers, and canopy max height.
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{height_profile_mod_rich_slopes}
+	\caption{Standardized fixed effect slopes for each model of a canopy structure metric. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects.}
+	\label{height_profile_mod_rich_slopes}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{height_profile_mods_re}
+	\caption{Random effects per plot, coloured by site, for the effect of neighbourhood species richness on various canopy structure metrics.}
+	\label{height_profile_mods_re}
+\end{figure}
 
 \subsection{Grassy biomass}
 
+Canopy structure had significant effects on grassy volume in the understorey. Tree density and effective number of layers had a negative effect on grassy volume, while the coefficient of variation of point height had a positive effect. Species richness had a positive but non-significant effect on grassy volume.
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=0.4\textwidth]{grass_vol_best_mod_slopes}
+	\caption{Standardized fixed effect slopes for mean subplot grass volume. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects.}
+	\label{grass_vol_best_mod_slopes}
+\end{figure}
+
+A path analysis showed similar results. Tree density had a negative effect on grassy volume
+
 \subsection{Canopy rugosity}
 
+None of the stand structure metrics or diversity metrics had significant effects on whole-plot canopy rugosity, but the model as a whole had a significant effect on.
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=0.4\textwidth]{rugosity_mod_slopes}
+	\caption{Standardized fixed effect slopes for whole-plot canopy rugosity. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects.}
+	\label{rugosity_mod_slopes}
+\end{figure}
 
 \section{Discussion}
 
