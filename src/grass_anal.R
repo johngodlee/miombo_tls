@@ -141,6 +141,7 @@ plot(path_fit)
 # Mixed model of TLS gap fraction vs. grass volume
 vol_max_mod <- lmer(vol ~ rich_std + tree_dens_std + gap_frac_tls_std + 
   layer_div_std + dens_peak_height_std + point_cov_std + cum_lm_se_std + 
+  height_q99 + 
   (1 | site) + (1 | site:plot_id) + (1 | site:plot_id:subplot), 
   data = grass_lai, na.action = "na.fail", REML = FALSE)
 

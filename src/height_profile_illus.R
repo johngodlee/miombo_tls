@@ -9,6 +9,8 @@ library(zoo)
 library(vegan)
 library(fitdistrplus)
 
+source("functions.R")
+
 # Import data
 dat <- readRDS("../dat/tls/height_profile/P12S8_cylinder10.rds")
 
@@ -97,7 +99,6 @@ shannon <- bin_fil %>%
 weib <- fitdistr(bin_fil$n_loess[bin_fil$n_loess > 0], "weibull")
 weib_shape <- weib$estimate[1]
 weib_scale <- weib$estimate[2]
-plot(dweibull(bin_fil$n_loess[bin_fil$n_loess > 0], shape = weib_shape, scale = weib_scale))
 
 
 # Get error on a linear model of cumulative volume
@@ -133,13 +134,13 @@ canopy_plot <- ggplot() +
   geom_vline(xintercept = peaks50, colour = "red") +
   geom_vline(xintercept = dens_peak_height, 
     size = 1.5, colour = "orange", linetype = 2) + 
-  geom_point(aes(x = mean(n_rep), y = (max(bin_fil$vol) / 1000000) - 0.0002),
-    shape = 21, colour = "black", size = 5, fill = "grey") + 
   geom_errorbarh(aes(
       xmin = mean(n_rep) - sd(n_rep), 
       xmax = mean(n_rep) + sd(n_rep), 
       y = (max(bin_fil$vol) / 1000000) - 0.0002) , 
     height = 0.0001) + 
+  geom_point(aes(x = mean(n_rep), y = (max(bin_fil$vol) / 1000000) - 0.0002),
+    shape = 21, colour = "black", size = 5, fill = "grey") + 
   geom_vline(xintercept = height_q[2], 
     size = 1.5, colour = "cyan", linetype = 2) + 
   geom_line(aes(x = c(min(peaks50), max(peaks50)), 
@@ -151,7 +152,7 @@ canopy_plot <- ggplot() +
   theme_bw() + 
   labs(x = "Height (m)", y = expression("Foliage"~"volume"~(m^3)))
 
-pdf(file = "../img/height_profile_illus.pdf", width = 10, height = 7)
+pdf(file = "../img/height_profile_illus.pdf", width = 10, height = 5)
 canopy_plot
 dev.off()
 
@@ -159,10 +160,22 @@ dev.off()
 bin_fil$cum_lm_pred <- predict(cum_lm)
 cum_plot <- ggplot() + 
   geom_line(data = bin_fil, aes(x = z_round, y = n_cum / 1000000)) + 
-  geom_line(data = bin_fil, aes(x = z_round, y = cum_lm_pred / 1000000), colour = "blue") +
+  geom_line(data = bin_fil, aes(x = z_round, y = cum_lm_pred / 1000000), colour = "purple") +
   theme_bw() + 
-  labs(x = "Height (m)", y = expression("Foliage"~"volume"~(m^3)))
+  labs(x = "Height (m)", y = expression("Cumulative"~"foliage"~"volume"~(m^3)))
 
-pdf(file = "../img/cum_lm_illus.pdf", width = 10, height = 7)
+pdf(file = "../img/cum_lm_illus.pdf", width = 10, height = 5)
 cum_plot
+dev.off()
+
+library(patchwork)
+
+canopy_plot <- canopy_plot + 
+  theme(
+    axis.title.x = element_blank(),
+    plot.margin = margin(b = 2, unit = "pt"))
+
+pdf(file = "../img/height_profile_illus_all.pdf", width = 10, height = 8)
+(canopy_plot) / cum_plot + 
+  plot_layout(heights = c(2,1))
 dev.off()
