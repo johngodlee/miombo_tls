@@ -30,7 +30,7 @@ all_bins$site <- ifelse(grepl("ABG", all_bins$plot_id), "Bicuar", "Mtarure")
 pdf(file = "../img/height_profile.pdf", height = 8, width = 10)
 ggplot() + 
   geom_line(data = all_bins, 
-    aes(x = z_round, y = gap_frac, group = plot_subplot), 
+    aes(x = z_round, y = vol_frac, group = plot_subplot), 
     alpha = 0.6) +
   theme_bw() + 
   labs(x = "Elevation (m)", y = "Gap fraction") + 
@@ -40,7 +40,7 @@ dev.off()
 pdf(file = "../img/height_profile_plot_facet.pdf", height = 15, width = 15)
 ggplot() + 
   geom_line(data = all_bins, 
-    aes(x = z_round, y = gap_frac, group = plot_subplot)) + 
+    aes(x = z_round, y = vol_frac, group = plot_subplot)) + 
   facet_wrap(~plot_id) + 
   theme_bw() + 
   labs(x = "Elevation (m)", y = "Gap fraction") + 
@@ -50,7 +50,7 @@ dev.off()
 pdf(file = "../img/height_profile_site.pdf", height = 15, width = 15)
 ggplot() + 
   geom_line(data = all_bins, 
-    aes(x = z_round, y = gap_frac, group = plot_subplot, colour = site)) + 
+    aes(x = z_round, y = vol_frac, group = plot_subplot, colour = site)) + 
   theme_bw() + 
   labs(x = "Elevation (m)", y = "Gap fraction") + 
   coord_flip()
@@ -59,7 +59,7 @@ dev.off()
 pdf(file = "../img/height_profile_site_facet.pdf", height = 12, width = 10)
 ggplot() + 
   geom_line(data = all_bins, 
-    aes(x = z_round, y = gap_frac, group = plot_subplot)) + 
+    aes(x = z_round, y = vol_frac, group = plot_subplot)) + 
   theme_bw() + 
   facet_wrap(~site) + 
   labs(x = "Elevation (m)", y = "Gap fraction") + 
@@ -168,27 +168,27 @@ subplot_trees_summ <- subplot_trees %>%
 
 # Layer diversity vs. richness model
 layer_div_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std +  
-  (rich_std | plot_id), 
+  (1 | plot_id), 
   data = subplot_trees_summ)
 
 # Area under curve (AUC) vs. richness model
 auc_canopy_div_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + 
-  (rich_std | plot_id),
+  (1 | plot_id),
   data = subplot_trees_summ)
 
 # Peak density height vs. richness model
 dens_peak_height_div_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + 
-  (rich_std | plot_id), 
+  (1 | plot_id), 
   data = subplot_trees_summ)
 
 # q99 height vs. richness model
 q99_height_div_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + 
-  (rich_std | plot_id), 
+  (1 | plot_id), 
   data = subplot_trees_summ)
 
 # Cumulative height profile linear model standard error vs richness model
 cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + 
-  (rich_std | plot_id), 
+  (1 | plot_id), 
   data = subplot_trees_summ)
 
 # Make list of models
@@ -265,10 +265,21 @@ mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
       p.value <= 0.01 ~ "**",
       p.value <= 0.001 ~ "***",
       TRUE ~ NA_character_), 
-    resp = names(x@frame)[1])
+    resp = names(x@frame)[1]) %>%
+  mutate(resp = case_when(
+      resp == "layer_div" ~ "ENL",
+      resp == "auc_canopy" ~ "Area under Canopy",
+      resp == "dens_peak_height" ~ "Max peak height",
+      resp == "height_q99" ~ "Max height",
+      resp == "cum_lm_se" ~ "Foliage uniformity",
+      TRUE ~ NA_character_),
+    term = case_when(
+      term == "rich_std" ~ "Richness",
+      term == "hegyi_std" ~ "Hegyi",
+      term == "diam_cov_std" ~ "CoV Diam."))
   }))
 
-pdf(file = "../img/height_profile_mod_rich_slopes.pdf", height = 5, width = 8)
+pdf(file = "../img/height_profile_mod_rich_slopes.pdf", height = 5, width = 12)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = mod_pred, 

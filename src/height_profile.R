@@ -43,7 +43,7 @@ profile_stat_list <- lapply(file_list, function(x) {
 
   if (nrow(dat) > 0) {
     
-    # Calculate volume and gap fraction
+    # Calculate volume and volume fraction
     bin_tally <- dat %>% 
       filter(
         z_round > 0,
@@ -56,7 +56,7 @@ profile_stat_list <- lapply(file_list, function(x) {
         plot_id = plot_id_new,
         subplot = subplot,
         vol = n * voxel_dim,
-        gap_frac = 1 - vol / layer_vol) %>%
+        vol_frac = vol / layer_vol) %>%
       as.data.frame()
 
     # Filter to above ground, find first local minima above 1.3 m
@@ -70,7 +70,7 @@ profile_stat_list <- lapply(file_list, function(x) {
     lo <- loess(bin_fil$n~bin_fil$z_round, span = 0.1)
     bin_fil$n_loess <- predict(lo)
     bin_fil$vol_loess <- bin_fil$n_loess * voxel_dim
-    bin_fil$gap_frac_loess <- bin_fil$vol_loess / layer_vol 
+    bin_fil$vol_frac_loess <- bin_fil$vol_loess / layer_vol 
 
     # Re-calculate peaks and troughs
     peaks50 <- bin_fil$z_round[findPeaks(bin_fil$n_loess, m = 25)]
@@ -126,10 +126,10 @@ profile_stat_list <- lapply(file_list, function(x) {
       plot_id = plot_id_new, 
       subplot, 
       vol = NA_real_,
-      gap_frac = NA_real_,
+      vol_frac = NA_real_,
       n_loess = NA_real_,
       vol_loess = NA_real_,
-      gap_frac_loess = NA_real_,
+      vol_frac_loess = NA_real_,
       n_cum = NA_real_
     )
 
