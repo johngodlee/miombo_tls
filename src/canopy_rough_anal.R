@@ -8,6 +8,7 @@ library(tidyr)
 library(broom)
 library(ggplot2)
 library(ggeffects)
+library(sjPlot)
 library(lme4)
 library(MuMIn)
 
@@ -63,11 +64,12 @@ bivar_summ <- do.call(rbind, lapply(seq_along(bivar_mod_list), function(x) {
 
 # Standardize predictors
 dat_std <- dat %>%
-  mutate(across(c("tree_shannon", "tree_dens", "cov_diam"), 
+  mutate(across(c("tree_shannon", "tree_dens", "cov_diam", "wi_sum", "mi_sum"), 
       ~as.vector(scale(.x)), .names = "{.col}_std"))
 
 # Mixed effects model - What predicts canopy rugosity?
-rug_lmer <- lmer(rc ~ tree_shannon_std + tree_dens_std + cov_diam_std + (1 | site), 
+rug_lmer <- lmer(rc ~ tree_shannon_std + tree_dens_std + cov_diam_std + 
+  mi_sum_std + wi_sum_std + (1 | site), 
   data = dat_std, na.action = "na.fail")
 
 rug_dredge <- as.data.frame(dredge(rug_lmer, evaluate = TRUE, rank = "AIC"))
@@ -97,7 +99,7 @@ ggplot() +
   labs(x = "Estimate", y = "")
 dev.off()
 
-pred_names <- c("tree_shannon_std", "tree_dens_std", "cov_diam_std")
+pred_names <- c("tree_shannon_std", "tree_dens_std", "cov_diam_std", "wi_sum_std", "mi_sum_std")
 
 # Look at model predicted values and random effects
 re_df <- do.call(rbind, lapply(pred_names, function(x) {
@@ -136,3 +138,6 @@ dev.off()
 sink("../out/rugosity_mod_summ.txt")
 summary(rug_lmer)
 sink()
+
+# Model of canopy top roughness
+
