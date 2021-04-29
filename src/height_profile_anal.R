@@ -10,7 +10,7 @@ library(MuMIn)
 library(sjPlot)
 library(ggplot2)
 library(ggeffects)
-library(gridExtra)
+library(patchwork)
 
 source("functions.R")
 
@@ -18,6 +18,8 @@ source("functions.R")
 all_bins <- read.csv("../dat/height_profile_bins.csv")
 
 profile_stats <- read.csv("../dat/height_profile_summ.csv")
+
+gap_frac <- read.csv("../dat/gap_frac.csv")
 
 ripley_list <- readRDS("../dat/height_profile_ripley.rds")
 
@@ -115,31 +117,69 @@ ggplot() +
 dev.off()
 
 
+# Add gap fraction
+profile_stats_all <- profile_stats %>%
+  left_join(., 
+    gap_frac[gap_frac$method == "tls", c("plot_id", "subplot", "gap_frac")],
+    by = c("plot_id", "subplot"))
+
+# Add site
+profile_stats_all$site <- ifelse(grepl("ABG", profile_stats_all$plot_id), 
+  "Bicuar", "Mtarure")
+
 # Bivariate plots of various response variables 
-profile_stats$site <- ifelse(grepl("ABG", profile_stats$plot_id), "Bicuar", "Mtarure")
+bivar_names <- names(profile_stats_all)[
+  -which(names(profile_stats_all) %in% c("plot_id", "subplot", "site"))]
 
-bivar_names <- names(profile_stats)[-which(names(profile_stats) %in% c("plot_id", "subplot", "site"))]
-
-bivar_mat <- t(combn(bivar_names, 2))
+bivar_mat <- t(combn(bivar_names, 2)) %>%
+  as.data.frame() %>%
+  arrange(V1, V2)
 
 bivar_list <- apply(bivar_mat, 1, function(x) {
-  out <- profile_stats[,x]
-  names(out) <- c("x", "y")
-  out$xvar <- x[1]
-  out$yvar <- x[2]
+  out <- profile_stats_all[,c(x, "site")]
+  names(out) <- c("x", "y", "site")
+  out$xvar <- names(resp_names)[resp_names == x[1]]
+  out$yvar <- names(resp_names)[resp_names == x[2]]
   return(out)
     })
 
 bivar_plot_list <- lapply(bivar_list, function(x) {
   ggplot(x, aes(x = x, y = y)) + 
-    geom_point(colour = "black", fill = "grey", shape = 21) + 
-    geom_smooth(method = "lm") + 
+    geom_point(colour = "black", aes(fill = site), shape = 21) + 
+    geom_smooth(method = "lm", colour = "black", se = TRUE) + 
+    geom_smooth(method = "lm", aes(colour = site), se = FALSE) + 
+    scale_fill_manual(name = "Site", values = pal[1:2]) + 
     labs(x = x$xvar, y = x$yvar) + 
-    theme_bw()
+    theme_bw() + 
+    theme(
+      axis.text = element_blank(),
+      axis.ticks = element_blank())
+    })
+# Bicuar red, Mtrarure blue
+
+pdf(file = "../img/height_profile_stat_bivar.pdf", width = 18, height = 12)
+wrap_plots(bivar_plot_list) + 
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+dev.off()
+
+# Histograms
+hist_list <- lapply(bivar_names, function(x) {
+  dat <- profile_stats_all[,c("site", x)]
+  names(dat)[2] <- "var"
+  ggplot() + 
+    geom_histogram(data = dat, 
+      aes(x = var, fill = site), 
+      position="identity", colour = "black", alpha = 0.5) + 
+    scale_fill_manual(name = "Site", values = pal[1:2]) + 
+    theme_bw() + 
+    labs(x = names(resp_names)[resp_names == x], y = "") 
     })
 
-pdf(file = "../img/height_profile_stat_bivar.pdf", width = 15, height = 12)
-grid.arrange(grobs = bivar_plot_list)
+pdf(file = "../img/height_profile_stat_hist.pdf", width = 18, height = 12)
+wrap_plots(hist_list) + 
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 dev.off()
 
 # Add some extra columns to subplot trees
@@ -161,7 +201,7 @@ subplot_trees_summ <- subplot_trees %>%
     diam_sd = sd(diam),
     diam_mean = mean(diam)) %>%
   mutate(diam_cov = diam_sd / diam_mean * 100) %>%
-  left_join(., profile_stats, c("plot_id", "subplot")) %>%
+  left_join(., profile_stats_all, c("plot_id", "subplot")) %>%
   mutate(across(c("rich", "diam_cov", "hegyi", "ba"), ~as.vector(scale(.x)), 
       .names = "{.col}_std")) %>%
   mutate(site = ifelse(grepl("ABG", plot_id), "Bicuar", "Mtarure"))
@@ -191,9 +231,14 @@ cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std +
   (1 | plot_id), 
   data = subplot_trees_summ)
 
+# Gap fraction
+gap_frac_div_mod <- lmer(gap_frac ~ rich_std + hegyi_std + diam_cov_std + 
+  (1 | plot_id), 
+  data = subplot_trees_summ)
+
 # Make list of models
 mod_list <- list(layer_div_mod, auc_canopy_div_mod, dens_peak_height_div_mod,
-  q99_height_div_mod, cum_lm_se_div_mod)
+  q99_height_div_mod, cum_lm_se_div_mod, gap_frac_div_mod)
 
 # Look at model predicted values and random effects
 fe_df <- do.call(rbind, lapply(mod_list, function(x) {
@@ -234,9 +279,11 @@ auc_canopy_null_mod <- lmer(auc_canopy ~ ba_std + (1 | plot_id), data = subplot_
 dens_peak_height_null_mod <- lmer(dens_peak_height ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
 q99_height_null_mod <- lmer(height_q99 ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
 cum_lm_se_null_mod <- lmer(cum_lm_se ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+gap_frac_null_mod <- lmer(gap_frac ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
 
 null_mod_list <- list(layer_null_mod, auc_canopy_null_mod,
-  dens_peak_height_null_mod, q99_height_null_mod, cum_lm_se_null_mod)
+  dens_peak_height_null_mod, q99_height_null_mod, 
+  cum_lm_se_null_mod, gap_frac_null_mod)
 
 stopifnot(length(mod_list) == length(null_mod_list))
 
@@ -266,17 +313,9 @@ mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
       p.value <= 0.001 ~ "***",
       TRUE ~ NA_character_), 
     resp = names(x@frame)[1]) %>%
-  mutate(resp = case_when(
-      resp == "layer_div" ~ "ENL",
-      resp == "auc_canopy" ~ "Area under Canopy",
-      resp == "dens_peak_height" ~ "Max peak height",
-      resp == "height_q99" ~ "Max height",
-      resp == "cum_lm_se" ~ "Foliage uniformity",
-      TRUE ~ NA_character_),
-    term = case_when(
-      term == "rich_std" ~ "Richness",
-      term == "hegyi_std" ~ "Hegyi",
-      term == "diam_cov_std" ~ "CoV Diam."))
+  mutate(
+    resp = names(resp_names)[resp == resp_names],
+    term = names(pred_names)[term == pred_names])
   }))
 
 pdf(file = "../img/height_profile_mod_rich_slopes.pdf", height = 5, width = 12)
@@ -290,9 +329,98 @@ ggplot() +
     shape = 21, colour = "black") + 
   geom_text(data = mod_pred,
     aes(x = estimate, y = term, colour = group, label = psig),
-    size = 8, nudge_y = 0.1) + 
+    size = 8) + 
   facet_wrap(~resp, scales = "free_x", nrow = 1) + 
   theme_bw() + 
   theme(legend.position = "none") + 
+  labs(x = "Estimate", y = "")
+dev.off()
+
+# Run some models separately for Bicuar and Kilwa
+
+# Layer div.
+layer_div_mod_bicuar <- update(layer_div_mod, 
+  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+
+layer_div_mod_mtarure <- update(layer_div_mod, 
+  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+
+# Area under curve (AUC) vs. richness model
+auc_canopy_div_mod_bicuar <- update(auc_canopy_div_mod,
+  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+
+auc_canopy_div_mod_mtarure <- update(auc_canopy_div_mod,
+  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+
+# Peak density height vs. richness model
+dens_peak_height_div_mod_bicuar <- update(dens_peak_height_div_mod,
+  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+
+dens_peak_height_div_mod_mtarure <- update(dens_peak_height_div_mod,
+  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+
+# q99 height vs. richness model
+q99_height_div_mod_bicuar <- update(q99_height_div_mod,
+  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+
+q99_height_div_mod_mtarure <- update(q99_height_div_mod,
+  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+
+# Cumulative height profile linear model standard error vs richness model
+cum_lm_se_div_mod_bicuar <- update(cum_lm_se_div_mod,
+  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+
+cum_lm_se_div_mod_mtarure <- update(cum_lm_se_div_mod,
+  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+
+# Gap fraction
+gap_frac_div_mod_bicuar <- update(gap_frac_div_mod,
+  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+
+gap_frac_div_mod_mtarure <- update(gap_frac_div_mod,
+  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+
+# List of models
+mod_list_site <- list(
+  layer_div_mod_bicuar, layer_div_mod_mtarure, 
+  auc_canopy_div_mod_bicuar, auc_canopy_div_mod_mtarure,
+  dens_peak_height_div_mod_bicuar, dens_peak_height_div_mod_mtarure,
+  q99_height_div_mod_bicuar, q99_height_div_mod_mtarure,
+  cum_lm_se_div_mod_bicuar, cum_lm_se_div_mod_mtarure,
+  gap_frac_div_mod_bicuar, gap_frac_div_mod_mtarure)
+
+# Get fixed effects slopes
+mod_pred <- do.call(rbind, lapply(mod_list_site, function(x) {
+  get_model_data(x, type = "est") %>%
+  mutate(psig = case_when(
+      p.value <= 0.05 ~ "*",
+      p.value <= 0.01 ~ "**",
+      p.value <= 0.001 ~ "***",
+      TRUE ~ NA_character_), 
+    resp = names(x@frame)[1]) %>%
+  mutate(
+    site = ifelse(grepl("ABG", as.character(x@call[3])), "Bicuar", "Mtarure"),
+    resp = names(resp_names)[resp == resp_names],
+    term = names(pred_names)[term == pred_names])
+  }))
+
+pdf(file = "../img/height_profile_mod_rich_slopes_sites.pdf", height = 5, width = 12)
+ggplot() +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_errorbarh(data = mod_pred, 
+    aes(xmin = conf.low, xmax = conf.high, y = term, colour = site),
+    position = position_dodge(width = 0.5), height = 0) + 
+  geom_point(data = mod_pred,
+    aes(x = estimate, y = term, fill = site),
+    shape = 21, position = position_dodge(width = 0.5), colour = "black") + 
+  geom_text(data = mod_pred,
+    aes(x = estimate, y = term, colour = site, label = psig),
+    position = position_dodge(width = 0.5), size = 8) + 
+  scale_colour_manual(values = pal[1:2], guide = "none") + 
+  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  facet_wrap(~resp, scales = "free_x", nrow = 1) + 
+  theme_bw() + 
+  guides(fill = guide_legend(override.aes = list(size = 5))) +
+  theme(legend.position = "bottom") + 
   labs(x = "Estimate", y = "")
 dev.off()

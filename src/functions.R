@@ -4,6 +4,25 @@
 # Theme colours
 pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "grey", "#E0E0E0")
 
+resp_names <- c(  
+  "AUC profile" = "auc_canopy",
+  "Cum. mod. slope" = "cum_lm_se",
+  "Cum. mod. SE" = "cum_lm_slope",
+  "Height peak dens." = "dens_peak_height",
+  "Gap frac." = "gap_frac",
+  "Canopy height 95th" = "height_q95",
+  "Canopy height 99th" = "height_q99",
+  "Layer div." = "layer_div",
+  "CoV foliage" = "point_cov",
+  "Shannon" = "shannon",
+  "Weibull scale" = "weib_scale",
+  "Weibull shape" = "weib_shape")
+
+pred_names <- c(
+  "Richness" = "rich_std",
+  "Hegyi" = "hegyi_std",
+  "CoV Diam." = "diam_cov_std")
+
 
 #' Effective number of layers in a point cloud distribution
 #'
@@ -184,7 +203,6 @@ fov.theta <- function(prop_crop, full_circle_radius_px, focal_length_mm, pixel_p
 #' @export
 #' 
 spatialMingling <- function(x, y, sp, k = 4, adj = FALSE) {
-
   dat_sf <- sf::st_as_sf(data.frame(x,y,sp), coords = c("x", "y"))
 
   dists <- nngeo::st_nn(dat_sf, dat_sf, k = k+1)
@@ -223,7 +241,6 @@ spatialMingling <- function(x, y, sp, k = 4, adj = FALSE) {
 #' @export
 #' 
 winkelmass <- function(x, y, k = 4) {
-
   dat_sf <- sf::st_as_sf(data.frame(x,y), coords = c("x", "y"))
 
   dists <- nngeo::st_nn(dat_sf, dat_sf, k = k+1)
@@ -372,29 +389,6 @@ nearNeighb <- function(x, y, id = NULL, radius, zones = NULL) {
 #' 
 lorimerCZR <- function(k, n) {
   k * sqrt(10000 / n)
-}
-
-#' Hegyi index - Hegyi 1974
-#'
-#' @param dbh vector of DBH (diameter at breast height) measurements of competitor trees
-#' @param dist vector of distances from focal tree to competitor trees
-#' @param focal_dbh DBH of focal tree
-#'
-#' @return atomic vector of competition index for focal tree
-#' 
-#' @details A spatially explicit competition index which takes into account DBH
-#' and distance of competitor trees. The iterative Hegyi index is a variant 
-#' which picks competitors based on minimum distance of neighbouring trees 
-#' within arc zones around the focal tree.
-#' 
-#' @references Hegyi, F., 1974. A simulation model for managing jack-pine 
-#' stands. In: Fries, J. (Ed.), Growth Models for Tree and Stand Simulation. 
-#' Royal College of Forestry, Stockholm, pages. 74–90.
-#' 
-#' @export
-#'
-hegyi <- function(dbh, dist, focal_dbh) {
-	sum((dbh / focal_dbh) / dist)
 }
 
 #' Generate a valid UTM WGS84 proj4string given a UTM zone

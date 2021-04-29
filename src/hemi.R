@@ -89,7 +89,7 @@ gap_frac <- function(x) {
 
   # Calculate gap fraction
   gap_frac <- CalcGapFractions(img)
-  out[4] <- CalcOpenness(fractions = gap_frac)
+  out[4] <- 1 - CalcOpenness(fractions = gap_frac)
 
   # LAI
   out[5] <- CalcLAI(fractions = gap_frac)

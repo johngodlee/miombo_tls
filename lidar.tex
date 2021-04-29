@@ -80,17 +80,15 @@ As well as the species diversity of trees in a local neighbourhood, the spatial 
 
 While much work in the field of forest management has been done to test biotic drivers of tree canopy structure in temperate \citep{} and boreal forests \citep{}, similar work in the tropics is comparatively scarce \citep{}. In dry tropical woodlands especially, tree canopy structure and its effect on ecosystem function has received little attention, possibly due to the misplaced assumption that woody productivity in these ecosystems does not represent a globally significant carbon flux \citep{}, or that tree canopies in these smaller stature woodlands do not interact and compete for resources to the same degree as in large stature forests \citep{}. In recent years however, it has been shown that dry tropical woodlands represent the largest uncertainty in our estimates of the terrestrial carbon cycle \citep{Quere2018, Ahlstrom2015}. \citet{Sitch2015} demonstrated the dominant role of the dry tropics in driving variability in the terrestrial carbon sink, and showed that the dry tropics are the fastest increasing component of the terrestrial carbon sink. Part of this uncertainty arises from our lacking a nuanced understanding of how species composition and structure affect ecosystem function in these ecosystems, which underpins the Dynamic Global Vegetation Models (DGVMs) fed into global carbon dynamics models. This knowledge gap prompts further research of the biotic drivers of variation in productivity in the dry tropics, of which canopy structure is a key part \citep{}.
 
-In addition to driving variation in woody productivity and biomass, canopy structure is also expected to affect understorey biomass. A more open tree canopy which provides more light to the ground can encourage understorey growth. In mesic savannas open tree canopies are maintained via a positive feedback where increased grassy biomass as a result of a more open canopy increases the frequency and intensity of fires, reducing stem density particularly of small stems, maintaining the open canopy \citep{}. While it is clear that much of the dry tropics exists as a mosaic of closed canopy forest and open canopy savanna \citep{}, the complex mechanisms which determine whether a patch is savanna or forest are as yet unclear \cite{}. To find the tipping points which determine this phenomenon of ``alternative stable states'', it is necessary to understand both how canopy structure affects grassy biomass and how existing tree diversity and stand structure as a result of disturbance history influences canopy structure. 
-
 Canopy structure is multi-dimensional and has previously been explained using a plethora of simple metrics that originated in forest and community ecology \citep{}. Assessments of canopy structure in the dry tropical have most often modelled tree canopies as a series of ellipses (2D) or ellipsoids (3D) based on field measurements with measuring tapes \citep{}. Measurements of this kind are time consuming and yet are an over-simplification of canopy structure \citep{}. Alternatively, canopy cover is often measured using indirect optical methods which partition sky from canopy material, i.e. with hemispherical photography or the commonly used LAI-2000, providing a 2D representation of the canopy but lacking information on vertical canopy structure. In recent years, particularly in temperate and boreal forests, LiDAR (Light Detection And Ranging) has emerged as a suitable technology for rapidly and precisely assessing canopy structure in 3D, conserving information on 3D structure of the calibre that is required to understand it's complexities \citep{}.
 
-In this study we applied terrestrial LiDAR techniques to woodland-savanna mosaics at two sites in southern Africa, with the aim of increasing our understanding of how various metrics of tree canopy structure are affected by tree neighbourhood diversity and stand structure. We also investigated how variation in canopy structure affects understorey grassy biomass. Our overarching contention is that neighbourhoods of greater tree diversity and greater structural diversity allow greater canopy complexity and foliage density, resulting in higher productivity, a lower understorey biomass as a result of canopy light exclusion, and ultimately a more `forest-like' community, rather than an open canopy savanna.
+In this study we applied terrestrial LiDAR techniques to woodland-savanna mosaics at two sites in southern Africa, with the aim of increasing our understanding of how various metrics of tree canopy structure are affected by tree neighbourhood diversity and stand structure. Our overarching contention is that neighbourhoods of greater tree diversity and greater structural diversity allow greater canopy complexity and foliage density, resulting in higher productivity, and ultimately a more `forest-like' community, rather than an open canopy savanna.
 
 \section{Materials and methods}
 
 \subsection{Study sites}
 
-Measurements were conducted at two sites, the first in Bicuar National Park, southwest Angola (S15.1$^\circ$, E14.8$^\circ$), and the second in and around Mtarure Forest Reserve, southeast Tanzania (S9.0$^\circ$, E39.0$^\circ$) (\autoref{map}). At each site, 1 ha plots were sited in areas of miombo woodland vegetation, across a gradient of stem density. In Angola, 15 plots were sampled, while in Tanzania, seven were sampled following the curtailment of fieldwork due to COVID-19 travel restrictions. Fieldwork was conducted between February and April at both sites, during the peak growth period of each site in order to capture the highest foliage volume in the canopy and the largest grassy volume in the understorey.
+Measurements were conducted at two sites, the first in Bicuar National Park, southwest Angola (S15.1$^\circ$, E14.8$^\circ$), and the second in and around Mtarure Forest Reserve, southeast Tanzania (S9.0$^\circ$, E39.0$^\circ$) (\autoref{map}). At each site, 1 ha plots were sited in areas of miombo woodland vegetation, across a gradient of stem density. In Angola, 15 plots were sampled, while in Tanzania, seven were sampled following the curtailment of fieldwork due to COVID-19 travel restrictions. Fieldwork was conducted between February and April at both sites, during the peak growth period of each site in order to capture the highest foliage volume in the canopy.
 
 \begin{figure}[H]
 \centering
@@ -122,7 +120,7 @@ Within each subplot, a variable number of scans were recorded using a Leica HDS6
 
 Point clouds from scans in each subplot were registered and unified using Leica Cyclone (version 9.1). Targets from each scan were aligned using Cyclone's automatic target acquisition. 
 
-Point clouds were voxelised to cubic voxel sizes of different sizes depending on the application of the data. For grassy volume estimation we used 2 cm\textsuperscript{3} voxels, while for subplot height profile estimation and gap fraction we used 5 cm\textsuperscript{3} voxels, and for whole plot canopy rugosity we used 10 cm\textsuperscript{3} voxels. Variation in voxel size reflects the spatial scale of each analysis, and is bounded by the beam divergence of the scanner \citep{}. Choosing voxels that are too small can result in pock-marked representations of surfaces that are especially problematic when estimating canopy structure at a larger scale, such as when estimating canopy top roughness, while voxels that are too large can result in an over-estimation of plant volume when estimating canopy foliage density \citep{Cifuentes2014}. Voxels were classed as filled if they intersected with one or more points.
+Point clouds were voxelised to cubic voxel sizes of different sizes depending on the application of the data. For subplot height profile estimation and gap fraction we used 5 cm\textsuperscript{3} voxels, and for whole plot canopy rugosity we used 10 cm\textsuperscript{3} voxels. Variation in voxel size reflects the spatial scale of each analysis, and is bounded by the beam divergence of the scanner \citep{}. Choosing voxels that are too small can result in pock-marked representations of surfaces that are especially problematic when estimating canopy structure at a larger scale, such as when estimating canopy top roughness, while voxels that are too large can result in an over-estimation of plant volume when estimating canopy foliage density \citep{Cifuentes2014}. Voxels were classed as filled if they intersected with one or more points.
 
 Partial object interceptions caused by phase-shift laser scanners can produce erroneous results and must be corrected for to accurately estimate canopy height \citep{}. We used a noise reduction algorithm from \citet{} to discard points that appeared far from other points. This effectively removed ghost points produced by partial interceptions and also removed many erroneous returns caused by airborne dust particles, which was common in our study site.
 
@@ -140,8 +138,7 @@ At the plot level, we estimated the regularity of species distribution using the
 
 \subsection{Statistical analysis}
 
-Linear mixed effects models tested the effects of diversity and stand structural metrics on canopy structure, and the effect of canopy structure on grassy biomass.
-
+Linear mixed effects models tested the effects of diversity and stand structural metrics on canopy structure.
 
 \section{Results}
 
@@ -155,19 +152,6 @@ The linear mixed effects models showed that species richness of the subplot neig
 	\caption{Standardized fixed effect slopes for each model of a canopy structure metric. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects.}
 	\label{height_profile_mod_rich_slopes}
 \end{figure}
-
-\subsection{Grassy biomass}
-
-Canopy structure had significant effects on grassy volume in the understorey. Tree density and effective number of layers had a negative effect on grassy volume, while the coefficient of variation of point height had a positive effect. Species richness had a positive but non-significant effect on grassy volume.
-
-\begin{figure}[H]
-\centering
-	\includegraphics[width=0.4\textwidth]{grass_vol_best_mod_slopes}
-	\caption{Standardized fixed effect slopes for mean subplot grass volume. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects.}
-	\label{grass_vol_best_mod_slopes}
-\end{figure}
-
-A path analysis showed similar results. Tree density had a negative effect on grassy volume
 
 \subsection{Canopy rugosity}
 
@@ -184,6 +168,7 @@ None of the stand structure metrics or diversity metrics had significant effects
 
 Species diversity didn't have strong effects on canopy structure, but stand structure did.
 
+\subsection{Scaling up from subplots}
 
 \section{Conclusion}
 
