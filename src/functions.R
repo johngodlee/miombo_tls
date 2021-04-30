@@ -9,16 +9,27 @@ resp_names <- c(
   "Cum. mod. slope" = "cum_lm_se",
   "Cum. mod. SE" = "cum_lm_slope",
   "Height peak dens." = "dens_peak_height",
-  "Gap frac." = "gap_frac",
+  "Canopy cover" = "cover",
   "Canopy height 95th" = "height_q95",
   "Canopy height 99th" = "height_q99",
   "Layer div." = "layer_div",
   "CoV foliage" = "point_cov",
   "Shannon" = "shannon",
   "Weibull scale" = "weib_scale",
-  "Weibull shape" = "weib_shape")
+  "Weibull shape" = "weib_shape",
+  "Canopy cover" = "cover_mean",
+  "Canopy height" = "chm_mean",
+  "Canopy height SD" = "chm_sd",
+  "Roughness" = "rough_mean",
+  "Roughness SD" = "rough_sd",
+  "Rugosity" = "rc")
 
 pred_names <- c(
+  "Shannon" = "tree_shannon_std",
+  "Stem density" = "tree_dens_std",
+  "CoV diam." = "cov_diam_std",
+  "Spatial mingling" = "mi_sum_std",
+  "Winkelmass" = "wi_sum_std",
   "Richness" = "rich_std",
   "Hegyi" = "hegyi_std",
   "CoV Diam." = "diam_cov_std")

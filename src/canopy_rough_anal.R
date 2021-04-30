@@ -12,26 +12,44 @@ library(sjPlot)
 library(lme4)
 library(MuMIn)
 
+source("functions.R")
+
 # Import data
 canopy <- read.csv("../dat/plot_canopy_stats.csv")
 
 plot_data <- read.csv("../dat/plot_summ.csv")
 
+gap_frac <- read.csv("../dat/gap_frac.csv")
+
+plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+
+# Summarise gap fraction
+gap_frac_summ <- gap_frac %>%
+  group_by(plot_id) %>%
+  summarise(cover_mean = mean(cover, na.rm = TRUE))
+
 # Join dataframes
-dat <- left_join(canopy, plot_data, by = "plot_id") %>%
+plot_data_new <- left_join(plot_data, plot_id_lookup, by = "plot_id") %>%
+  rename(plot_id_new = seosaw_id)
+
+dat <- left_join(canopy, plot_data_new, by = "plot_id_new") %>%
+  left_join(., gap_frac_summ, by = c("plot_id_new" = "plot_id")) %>%
   mutate(site = case_when(
-      grepl("P", plot_id) ~ "AGO",
-      grepl("S|W", plot_id) ~ "TKW",
-      TRUE ~ NA_character_))
+      grepl("ABG", plot_id_new) ~ "AGO",
+      grepl("TKW", plot_id_new) ~ "TKW",
+      TRUE ~ NA_character_)) %>%
+  dplyr::select(-plot_id.x, -plot_id.y) %>%
+  rename(plot_id = plot_id_new)
 
 # Bivariate models
 dat_resp <- dat %>%
-  dplyr::select(site, plot_id, chm_mean, chm_sd, rough_mean, rough_sd, rc) %>%
+  dplyr::select(site, plot_id, cover_mean, chm_mean, chm_sd, 
+    rough_mean, rough_sd, rc) %>%
   gather(key_resp, val_resp, -plot_id, -site)
 
 dat_pred <- dat %>%
   dplyr::select(site, plot_id, rich, sd_diam, mean_diam, tree_dens, cov_diam, 
-    stem_shannon, tree_shannon) %>%
+    stem_shannon, tree_shannon, mi_sum, wi_sum) %>%
   gather(key_pred, val_pred, -plot_id, -site)
 
 bivar <- left_join(dat_resp, dat_pred, c("plot_id", "site"))
@@ -67,22 +85,48 @@ dat_std <- dat %>%
   mutate(across(c("tree_shannon", "tree_dens", "cov_diam", "wi_sum", "mi_sum"), 
       ~as.vector(scale(.x)), .names = "{.col}_std"))
 
-# Mixed effects model - What predicts canopy rugosity?
-rug_lmer <- lmer(rc ~ tree_shannon_std + tree_dens_std + cov_diam_std + 
-  mi_sum_std + wi_sum_std + (1 | site), 
-  data = dat_std, na.action = "na.fail")
+# Mixed effects models
+cover_mean_lmer <- lmer(cover_mean ~ tree_shannon_std + tree_dens_std +
+	cov_diam_std + mi_sum_std + wi_sum_std + (1 | site), 
+	data = dat_std, na.action = "na.fail")
 
-rug_dredge <- as.data.frame(dredge(rug_lmer, evaluate = TRUE, rank = "AIC"))
+chm_mean_lmer <- lmer(chm_mean ~ tree_shannon_std + tree_dens_std +
+	cov_diam_std + mi_sum_std + wi_sum_std + (1 | site), 
+	data = dat_std, na.action = "na.fail")
 
-mod_pred <- get_model_data(rug_lmer, type = "est") %>%
+chm_sd_lmer <- lmer(chm_sd ~ tree_shannon_std + tree_dens_std +
+	cov_diam_std + mi_sum_std + wi_sum_std + (1 | site), 
+	data = dat_std, na.action = "na.fail")
+
+rough_mean_lmer <- lmer(rough_mean ~ tree_shannon_std + tree_dens_std +
+	cov_diam_std + mi_sum_std + wi_sum_std + (1 | site), 
+	data = dat_std, na.action = "na.fail")
+
+rough_sd_lmer <- lmer(rough_sd ~ tree_shannon_std + tree_dens_std +
+	cov_diam_std + mi_sum_std + wi_sum_std + (1 | site), 
+	data = dat_std, na.action = "na.fail")
+
+rc_lmer <- lmer(rc ~ tree_shannon_std + tree_dens_std +
+	cov_diam_std + mi_sum_std + wi_sum_std + (1 | site), 
+	data = dat_std, na.action = "na.fail")
+
+mod_list <- list(cover_mean_lmer, chm_mean_lmer, chm_sd_lmer, rough_mean_lmer, 
+  rough_sd_lmer, rc_lmer)
+
+mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
+  get_model_data(x, type = "est") %>%
   mutate(psig = case_when(
       p.value <= 0.05 ~ "*",
       p.value <= 0.01 ~ "**",
       p.value <= 0.001 ~ "***",
-      TRUE ~ NA_character_))
+      TRUE ~ NA_character_), 
+    resp = names(x@frame)[1]) %>%
+  mutate(
+    resp = names(resp_names)[match(resp, resp_names)],
+    term = names(pred_names)[match(term, pred_names)])
+  }))
 
-# Plot model fixed effect slopes
-pdf(file = "../img/rugosity_mod_slopes.pdf", height = 8, width = 5)
+pdf(file = "../img/canopy_rough_slopes.pdf", height = 5, width = 12)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = mod_pred, 
@@ -93,51 +137,94 @@ ggplot() +
     shape = 21, colour = "black") + 
   geom_text(data = mod_pred,
     aes(x = estimate, y = term, colour = group, label = psig),
-    size = 8, nudge_y = 0.1) + 
+    size = 8) + 
+  facet_wrap(~resp, scales = "free_x", nrow = 1) + 
   theme_bw() + 
   theme(legend.position = "none") + 
   labs(x = "Estimate", y = "")
 dev.off()
 
-pred_names <- c("tree_shannon_std", "tree_dens_std", "cov_diam_std", "wi_sum_std", "mi_sum_std")
-
-# Look at model predicted values and random effects
-re_df <- do.call(rbind, lapply(pred_names, function(x) {
-  out <- as.data.frame(ggpredict(rug_lmer, 
-      terms = c(x, "site"), type = "re"))
-  out$pred <- x
-  return(out) 
-}))
-
-pdf(file = "../img/rugosity_mod_re.pdf", height = 8, width = 12)
-ggplot() + 
-  geom_line(data = re_df, 
-    aes(x = x, y = predicted, colour = group)) + 
-  facet_wrap(~pred, scales = "free_x") + 
-  theme_bw() + 
-  labs(x = "", y = "Canopy rugosity")
-dev.off()
-
-fe_df <- do.call(rbind, lapply(pred_names, function(x) {
-  out <- as.data.frame(ggpredict(rug_lmer, terms = x, type = "fe"))
-  out$pred <- x
-  return(out)
-}))
-
-pdf(file = "../img/rugosity_mod_fe.pdf", height = 8, width = 12)
-ggplot() + 
-  geom_ribbon(data = fe_df, aes(x = x, ymin = conf.low, ymax = conf.high), 
-    alpha = 0.5) +
-  geom_line(data = fe_df, aes(x = x, y = predicted)) + 
-  facet_wrap(~pred, scales = "free_x") + 
-  theme_bw() + 
-  labs(x = "", y = "Canopy rugosity")
-dev.off()
-
-# Output best model stats
-sink("../out/rugosity_mod_summ.txt")
-summary(rug_lmer)
+# Output model stats
+sink("../out/canopy_rough_mod_summ.txt")
+lapply(mod_list, summary)
 sink()
 
-# Model of canopy top roughness
+# Models of just Kilwa, just Bicuar 
+cover_mean_lm_bicuar <- lm(cover_mean ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std,
+  data = dat_std[grepl("ABG", dat_std$plot_id),])
 
+cover_mean_lm_mtarure <- lm(cover_mean ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("TKW", dat_std$plot_id),])
+
+chm_mean_lm_bicuar <- lm(chm_mean ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("ABG", dat_std$plot_id),])
+
+chm_mean_lm_mtarure <- lm(chm_mean ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("TKW", dat_std$plot_id),])
+
+chm_sd_lm_bicuar <- lm(chm_sd ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("ABG", dat_std$plot_id),])
+
+chm_sd_lm_mtarure <- lm(chm_sd ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("TKW", dat_std$plot_id),])
+
+rough_mean_lm_bicuar <- lm(rough_mean ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("ABG", dat_std$plot_id),])
+
+rough_mean_lm_mtarure <- lm(rough_mean ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("TKW", dat_std$plot_id),])
+
+rough_sd_lm_bicuar <- lm(rough_sd ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("ABG", dat_std$plot_id),])
+
+rough_sd_lm_mtarure <- lm(rough_sd ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("TKW", dat_std$plot_id),])
+
+rc_lm_bicuar <- lm(rc ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("ABG", dat_std$plot_id),])
+
+rc_lm_mtarure <- lm(rc ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std + wi_sum_std, 
+  data = dat_std[grepl("TKW", dat_std$plot_id),])
+
+mod_list_site <- list(
+  cover_mean_lm_bicuar, cover_mean_lm_mtarure,
+  chm_mean_lm_bicuar, chm_mean_lm_mtarure,
+  chm_sd_lm_bicuar, chm_sd_lm_mtarure,
+  rough_mean_lm_bicuar, rough_mean_lm_mtarure,
+  rough_sd_lm_bicuar, rough_sd_lm_mtarure,
+  rc_lm_bicuar, rc_lm_mtarure)
+
+mod_pred <- do.call(rbind, lapply(mod_list_site, function(x) {
+  get_model_data(x, type = "est") %>%
+  mutate(psig = case_when(
+      p.value <= 0.05 ~ "*",
+      p.value <= 0.01 ~ "**",
+      p.value <= 0.001 ~ "***",
+      TRUE ~ NA_character_), 
+    resp = as.character(x$call$formula)[2]) %>%
+  mutate(
+    site = ifelse(grepl("ABG", as.character(x$call$data)[3]), "Bicuar", "Mtarure"),
+    resp = names(resp_names)[match(resp, resp_names)],
+    term = names(pred_names)[match(term, pred_names)])
+  }))
+
+pdf(file = "../img/canopy_rough_slopes_sites.pdf", height = 5, width = 12)
+ggplot() +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_errorbarh(data = mod_pred, 
+    aes(xmin = conf.low, xmax = conf.high, y = term, colour = site),
+    position = position_dodge(width = 0.5), height = 0) + 
+  geom_point(data = mod_pred,
+    aes(x = estimate, y = term, fill = site),
+    shape = 21, position = position_dodge(width = 0.5), colour = "black") + 
+  geom_text(data = mod_pred,
+    aes(x = estimate, y = term, colour = site, label = psig),
+    position = position_dodge(width = 0.5), size = 8) + 
+  scale_colour_manual(values = pal[1:2], guide = "none") + 
+  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  facet_wrap(~resp, scales = "free_x", nrow = 1) + 
+  theme_bw() + 
+  guides(fill = guide_legend(override.aes = list(size = 5))) +
+  theme(legend.position = "bottom") + 
+  labs(x = "Estimate", y = "")
+dev.off()

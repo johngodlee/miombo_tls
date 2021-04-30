@@ -1,35 +1,34 @@
 > summary(rug_lmer)
 Linear mixed model fit by REML ['lmerMod']
-Formula: rc ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std +  
-    wi_sum_std + (1 | site)
+Formula: rc ~ tree_shannon_std + tree_dens_std + cov_diam_std + mi_sum_std +      wi_sum_std + (1 | site)
    Data: dat_std
 
-REML criterion at convergence: 165.1
+REML criterion at convergence: 163.4
 
 Scaled residuals: 
     Min      1Q  Median      3Q     Max 
--1.6624 -0.4323  0.0464  0.4287  1.6623 
+-1.3428 -0.4819  0.0724  0.4488  1.6513 
 
 Random effects:
  Groups   Name        Variance Std.Dev.
- site     (Intercept)  9431     97.1   
- Residual             18466    135.9   
+ site     (Intercept)  7690     87.7   
+ Residual             16017    126.6   
 Number of obs: 18, groups:  site, 2
 
 Fixed effects:
                  Estimate Std. Error t value
-(Intercept)        891.12      76.44   11.66
-tree_shannon_std   -19.34      49.29   -0.39
-tree_dens_std     -295.29     275.60   -1.07
-cov_diam_std        -2.39      40.95   -0.06
-mi_sum_std          49.71      45.99    1.08
-wi_sum_std         196.88     262.96    0.75
+(Intercept)        894.08      69.43   12.88
+tree_shannon_std   -22.26      45.66   -0.49
+tree_dens_std     -333.12     255.88   -1.30
+cov_diam_std        -2.85      38.04   -0.07
+mi_sum_std          49.02      42.78    1.15
+wi_sum_std         230.98     244.26    0.95
 
 Correlation of Fixed Effects:
             (Intr) tr_sh_ tr_dn_ cv_dm_ m_sm_s
 tr_shnnn_st -0.083                            
-tre_dns_std  0.063 -0.252                     
-cov_dim_std  0.057 -0.468  0.054              
-mi_sum_std   0.041 -0.309 -0.151  0.460       
-wi_sum_std  -0.058  0.190 -0.987 -0.055  0.098
+tre_dns_std  0.063 -0.246                     
+cov_dim_std  0.057 -0.464  0.049              
+mi_sum_std   0.041 -0.306 -0.156  0.458       
+wi_sum_std  -0.058  0.184 -0.987 -0.050  0.102
 > sink()

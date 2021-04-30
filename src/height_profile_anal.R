@@ -120,7 +120,7 @@ dev.off()
 # Add gap fraction
 profile_stats_all <- profile_stats %>%
   left_join(., 
-    gap_frac[gap_frac$method == "tls", c("plot_id", "subplot", "gap_frac")],
+    gap_frac[gap_frac$method == "tls", c("plot_id", "subplot", "cover")],
     by = c("plot_id", "subplot"))
 
 # Add site
@@ -232,13 +232,13 @@ cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std +
   data = subplot_trees_summ)
 
 # Gap fraction
-gap_frac_div_mod <- lmer(gap_frac ~ rich_std + hegyi_std + diam_cov_std + 
+cover_div_mod <- lmer(cover ~ rich_std + hegyi_std + diam_cov_std + 
   (1 | plot_id), 
   data = subplot_trees_summ)
 
 # Make list of models
 mod_list <- list(layer_div_mod, auc_canopy_div_mod, dens_peak_height_div_mod,
-  q99_height_div_mod, cum_lm_se_div_mod, gap_frac_div_mod)
+  q99_height_div_mod, cum_lm_se_div_mod, cover_div_mod)
 
 # Look at model predicted values and random effects
 fe_df <- do.call(rbind, lapply(mod_list, function(x) {
@@ -279,11 +279,11 @@ auc_canopy_null_mod <- lmer(auc_canopy ~ ba_std + (1 | plot_id), data = subplot_
 dens_peak_height_null_mod <- lmer(dens_peak_height ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
 q99_height_null_mod <- lmer(height_q99 ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
 cum_lm_se_null_mod <- lmer(cum_lm_se ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
-gap_frac_null_mod <- lmer(gap_frac ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+cover_null_mod <- lmer(cover ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
 
 null_mod_list <- list(layer_null_mod, auc_canopy_null_mod,
   dens_peak_height_null_mod, q99_height_null_mod, 
-  cum_lm_se_null_mod, gap_frac_null_mod)
+  cum_lm_se_null_mod, cover_null_mod)
 
 stopifnot(length(mod_list) == length(null_mod_list))
 
@@ -314,8 +314,8 @@ mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
       TRUE ~ NA_character_), 
     resp = names(x@frame)[1]) %>%
   mutate(
-    resp = names(resp_names)[resp == resp_names],
-    term = names(pred_names)[term == pred_names])
+    resp = names(resp_names)[match(resp, resp_names)],
+    term = names(pred_names)[match(term, pred_names)])
   }))
 
 pdf(file = "../img/height_profile_mod_rich_slopes.pdf", height = 5, width = 12)
@@ -374,10 +374,10 @@ cum_lm_se_div_mod_mtarure <- update(cum_lm_se_div_mod,
   data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
 
 # Gap fraction
-gap_frac_div_mod_bicuar <- update(gap_frac_div_mod,
+cover_div_mod_bicuar <- update(cover_div_mod,
   data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
 
-gap_frac_div_mod_mtarure <- update(gap_frac_div_mod,
+cover_div_mod_mtarure <- update(cover_div_mod,
   data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
 
 # List of models
@@ -387,7 +387,7 @@ mod_list_site <- list(
   dens_peak_height_div_mod_bicuar, dens_peak_height_div_mod_mtarure,
   q99_height_div_mod_bicuar, q99_height_div_mod_mtarure,
   cum_lm_se_div_mod_bicuar, cum_lm_se_div_mod_mtarure,
-  gap_frac_div_mod_bicuar, gap_frac_div_mod_mtarure)
+  cover_div_mod_bicuar, cover_div_mod_mtarure)
 
 # Get fixed effects slopes
 mod_pred <- do.call(rbind, lapply(mod_list_site, function(x) {
@@ -400,8 +400,8 @@ mod_pred <- do.call(rbind, lapply(mod_list_site, function(x) {
     resp = names(x@frame)[1]) %>%
   mutate(
     site = ifelse(grepl("ABG", as.character(x@call[3])), "Bicuar", "Mtarure"),
-    resp = names(resp_names)[resp == resp_names],
-    term = names(pred_names)[term == pred_names])
+    resp = names(resp_names)[match(resp, resp_names)],
+    term = names(pred_names)[match(term, pred_names)])
   }))
 
 pdf(file = "../img/height_profile_mod_rich_slopes_sites.pdf", height = 5, width = 12)

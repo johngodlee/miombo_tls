@@ -105,7 +105,7 @@ gap_frac <- function(x) {
   out[9] = rad[4]
 
   out_df <- as.data.frame(out)
-  names(out_df) <- c("plot_id", "subplot", "file", "gap_frac", "lai", 
+  names(out_df) <- c("plot_id", "subplot", "file", "cover", "lai", 
     "direct_above", "diff_above", "direct_below", "diff_below")
   return(out_df)
 }
