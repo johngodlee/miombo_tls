@@ -27,6 +27,8 @@ gap_frac <- read.csv("../dat/gap_frac.csv")
 
 ripley_list <- readRDS("../dat/height_profile_ripley.rds")
 
+plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+
 # Plot all profiles together
 all_bins$plot_subplot <- paste(all_bins$plot_id, all_bins$subplot, sep = "_")
 all_bins$site <- ifelse(grepl("ABG", all_bins$plot_id), "Bicuar", "Mtarure")
@@ -92,10 +94,9 @@ ripley_pred_df <- data.frame(x = rep(pred,
   group = rep(names(ripley_pred)[!unlist(lapply(ripley_pred, is.null))], 
     each = length(pred)))
 
-ripley_pred_df$plot_id <- gsub("(^[A-Z][0-9]+).*", "\\1", ripley_pred_df$group)
-ripley_pred_df$plot_id <- factor(ripley_pred_df$plot_id, 
-  levels = c(paste0("P", seq_len(15)), paste0("S", c(3,5,7)), 
-    paste0("W", c(9,11,18,26))))
+ripley_pred_df$plot_id <- plot_id_lookup$seosaw_id[
+  match(gsub("(^[A-Z][0-9]+).*", "\\1", ripley_pred_df$group), plot_id_lookup$plot_id, )]
+ripley_pred_df$site <- ifelse(grepl("ABG", ripley_pred_df$plot_id), "Bicuar", "Mtarure")
 
 # Create envelope simulations from uniform distributions
 n <- 100
@@ -113,6 +114,18 @@ ggplot() +
   geom_line(data = ripley_pred_df, 
     aes(x = x, y = y, group = group), colour = pal[1]) +
   facet_wrap(~plot_id) + 
+  labs(x = "Normalized Distance", y = "Total Proportion") + 
+  theme_bw() + 
+  theme(legend.position = "none")
+dev.off()
+
+# Ripley's L per site
+pdf(file = "../img/height_profile_ripley.pdf", height = 8, width = 12)
+ggplot() + 
+  geom_line(data = envelope_df, aes(x = x, y = y, group = group), alpha = 0.5) + 
+  geom_line(data = ripley_pred_df, 
+    aes(x = x, y = y, colour = site, group = group)) +
+  scale_colour_manual(name = "Site", values = pal[1:2]) + 
   labs(x = "Normalized Distance", y = "Total Proportion") + 
   theme_bw() + 
   theme(legend.position = "none")
@@ -151,13 +164,13 @@ bivar_plot_list <- lapply(bivar_list, function(x) {
     geom_smooth(method = "lm", colour = "black", se = TRUE) + 
     geom_smooth(method = "lm", aes(colour = site), se = FALSE) + 
     scale_fill_manual(name = "Site", values = pal[1:2]) + 
+    scale_colour_manual(name = "Site", values = pal[1:2]) + 
     labs(x = x$xvar, y = x$yvar) + 
     theme_bw() + 
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank())
     })
-# Bicuar red, Mtrarure blue
 
 pdf(file = "../img/height_profile_stat_bivar.pdf", width = 18, height = 12)
 wrap_plots(bivar_plot_list) + 
@@ -184,6 +197,44 @@ wrap_plots(hist_list) +
   theme(legend.position = "bottom")
 dev.off()
 
+# Bivariate plots of explan. variables
+explan_names <- c("rich", "hegyi", "diam_cov", "ba", "point_dens")
+
+explan_mat <- t(combn(explan_names, 2)) %>%
+  as.data.frame() %>%
+  arrange(V1, V2)
+
+subplot_trees_summ$site <- ifelse(grepl("ABG", subplot_trees_summ$plot_id), 
+  "Bicuar", "Mtarure")
+
+explan_list <- apply(explan_mat, 1, function(x) {
+  out <- subplot_trees_summ[,c(x, "site")]
+  names(out) <- c("x", "y", "site")
+  out$xvar <- names(pred_names)[pred_names == x[1]]
+  out$yvar <- names(pred_names)[pred_names == x[2]]
+  return(out)
+    })
+
+explan_plot_list <- lapply(explan_list, function(x) {
+  ggplot(x, aes(x = x, y = y)) + 
+    geom_point(colour = "black", aes(fill = site), shape = 21) + 
+    geom_smooth(method = "lm", colour = "black", se = TRUE) + 
+    geom_smooth(method = "lm", aes(colour = site), se = FALSE) + 
+    scale_fill_manual(name = "Site", values = pal[1:2]) + 
+    scale_colour_manual(name = "Site", values = pal[1:2]) + 
+    labs(x = x$xvar, y = x$yvar) + 
+    theme_bw() + 
+    theme(
+      axis.text = element_blank(),
+      axis.ticks = element_blank())
+    })
+
+pdf(file = "../img/subplot_stand_struc_bivar.pdf", width = 15, height = 10)
+wrap_plots(explan_plot_list) + 
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+dev.off()
+
 # Join stand structure with height profile data
 subplot_dat <- subplot_trees_summ %>%
   left_join(., profile_stats_all, c("plot_id", "subplot")) %>%
@@ -192,38 +243,38 @@ subplot_dat <- subplot_trees_summ %>%
   mutate(site = ifelse(grepl("ABG", plot_id), "Bicuar", "Mtarure"))
 
 # Layer diversity vs. richness model
-layer_div_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std +  
+layer_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
   (1 | plot_id), 
   data = subplot_dat)
 
 # Area under curve (AUC) vs. richness model
-auc_canopy_div_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + 
+auc_canopy_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
   (1 | plot_id),
   data = subplot_dat)
 
 # Peak density height vs. richness model
-dens_peak_height_div_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + 
+dens_peak_height_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
   (1 | plot_id), 
   data = subplot_dat)
 
 # q99 height vs. richness model
-q99_height_div_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + 
+q99_height_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
   (1 | plot_id), 
   data = subplot_dat)
 
 # Cumulative height profile linear model standard error vs richness model
-cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + 
+cum_lm_se_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
   (1 | plot_id), 
   data = subplot_dat)
 
 # Gap fraction
-cover_div_mod <- lmer(cover ~ rich_std + hegyi_std + diam_cov_std + 
+cover_mod <- lmer(cover ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
   (1 | plot_id), 
   data = subplot_dat)
 
 # Make list of models
-mod_list <- list(layer_div_mod, auc_canopy_div_mod, dens_peak_height_div_mod,
-  q99_height_div_mod, cum_lm_se_div_mod, cover_div_mod)
+mod_list <- list(layer_mod, auc_canopy_mod, dens_peak_height_mod,
+  q99_height_mod, cum_lm_se_mod, cover_mod)
 
 # Look at model predicted values and random effects
 fe_df <- do.call(rbind, lapply(mod_list, function(x) {
@@ -324,55 +375,55 @@ dev.off()
 # Run some models separately for Bicuar and Kilwa
 
 # Layer div.
-layer_div_mod_bicuar <- update(layer_div_mod, 
+layer_mod_bicuar <- update(layer_mod, 
   data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
-layer_div_mod_mtarure <- update(layer_div_mod, 
+layer_mod_mtarure <- update(layer_mod, 
   data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Area under curve (AUC) vs. richness model
-auc_canopy_div_mod_bicuar <- update(auc_canopy_div_mod,
+auc_canopy_mod_bicuar <- update(auc_canopy_mod,
   data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
-auc_canopy_div_mod_mtarure <- update(auc_canopy_div_mod,
+auc_canopy_mod_mtarure <- update(auc_canopy_mod,
   data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Peak density height vs. richness model
-dens_peak_height_div_mod_bicuar <- update(dens_peak_height_div_mod,
+dens_peak_height_mod_bicuar <- update(dens_peak_height_mod,
   data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
-dens_peak_height_div_mod_mtarure <- update(dens_peak_height_div_mod,
+dens_peak_height_mod_mtarure <- update(dens_peak_height_mod,
   data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # q99 height vs. richness model
-q99_height_div_mod_bicuar <- update(q99_height_div_mod,
+q99_height_mod_bicuar <- update(q99_height_mod,
   data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
-q99_height_div_mod_mtarure <- update(q99_height_div_mod,
+q99_height_mod_mtarure <- update(q99_height_mod,
   data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Cumulative height profile linear model standard error vs richness model
-cum_lm_se_div_mod_bicuar <- update(cum_lm_se_div_mod,
+cum_lm_se_mod_bicuar <- update(cum_lm_se_mod,
   data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
-cum_lm_se_div_mod_mtarure <- update(cum_lm_se_div_mod,
+cum_lm_se_mod_mtarure <- update(cum_lm_se_mod,
   data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Gap fraction
-cover_div_mod_bicuar <- update(cover_div_mod,
+cover_mod_bicuar <- update(cover_mod,
   data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
-cover_div_mod_mtarure <- update(cover_div_mod,
+cover_mod_mtarure <- update(cover_mod,
   data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # List of models
 mod_list_site <- list(
-  layer_div_mod_bicuar, layer_div_mod_mtarure, 
-  auc_canopy_div_mod_bicuar, auc_canopy_div_mod_mtarure,
-  dens_peak_height_div_mod_bicuar, dens_peak_height_div_mod_mtarure,
-  q99_height_div_mod_bicuar, q99_height_div_mod_mtarure,
-  cum_lm_se_div_mod_bicuar, cum_lm_se_div_mod_mtarure,
-  cover_div_mod_bicuar, cover_div_mod_mtarure)
+  layer_mod_bicuar, layer_mod_mtarure, 
+  auc_canopy_mod_bicuar, auc_canopy_mod_mtarure,
+  dens_peak_height_mod_bicuar, dens_peak_height_mod_mtarure,
+  q99_height_mod_bicuar, q99_height_mod_mtarure,
+  cum_lm_se_mod_bicuar, cum_lm_se_mod_mtarure,
+  cover_mod_bicuar, cover_mod_mtarure)
 
 # Get fixed effects slopes
 mod_pred <- do.call(rbind, lapply(mod_list_site, function(x) {
@@ -414,11 +465,9 @@ dev.off()
 mod_spec <- "
 # Regressions
 cover ~ rich_std
-cover ~ b*hegyi_std 
-hegyi_std ~ a*rich_std
-
-# Indirect
-rich_cover_via_hegyi := a*b
+cover ~ hegyi_std 
+cover ~ diam_cov_std
+cover ~ ba_std
 "
 
 # Fit model
@@ -427,6 +476,7 @@ cover_path <- sem(mod_spec,
 
 # Plot path diagram
 pdf(file = "../img/cover_path_diag.pdf", width = 3, height = 3)
-semPaths(cover_path, "mod", "est")
+semPaths(cover_path, "mod", "est",
+  layout = "tree")
 dev.off()
 

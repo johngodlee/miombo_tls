@@ -144,7 +144,7 @@ Linear mixed effects models tested the effects of diversity and stand structural
 
 \subsection{Vertical canopy complexity}
 
-The linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across the measures of canopy structure (\autoref{height_profile_mods_fe}), but the effect sizes were not significant for any model (\autoref{height_profile_mod_rich_slopes}). On the other hand, stand physical structure had a much greater effect on canopy structure variables. The Hegyi index and coefficient of variation of stem diameter had positive significant effects on foliage density (AUC gap fraction), effective number of layers, and canopy max height.
+The linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across the measures of canopy structure, but the effect sizes were not significant for any model (\autoref{height_profile_mod_rich_slopes}). On the other hand, stand structure, measured by the Hegyi index, the Coefficient of Variation of stem diameter and total stem basal area, had a much greater effect on canopy structure variables. The Hegyi index had a positive significant effect on canopy cover, while basal area had positive significant effects on total foliage density, layer diversity, and canopy height, with strong non-significant effects on non-uniformity of vertical foliage distribution and the height of peak foliage density.
 
 \begin{figure}[H]
 \centering
@@ -155,18 +155,39 @@ The linear mixed effects models showed that species richness of the subplot neig
 
 \subsection{Canopy rugosity}
 
-None of the stand structure metrics or diversity metrics had significant effects on whole-plot canopy rugosity, but the model as a whole had a significant effect on canopy rugosity
+Maximum canopy height at the plot-level appears to be positively affected by both tree species diversity and total stem basal area.
+
+Basal area has a positive effect on canopy top roughness. 
+
+Variation in canopy height was increased both by variation in stem diameter and total stem basal area.
+
+The only significant fixed effect on canopy cover at the plot level was the Winkelmass, which measures the spatial clustering of trees.
 
 \begin{figure}[H]
 \centering
-	\includegraphics[width=0.4\textwidth]{rugosity_mod_slopes}
+	\includegraphics[width=\textwidth]{canopy_rough_slopes}
 	\caption{Standardized fixed effect slopes for whole-plot canopy rugosity. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects.}
-	\label{rugosity_mod_slopes}
+	\label{canopy_rough_slopes}
 \end{figure}
+
+\subsection{Comparing subplot and plot measures of canopy structure}
+
+Plot-level and subplot-level canopy structure metrics were highly correlated in many cases (\autoref{canopy_rough_slopes}). Notably, as canopy top rugosity increases, various subplot canopy complexity and density metrics decrease. Additionally, as canopy top roughness increases, many subplot canopy complexity and density metrics increase.
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{plot_subplot_bivar}
+	\caption{Bivariate plots of canopy structural metrics at the subplot and plot-level. Each point represents the mean values of a single plot. Points and linear model fits are coloured according to site. The black linear model combines both sites. Error bars on points are the standard deviation of subplot metrics.}
+	\label{plot_subplot_bivar}
+\end{figure}
+
+
 
 \section{Discussion}
 
 Species diversity didn't have strong effects on canopy structure, but stand structure did.
+
+With the whole plot effect of tree species diversity on canopy height, what we might be seeing is actually an increased canopy height allowing greater species diversity, rather than the other way round.
 
 \subsection{Scaling up from subplots}
 

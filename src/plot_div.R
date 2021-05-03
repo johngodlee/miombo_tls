@@ -75,9 +75,11 @@ bray_clust <- hclust(bray, method = "average")
 
 nmds_plots$bray_clust <- cutree(bray_clust, 3)
 nmds_plots$man_clust <- case_when(
+  nmds_plots$plot_id %in% c("P1", "P2", "P3", "P4", "P5", "P6", "P7", 
+    "P8", "P10", "P11", "P12", "P14", "S5", "W11", "W18", "W26") ~ "1",
   nmds_plots$plot_id %in% c("P9", "P13", "P15") ~ "2",
-  grepl("W|S", nmds_plots$plot_id) ~ "3",
-  TRUE ~ "1")
+  nmds_plots$plot_id %in% c("S3", "S7", "W9") ~ "3",
+  TRUE ~ NA_character_)
 
 # Split by plot
 trees_split <- split(trees_all, trees_all$plot_id)
@@ -140,13 +142,14 @@ plot_summ <- stems_all %>%
   group_by(plot_id) %>%
   summarise(
     rich = length(unique(species_name_clean)),
-    sd_diam = sd(diam, na.rm = TRUE),
-    mean_diam = mean(diam, na.rm = TRUE),
+    diam_sd = sd(diam, na.rm = TRUE),
+    diam_mean = mean(diam, na.rm = TRUE),
+    ba = sum(pi * (diam/2)^2, na.rm = TRUE),
     stem_dens = n(),
     tree_dens = length(unique(tree_id))
     ) %>%
   mutate(
-    cov_diam = sd_diam / mean_diam * 100,
+    diam_cov = diam_sd / diam_mean * 100,
     ) %>%
   left_join(., shannon, "plot_id") %>%
   left_join(., mi_sum, "plot_id") %>%

@@ -65,11 +65,13 @@ bivar_comb <- crossing(resp_vec, pred_vec)
 bivar_list <- apply(bivar_comb, 1, function(x) {
   out <- plot_agg[,c(x, gsub("_mean", "_sd", x[2]), "plot_id")]
   names(out) <- c("x", "y", "y_sd", "plot_id")
-  out$xvar <- paste("Plot", tolower(names(resp_names)[match(gsub("_plot", "", x[1]), resp_names)]))
-  out$yvar <- paste("Subplot", tolower(names(resp_names)[match(gsub("_subplot_mean", "", x[2]), resp_names)]))
+  out$xvar <- paste("Plot", names(resp_names)[match(gsub("_plot", "", x[1]), resp_names)])
+  out$yvar <- paste("Subplot", names(resp_names)[match(gsub("_subplot_mean", "", x[2]), resp_names)])
   out$site <- ifelse(grepl("ABG", out$plot_id), "Bicuar", "Mtarure")
   return(out)
     })
+
+bivar_df <- do.call(rbind, bivar_list)
 
 bivar_plot_list <- lapply(bivar_list, function(x) {
   ggplot(x, aes(x = x, y = y)) + 
@@ -86,8 +88,8 @@ bivar_plot_list <- lapply(bivar_list, function(x) {
       axis.ticks = element_blank())
     })
 
-pdf(file = "../img/plot_subplot_bivar.pdf", width = 18, height = 12)
+pdf(file = "../img/plot_subplot_bivar.pdf", width = 25, height = 10)
 wrap_plots(bivar_plot_list) + 
-  plot_layout(guides = "collect") &
+  plot_layout(ncol = 8, guides = "collect") &
   theme(legend.position = "bottom")
 dev.off()

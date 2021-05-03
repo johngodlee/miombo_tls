@@ -25,14 +25,28 @@ resp_names <- c(
   "Rugosity" = "rc")
 
 pred_names <- c(
-  "Shannon" = "tree_shannon_std",
-  "Stem density" = "tree_dens_std",
-  "CoV diam." = "cov_diam_std",
+  "Basal area" = "ba",
+  "Basal area" = "ba_std",
+  "Stem Shannon" = "stem_shannon",
+  "Stem Shannon" = "stem_shannon_std",
+  "Tree Shannon" = "tree_shannon",
+  "Tree Shannon" = "tree_shannon_std",
+  "Tree density" = "tree_dens",
+  "Tree density" = "tree_dens_std",
+  "Spatial mingling" = "mi_sum",
   "Spatial mingling" = "mi_sum_std",
+  "Winkelmass" = "wi_sum",
   "Winkelmass" = "wi_sum_std",
+  "Richness" = "rich",
   "Richness" = "rich_std",
+  "Hegyi" = "hegyi",
   "Hegyi" = "hegyi_std",
-  "CoV Diam." = "diam_cov_std")
+  "CoV diam." = "diam_cov",
+  "CoV diam." = "diam_cov_std",
+  "Mean diam." = "diam_mean",
+  "Mean diam." = "diam_mean_std",
+  "Point density" = "point_dens",
+  "Point density" = "point_dens_std")
 
 
 #' Effective number of layers in a point cloud distribution
@@ -430,7 +444,7 @@ rgl_init <- function(new.device = FALSE, bg = "white", width = 640) {
   rgl.viewpoint(theta = 15, phi = 20, zoom = 1)
 }
 
-#' Hegyi index
+#' Point centric Hegyi index
 #'
 #' @param 
 #'
@@ -441,9 +455,32 @@ rgl_init <- function(new.device = FALSE, bg = "white", width = 640) {
 #' 
 #' @export
 #' 
-hegyi <- function(dbh, dist) {
+hegyiPoint <- function(dbh, dist) {
   eq1 <- 1 / dist * dbh
   log(sum(eq1))
+}
+
+#' Hegyi index - Hegyi 1974
+#'
+#' @param dbh vector of DBH (diameter at breast height) measurements of competitor trees
+#' @param dist vector of distances from focal tree to competitor trees
+#' @param focal_dbh DBH of focal tree
+#'
+#' @return atomic vector of competition index for focal tree
+#' 
+#' @details A spatially explicit competition index which takes into account DBH
+#' and distance of competitor trees. The iterative Hegyi index is a variant 
+#' which picks competitors based on minimum distance of neighbouring trees 
+#' within arc zones around the focal tree.
+#' 
+#' @references Hegyi, F., 1974. A simulation model for managing jack-pine 
+#' stands. In: Fries, J. (Ed.), Growth Models for Tree and Stand Simulation. 
+#' Royal College of Forestry, Stockholm, pages. 74–90.
+#' 
+#' @export
+#'
+hegyi <- function(dbh, dist, focal_dbh) {
+	sum((dbh / focal_dbh) / dist)
 }
 
 #' Format a plus-minus number combo

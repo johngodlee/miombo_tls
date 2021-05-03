@@ -86,20 +86,25 @@
 
 ### Subplot
 
-* Stand structure
-	* Hegyi index - Increases with increasing stem diameter and proximity to subplot centre
-	* Basal area - of trees within subplot
-	* CoV stem diameter - of trees within subplot
+* Explan:
+	* Stand structure
+		* Hegyi index - Increases with increasing stem diameter and proximity to subplot centre. 
+		* Basal area - of trees within subplot
+		* CoV stem diameter - of trees within subplot
+	* Species diversity
+		* Species richness - Number species in neighbourhood
 * Canopy structure
 	* Canopy cover - subplot centre from TLS
 	* Crown area - Sum of crown areas of trees in subplot
 	* Layer diversity - Effective number of layers (sensu Ehbrecht et al. (2016))
 	* AUC canopy - Area under the curve of foliage density
-	* Max canopy height - 
-	* Peak foliage density height - 
+	* Peak foliage density height - Height at which the peak foliage density is found
 	* Point CoV - Coefficient of Variation of point height distribution
-* Species diversity
-	* Species richness - 
+
+Discarded stats:
+
+* Point density - not variable enough at low competition, covaries with Hegyi
+* Max canopy height - Too stochastics within a subplot.
 
 ### Whole plot
 
