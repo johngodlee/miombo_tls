@@ -6,8 +6,8 @@ pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "grey", "#E0E0E0")
 
 resp_names <- c(  
   "AUC profile" = "auc_canopy",
-  "Cum. mod. slope" = "cum_lm_se",
-  "Cum. mod. SE" = "cum_lm_slope",
+  "Cum. mod. SE" = "cum_lm_se",
+  "Cum. mod. slope" = "cum_lm_slope",
   "Height peak dens." = "dens_peak_height",
   "Canopy cover" = "cover",
   "Canopy height 95th" = "height_q95",

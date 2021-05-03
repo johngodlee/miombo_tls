@@ -11,6 +11,8 @@ library(sjPlot)
 library(ggplot2)
 library(ggeffects)
 library(patchwork)
+library(lavaan)
+library(semPaths)
 
 source("functions.R")
 
@@ -424,3 +426,24 @@ ggplot() +
   theme(legend.position = "bottom") + 
   labs(x = "Estimate", y = "")
 dev.off()
+
+# Path analysis for Bicuar plots
+mod_spec <- "
+# Regressions
+cover ~ rich_std
+cover ~ b*hegyi_std 
+hegyi_std ~ a*rich_std
+
+# Indirect
+rich_cover_via_hegyi := a*b
+"
+
+# Fit model
+cover_path <- sem(mod_spec, 
+  data = subplot_trees_summ[subplot_trees_summ$site == "Bicuar",])
+
+# Plot path diagram
+pdf(file = "../img/cover_path_diag.pdf", width = 3, height = 3)
+semPaths(cover_path, "mod", "est")
+dev.off()
+

@@ -10,7 +10,7 @@ library(dplyr)
 library(sf)
 library(readxl)
 library(raster)
-library(gridExtra)
+library(patchwork)
 
 source("functions.R")
 
