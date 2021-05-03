@@ -82,3 +82,39 @@
 		* Also addresses whether gap fraction is a result of species diversity
 	* Mixed model selection - best combination of canopy structure attributes to explain grass volume //
 
+## Variables
+
+### Subplot
+
+* Stand structure
+	* Hegyi index - Increases with increasing stem diameter and proximity to subplot centre
+	* Basal area - of trees within subplot
+	* CoV stem diameter - of trees within subplot
+* Canopy structure
+	* Canopy cover - subplot centre from TLS
+	* Crown area - Sum of crown areas of trees in subplot
+	* Layer diversity - Effective number of layers (sensu Ehbrecht et al. (2016))
+	* AUC canopy - Area under the curve of foliage density
+	* Max canopy height - 
+	* Peak foliage density height - 
+	* Point CoV - Coefficient of Variation of point height distribution
+* Species diversity
+	* Species richness - 
+
+### Whole plot
+
+* Stand structure
+	* Basal area - 
+	* Stem density (tree density?) - 
+	* Spatial mingling index - Increases with species mixing
+	* Winkelmass - Increases with irregularity of stem layout
+* Canopy structure
+	* Canopy height model SD - Roughness of canopy top - 
+	* Rugosity - Whole canopy uniformity (sensu Hardiman et al. (2011))
+	* Mean canopy topographic roughness index - Increases with waviness of canopy, from {raster}
+	* Canopy cover mean - subplot centre from TLS
+* Species diversity
+	* Shannon index - 
+	* Species richness - 
+
+## Notes

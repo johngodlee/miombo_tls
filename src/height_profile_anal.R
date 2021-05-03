@@ -12,7 +12,7 @@ library(ggplot2)
 library(ggeffects)
 library(patchwork)
 library(lavaan)
-library(semPaths)
+library(semPlot)
 
 source("functions.R")
 
@@ -21,11 +21,11 @@ all_bins <- read.csv("../dat/height_profile_bins.csv")
 
 profile_stats <- read.csv("../dat/height_profile_summ.csv")
 
+subplot_trees_summ <- read.csv("../dat/subplot_summ.csv")
+
 gap_frac <- read.csv("../dat/gap_frac.csv")
 
 ripley_list <- readRDS("../dat/height_profile_ripley.rds")
-
-subplot_trees <- read.csv("../dat/subplot_trees.csv")
 
 # Plot all profiles together
 all_bins$plot_subplot <- paste(all_bins$plot_id, all_bins$subplot, sep = "_")
@@ -184,25 +184,8 @@ wrap_plots(hist_list) +
   theme(legend.position = "bottom")
 dev.off()
 
-# Add some extra columns to subplot trees
-subplot_trees$crown_area <- pi * subplot_trees$x_dim * subplot_trees$y_dim
-
-# Summarise subplot tree data
-# Join with height profile data
-
-subplot_trees_summ <- subplot_trees %>%
-  filter(!is.na(diam), !is.na(distance)) %>% 
-  group_by(plot_id, subplot) %>%
-  summarise(
-    point_dens = pointDens(diam, distance),
-    hegyi = hegyi(diam, distance),
-    rich = length(unique(species)),
-    ba = sum(pi * (diam/2)^2, na.rm = TRUE),
-    cum_height = sum(height, na.rm = TRUE),
-    crown_area = sum(crown_area, na.rm = TRUE), 
-    diam_sd = sd(diam),
-    diam_mean = mean(diam)) %>%
-  mutate(diam_cov = diam_sd / diam_mean * 100) %>%
+# Join stand structure with height profile data
+subplot_dat <- subplot_trees_summ %>%
   left_join(., profile_stats_all, c("plot_id", "subplot")) %>%
   mutate(across(c("rich", "diam_cov", "hegyi", "ba"), ~as.vector(scale(.x)), 
       .names = "{.col}_std")) %>%
@@ -211,32 +194,32 @@ subplot_trees_summ <- subplot_trees %>%
 # Layer diversity vs. richness model
 layer_div_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std +  
   (1 | plot_id), 
-  data = subplot_trees_summ)
+  data = subplot_dat)
 
 # Area under curve (AUC) vs. richness model
 auc_canopy_div_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + 
   (1 | plot_id),
-  data = subplot_trees_summ)
+  data = subplot_dat)
 
 # Peak density height vs. richness model
 dens_peak_height_div_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + 
   (1 | plot_id), 
-  data = subplot_trees_summ)
+  data = subplot_dat)
 
 # q99 height vs. richness model
 q99_height_div_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + 
   (1 | plot_id), 
-  data = subplot_trees_summ)
+  data = subplot_dat)
 
 # Cumulative height profile linear model standard error vs richness model
 cum_lm_se_div_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + 
   (1 | plot_id), 
-  data = subplot_trees_summ)
+  data = subplot_dat)
 
 # Gap fraction
 cover_div_mod <- lmer(cover ~ rich_std + hegyi_std + diam_cov_std + 
   (1 | plot_id), 
-  data = subplot_trees_summ)
+  data = subplot_dat)
 
 # Make list of models
 mod_list <- list(layer_div_mod, auc_canopy_div_mod, dens_peak_height_div_mod,
@@ -276,12 +259,12 @@ ggplot(re_df) +
 dev.off()
 
 # Check richness models better or worse than model with only basal area
-layer_null_mod <- lmer(layer_div ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
-auc_canopy_null_mod <- lmer(auc_canopy ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
-dens_peak_height_null_mod <- lmer(dens_peak_height ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
-q99_height_null_mod <- lmer(height_q99 ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
-cum_lm_se_null_mod <- lmer(cum_lm_se ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
-cover_null_mod <- lmer(cover ~ ba_std + (1 | plot_id), data = subplot_trees_summ)
+layer_null_mod <- lmer(layer_div ~ ba_std + (1 | plot_id), data = subplot_dat)
+auc_canopy_null_mod <- lmer(auc_canopy ~ ba_std + (1 | plot_id), data = subplot_dat)
+dens_peak_height_null_mod <- lmer(dens_peak_height ~ ba_std + (1 | plot_id), data = subplot_dat)
+q99_height_null_mod <- lmer(height_q99 ~ ba_std + (1 | plot_id), data = subplot_dat)
+cum_lm_se_null_mod <- lmer(cum_lm_se ~ ba_std + (1 | plot_id), data = subplot_dat)
+cover_null_mod <- lmer(cover ~ ba_std + (1 | plot_id), data = subplot_dat)
 
 null_mod_list <- list(layer_null_mod, auc_canopy_null_mod,
   dens_peak_height_null_mod, q99_height_null_mod, 
@@ -342,45 +325,45 @@ dev.off()
 
 # Layer div.
 layer_div_mod_bicuar <- update(layer_div_mod, 
-  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
 layer_div_mod_mtarure <- update(layer_div_mod, 
-  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Area under curve (AUC) vs. richness model
 auc_canopy_div_mod_bicuar <- update(auc_canopy_div_mod,
-  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
 auc_canopy_div_mod_mtarure <- update(auc_canopy_div_mod,
-  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Peak density height vs. richness model
 dens_peak_height_div_mod_bicuar <- update(dens_peak_height_div_mod,
-  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
 dens_peak_height_div_mod_mtarure <- update(dens_peak_height_div_mod,
-  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # q99 height vs. richness model
 q99_height_div_mod_bicuar <- update(q99_height_div_mod,
-  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
 q99_height_div_mod_mtarure <- update(q99_height_div_mod,
-  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Cumulative height profile linear model standard error vs richness model
 cum_lm_se_div_mod_bicuar <- update(cum_lm_se_div_mod,
-  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
 cum_lm_se_div_mod_mtarure <- update(cum_lm_se_div_mod,
-  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # Gap fraction
 cover_div_mod_bicuar <- update(cover_div_mod,
-  data = subplot_trees_summ[grepl("ABG", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("ABG", subplot_dat$plot_id),])
 
 cover_div_mod_mtarure <- update(cover_div_mod,
-  data = subplot_trees_summ[grepl("TKW", subplot_trees_summ$plot_id),])
+  data = subplot_dat[grepl("TKW", subplot_dat$plot_id),])
 
 # List of models
 mod_list_site <- list(
@@ -440,7 +423,7 @@ rich_cover_via_hegyi := a*b
 
 # Fit model
 cover_path <- sem(mod_spec, 
-  data = subplot_trees_summ[subplot_trees_summ$site == "Bicuar",])
+  data = subplot_dat[subplot_dat$site == "Bicuar",])
 
 # Plot path diagram
 pdf(file = "../img/cover_path_diag.pdf", width = 3, height = 3)
