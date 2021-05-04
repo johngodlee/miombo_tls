@@ -144,7 +144,16 @@ Linear mixed effects models tested the effects of diversity and stand structural
 
 \subsection{Vertical canopy complexity}
 
-The linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across the measures of canopy structure, but the effect sizes were not significant for any model (\autoref{height_profile_mod_rich_slopes}). On the other hand, stand structure, measured by the Hegyi index, the Coefficient of Variation of stem diameter and total stem basal area, had a much greater effect on canopy structure variables. The Hegyi index had a positive significant effect on canopy cover, while basal area had positive significant effects on total foliage density, layer diversity, and canopy height, with strong non-significant effects on non-uniformity of vertical foliage distribution and the height of peak foliage density.
+\begin{figure}[H]
+\centering
+	\includegraphics[width=0.8\textwidth]{subplot_canopy_bivar}
+	\caption{Bivariate relationships between subplot canopy structure metrics (y axis) and diversity and stand structure metrics (x axis). Points and linear model lines of best fit are coloured by site. The black line of best fit is a linear model including both sites.}
+	\label{subplot_canopy_bivar}
+\end{figure}
+
+Species diversity, measured by species richness of the tree neighbourhood around each 10 m diameter subplot, appears to have weak but positive effects on canopy layer diversity and total canopy cover, with possibly weak negative effects on the height of peak canopy density. Stand structural metrics have much stronger positive effects on canopy structure, particularly canopy cover and layer diversity. (\autoref{subplot_canopy_bivar}).
+
+Linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across the measures of canopy structure, but the effect sizes were not significant for any model (\autoref{height_profile_mod_rich_slopes}). On the other hand, stand structural metrics, the Hegyi index, Coefficient of Variation of stem diameter and total stem basal area, had a much greater effect on canopy structure variables. The Hegyi index had a positive significant effect on canopy cover, while basal area had positive significant effects on total foliage density, layer diversity, and canopy height, with strong non-significant effects on non-uniformity of vertical foliage distribution and the height of peak foliage density.
 
 \begin{figure}[H]
 \centering
@@ -155,13 +164,23 @@ The linear mixed effects models showed that species richness of the subplot neig
 
 \subsection{Canopy rugosity}
 
-Maximum canopy height at the plot-level appears to be positively affected by both tree species diversity and total stem basal area.
+Similar to subplot analyses, at the whole-plot level, tree species diversity tended to have weak positive effects on canopy complexity metrics, while stand structural diversity metrics had stronger positive effects (\autoref{canopy_rough_mod_bivar}). Strong positive relationships of basal area on canopy complexity are driven mostly by two plots with particularly low basal area in Mtarure. These plots are sparse thorny savanna, dominated by \textit{Senegalia} spp. (\autoref{nmds}). Indeed, linear models using only Bicuar plots show divergent relationships. These two plots also have particularly low canopy cover, canopy height, and canopy top roughness, despite having similar tree species richness and spatial distribution of trees (Winkelmass) as other plots.
 
-Basal area has a positive effect on canopy top roughness. 
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{nmds}
+	\caption{The first two axes of a Non-metric Multi-Dimensional Scaling (NMDS) analysis of tree species diversity in each plot. Species scores are labelled as black text, while plot scores are labelled as coloured points. Plots can be split into three principal groups: 1) ABG\_9, ABG\_13 and ABG\_15, dominated by \textit{Baikiaea plurijuga}; 2) the other Bicar plots plus TKW\_9, TKW\_13, TKW\_19 and TKW\_21, dominated by \textit{Julbernardia} spp., \textit{Brachystegia} spp. and \textit{Ochna} spp.; 3) TKW\_7, TKW\_10 and TKW\_25, dominated by \textit{Senegalia} spp. and \textit{Vachellia} spp..}
+	\label{nmds}
+\end{figure}
 
-Variation in canopy height was increased both by variation in stem diameter and total stem basal area.
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{canopy_rough_mod_bivar}
+	\caption{Bivariate relationships between whole-plot canopy structure metrics (y axis) and diversiy and stand structure metrics (x axis). Points and linear model lines of best fit are coloured by site. The black line of best fit is a linear model including both sites.}
+	\label{canopy_rough_mod_bivar}
+\end{figure}
 
-The only significant fixed effect on canopy cover at the plot level was the Winkelmass, which measures the spatial clustering of trees.
+Maximum canopy height at the plot-level appears to be positively affected by both tree species diversity and total stem basal area. Basal area has a positive effect on canopy top roughness. Variation in canopy height was increased both by variation in stem diameter and total stem basal area. The only significant fixed effect on canopy cover at the plot level was the Winkelmass, which measures the spatial clustering of trees.
 
 \begin{figure}[H]
 \centering
@@ -174,6 +193,7 @@ The only significant fixed effect on canopy cover at the plot level was the Wink
 
 Plot-level and subplot-level canopy structure metrics were highly correlated in many cases (\autoref{canopy_rough_slopes}). Notably, as canopy top rugosity increases, various subplot canopy complexity and density metrics decrease. Additionally, as canopy top roughness increases, many subplot canopy complexity and density metrics increase.
 
+
 \begin{figure}[H]
 \centering
 	\includegraphics[width=\textwidth]{plot_subplot_bivar}
@@ -184,6 +204,8 @@ Plot-level and subplot-level canopy structure metrics were highly correlated in 
 
 
 \section{Discussion}
+
+We investigated the effects of tree species diversity and structural diversity on several metrics of canopy structure that are hypothesised to affect plot productivity.
 
 Species diversity didn't have strong effects on canopy structure, but stand structure did.
 

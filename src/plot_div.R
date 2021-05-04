@@ -55,19 +55,27 @@ nmds <- metaMDS(tree_ab)
 
 nmds_plots <- as.data.frame(nmds$points) %>%
   rownames_to_column("plot_id") %>%
-  mutate(site = ifelse(grepl("P", plot_id), "Bicuar", "Mtarure"))
+  mutate(site = ifelse(grepl("P", plot_id), "Bicuar", "Mtarure")) %>%
+  left_join(., plot_id_lookup, by = c("plot_id" = "plot_id"))
 
 nmds_species <- as.data.frame(nmds$species) %>%
   rownames_to_column("species")
 
 pdf(file = "../img/nmds.pdf", width = 10, height = 8)
 ggplot() + 
-  geom_label(data = nmds_plots, 
-    aes(x = MDS1, y = MDS2, label = plot_id, colour = site)) +
+  geom_point(data = nmds_plots, 
+    aes(x = MDS1, y = MDS2, fill = site),
+    shape = 21) +
+  geom_label_repel(data = nmds_plots, 
+    aes(x = MDS1, y = MDS2, label = seosaw_id, colour = site)) +
   scale_colour_manual(name = "Site", values = pal[1:2]) + 
+  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  guides(colour = FALSE) + 
   geom_text_repel(data = nmds_species, 
-    aes(x = MDS1, y = MDS2, label = species), size = 2) + 
-  theme_bw()
+    aes(x = MDS1, y = MDS2, label = species), 
+    segment.alpha = 0, size = 2) + 
+  theme_bw() + 
+  theme(legend.position = "bottom")
 dev.off()
 
 bray <- vegdist(tree_ab)

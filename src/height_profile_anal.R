@@ -242,6 +242,46 @@ subplot_dat <- subplot_trees_summ %>%
       .names = "{.col}_std")) %>%
   mutate(site = ifelse(grepl("ABG", plot_id), "Bicuar", "Mtarure"))
 
+# Bivariate plots of responses and predictors in models 
+mod_pred_names <- c("rich", "hegyi", "diam_cov", "ba")
+
+mod_dat_pred <- subplot_dat %>%
+  dplyr::select(site, plot_id, subplot, all_of(mod_pred_names)) %>%
+  gather(key_pred, val_pred, -site, -plot_id, -subplot)
+
+mod_resp_names <- c("layer_div", "auc_canopy", "dens_peak_height", 
+  "height_q99", "cum_lm_se", "cover")
+
+mod_dat_resp <- subplot_dat %>%
+  dplyr::select(site, plot_id, subplot, all_of(mod_resp_names)) %>%
+  gather(key_resp, val_resp, -site, -plot_id, -subplot)
+
+mod_dat_bivar <- left_join(mod_dat_resp, mod_dat_pred, 
+  by = c("site", "plot_id", "subplot"))
+
+mod_dat_bivar$key_resp_pretty <- names(resp_names)[
+  match(mod_dat_bivar$key_resp, resp_names)]
+mod_dat_bivar$key_pred_pretty <- names(pred_names)[
+  match(mod_dat_bivar$key_pred, pred_names)]
+
+pdf(file = "../img/subplot_canopy_bivar.pdf", width = 12, height = 15)
+ggplot() + 
+  geom_point(data = mod_dat_bivar, aes(x = val_pred, y = val_resp, fill = site), 
+    colour = "black", shape = 21, alpha = 0.8) + 
+  geom_smooth(data = mod_dat_bivar, aes(x = val_pred, y = val_resp), method = "lm",
+    colour = "black") + 
+  geom_smooth(data = mod_dat_bivar, aes(x = val_pred, y = val_resp, colour = site), 
+    method = "lm", se = FALSE, size = 0.5) + 
+  scale_colour_manual(name = "Site", values = pal[1:2]) + 
+  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  facet_grid(key_resp_pretty~key_pred_pretty, scales = "free") + 
+  theme_bw() + 
+  theme(
+    legend.position = "bottom",
+    strip.background = element_rect(fill = NA)) +
+  labs(x = "", y = "")
+dev.off()
+
 # Layer diversity vs. richness model
 layer_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
   (1 | plot_id), 

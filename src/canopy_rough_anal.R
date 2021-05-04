@@ -73,6 +73,35 @@ ggplot() +
   theme_bw()
 dev.off()
 
+bivar_mod <- bivar %>%
+  filter(
+    key_resp %in% c("cover_mean", "chm_mean", "chm_sd", "rough_mean", "rc"),
+    key_pred %in% c("tree_shannon", "ba", "diam_cov", "mi_sum", "wi_sum"))
+
+bivar_mod$key_resp_pretty <- names(resp_names)[
+  match(bivar_mod$key_resp, resp_names)]
+
+bivar_mod$key_pred_pretty <- names(pred_names)[
+  match(bivar_mod$key_pred, pred_names)]
+
+pdf(file = "../img/canopy_rough_mod_bivar.pdf", width = 15, height = 15)
+ggplot(bivar_mod) + 
+  geom_point(aes(x = val_pred, y = val_resp, fill = site), 
+    colour = "black", shape = 21) + 
+  geom_smooth(aes(x = val_pred, y = val_resp), method = "lm",
+    colour = "black") + 
+  geom_smooth(aes(x = val_pred, y = val_resp, colour = site), 
+    method = "lm", se = FALSE, size = 0.5) + 
+  scale_colour_manual(name = "Site", values = pal[1:2]) + 
+  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  facet_grid(key_resp_pretty~key_pred_pretty, scales = "free") + 
+  theme_bw() + 
+  theme(
+    legend.position = "bottom",
+    strip.background = element_rect(fill = NA)) +
+  labs(x = "", y = "")
+dev.off()
+
 pdf(file = "../img/plot_canopy_clust_bivar.pdf", width = 18, height = 12)
 ggplot() + 
   geom_point(data = bivar, aes(x = val_pred, y = val_resp, fill = as.character(man_clust)), 
