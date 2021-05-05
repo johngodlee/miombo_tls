@@ -33,6 +33,8 @@ tree_ab <- stems_all %>%
   column_to_rownames("plot_id") %>%
   mutate(across(everything(), ~ifelse(is.na(.x), 0, .x)))
 
+tree_ab_fil <- tree_ab[,colSums(tree_ab) > 1]
+
 # Calculate Shannon diversity
 stem_shannon <- diversity(stem_ab)
 tree_shannon <- diversity(tree_ab)
@@ -51,7 +53,7 @@ trees_all <- stems_all %>%
     species_name_clean = first(na.omit(species_name_clean)))
 
 # NMDS of plots
-nmds <- metaMDS(tree_ab)
+nmds <- metaMDS(tree_ab_fil)
 
 nmds_plots <- as.data.frame(nmds$points) %>%
   rownames_to_column("plot_id") %>%
@@ -75,7 +77,8 @@ ggplot() +
     aes(x = MDS1, y = MDS2, label = species), 
     segment.alpha = 0, size = 2) + 
   theme_bw() + 
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") + 
+  labs(x = "NMDS 1", y = "NMDS 2")
 dev.off()
 
 bray <- vegdist(tree_ab)

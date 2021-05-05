@@ -230,7 +230,8 @@ fov.theta <- function(prop_crop, full_circle_radius_px, focal_length_mm, pixel_p
 spatialMingling <- function(x, y, sp, k = 4, adj = FALSE) {
   dat_sf <- sf::st_as_sf(data.frame(x,y,sp), coords = c("x", "y"))
 
-  dists <- nngeo::st_nn(dat_sf, dat_sf, k = k+1)
+  dists <- suppressMessages(
+    nngeo::st_nn(dat_sf, dat_sf, k = k+1, progress = FALSE))
 
   mi <- unlist(lapply(dists, function(i) {
     1/k * sum(sp[i[1]] != sp[i[-1]])
@@ -268,7 +269,8 @@ spatialMingling <- function(x, y, sp, k = 4, adj = FALSE) {
 winkelmass <- function(x, y, k = 4) {
   dat_sf <- sf::st_as_sf(data.frame(x,y), coords = c("x", "y"))
 
-  dists <- nngeo::st_nn(dat_sf, dat_sf, k = k+1)
+  dists <- suppressMessages(nngeo::st_nn(dat_sf, dat_sf, k = k+1, 
+      progress = FALSE))
 
   a0 <- 360 / k
 
