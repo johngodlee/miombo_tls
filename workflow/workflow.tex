@@ -210,8 +210,15 @@ where $\alpha_{j}$ is the angle between consecutive neighbours and $\alpha_{0}$ 
 \begin{figure}[H]
 \centering
 	\includegraphics[width=\textwidth]{wi_diagram}
-	\caption{Variation in Winkelmass with increasing spatial irregularity of individuals. The top panel shows variation of Winkelmass in a single plot as individuals are sequentially moved to a random location within the plot. Red dotted lines correspond to the panels below which show the spatial distribution of individuals after a given number of random individual movements.}
+	\caption{Variation in Winkelmass with increasing spatial irregularity of individuals. The top panel shows variation of Winkelmass in \wireps{} plots as individuals are sequentially moved to a random location within the plot. Red dotted lines correspond to the panels below which show the spatial distribution of individuals after a given number of random individual movements.}
 	\label{wi_diagram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{wi_k}
+	\caption{Variation in Winkelmass with increasing number of neighbours $k$ considered in the calculation. \wireps{} replicate plots were used, each with \wistart{} random individual movements, as in \autoref{wi_diagram}.}
+	\label{wi_k}
 \end{figure}
 
 To estimate tree spatial structure in subplots we used an adapted version of the Iterative Hegyi index ($H_{i}$) \citep{Hegyi1974}. Our adapted formula allows the index to be based on a point rather than a focal tree, transforming it from a tree-centric competition index to a point-centric crowding index:

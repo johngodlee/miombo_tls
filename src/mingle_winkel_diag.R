@@ -164,7 +164,8 @@ xy_vec <- seq(2,50, 4)
 dat <- expand.grid(xy_vec, xy_vec)
 names(dat) <- c("x", "y")
 
-wi_list <- replicate(1, dat, simplify = FALSE)
+wi_reps <- 20
+wi_list <- replicate(20, dat, simplify = FALSE)
 wi_list <- lapply(wi_list, function(x) {
   x$adj <- 0
   x
@@ -173,7 +174,7 @@ wi_list <- list(wi_list)
 
 coord_repls <- seq(0,50,0.1)
 
-for (i in seq_len(300)) {
+for (i in seq_len(200)) {
   wi_list[[i + 1]] <- wi_list[[i]]
   wi_list[[i + 1]] <- lapply(wi_list[[i + 1]], function(x) {
     x[sample(nrow(x), 1),c(1,2)] <- sample(coord_repls, 2)
@@ -192,11 +193,15 @@ wi_df <- do.call(rbind, mclapply(seq_along(wi_list), function(x) {
     }))
   }, mc.cores = 4))
 
-wi_samples <- c(0,50,100,150,200,250)
+wi_df_clean <- wi_df %>%
+  group_by(adj) %>%
+  mutate(run = row_number())
+
+wi_samples <- c(0,50,100,150,200)
 
 wi_plot <- ggplot() + 
-  geom_line(data = wi_df, 
-    aes(x = adj, y = wi)) + 
+  geom_line(data = wi_df_clean, 
+    aes(x = adj, y = wi, group = run)) + 
   geom_vline(xintercept = wi_samples, 
     colour = "red", linetype = 2) + 
   theme_bw() + 
@@ -209,7 +214,7 @@ wi_df_fil <- do.call(rbind,
   mutate(adj = factor(adj, levels = paste0("N = ", wi_samples))) 
 
 wi_map_plot <- ggplot() + 
-  geom_point(data = wi_df_fil, 
+  geom_line(data = wi_df_fil, 
     aes(x = x, y = y),
     fill = "darkgrey", shape = 21) + 
   facet_wrap(~adj, nrow = 1) + 
@@ -227,7 +232,8 @@ wi_plot + wi_map_plot +
   plot_layout(ncol = 1, heights = c(2,1))
 dev.off()
 
-wi_k_reps <- wi_list[[101]]
+wi_start <- 100
+wi_k_reps <- wi_list[[wi_start + 1]]
 
 wi_k_df <- do.call(rbind, mclapply(seq_along(wi_k_reps), function(x) {
   message(x, "/", length(wi_k_reps))
@@ -240,16 +246,29 @@ wi_k_df <- do.call(rbind, mclapply(seq_along(wi_k_reps), function(x) {
     }))
   }, mc.cores = 4))
 
-plot(wi_k_df)
+wi_k_df_clean <- wi_k_df %>% 
+  group_by(k) %>%
+  mutate(run = row_number())
 
-saveRDS(wi_df, "../dat/wi_var.rds")
-saveRDS(wi_k_df, "../dat/wi_k.rds")
+wi_k_plot <- ggplot() + 
+  geom_line(data = wi_k_df_clean, aes(x = k, y = wi, group = run)) + 
+  theme_bw() + 
+  labs(x = "k", y = expression(bar(W[i])))
+
+pdf(file = "../img/wi_k.pdf", width = 8, height = 5)
+wi_k_plot
+dev.off()
+
+saveRDS(wi_df_clean, "../dat/wi_var.rds")
+saveRDS(wi_k_df_clean, "../dat/wi_k.rds")
 
 # Write some stats to file
 write(
   c(
     texCmd(mi_sp_reps, "mispreps"),  # Number of replicates for Mi var with sp.
     texCmd(mi_n_reps, "minreps"),  # Number of replicates for Mi var with mingling
-    texCmd(mi_n_sp, "minsp")  # Number of species for Mi var with mingling
+    texCmd(mi_n_sp, "minsp"),  # Number of species for Mi var with mingling
+    texCmd(wi_reps, "wireps"),  # Number of replicates for Wi var with inc. irregularity
+    texCmd(wi_start, "wistart")
     ),
   file = "../out/mingl_wink.tex")
