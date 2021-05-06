@@ -103,9 +103,9 @@ mi <- do.call(rbind, lapply(trees_split, function(i) {
   return(i)
 }))
 
-mi_sum <- mi %>%
+mi_summ <- mi %>%
   group_by(plot_id) %>%
-  summarise(mi_sum = sum(mi))
+  summarise(mi_mean = mean(mi))
 
 # Calculate Winkelmass
 wi <- do.call(rbind, lapply(trees_split, function(i) {
@@ -114,9 +114,9 @@ wi <- do.call(rbind, lapply(trees_split, function(i) {
   return(i)
 }))
 
-wi_sum <- wi %>%
+wi_summ <- wi %>%
   group_by(plot_id) %>%
-  summarise(wi_sum = sum(wi))
+  summarise(wi_mean = mean(wi))
 
 # Hegyi index
 hegyi_df <- do.call(rbind, lapply(trees_split, function(i) {
@@ -140,7 +140,7 @@ hegyi_join <- hegyi_df %>%
       0, hegyi)) %>%
   left_join(., trees_all, c("plot_id", "tree_id"))
 
-hegyi_sum <- hegyi_join %>%
+hegyi_summ <- hegyi_join %>%
   group_by(plot_id) %>%
   summarise(
     hegyi_sum = sum(hegyi),
@@ -163,10 +163,10 @@ plot_summ <- stems_all %>%
     diam_cov = diam_sd / diam_mean * 100,
     ) %>%
   left_join(., shannon, "plot_id") %>%
-  left_join(., mi_sum, "plot_id") %>%
-  left_join(., hegyi_sum, "plot_id") %>%
+  left_join(., mi_summ, "plot_id") %>%
+  left_join(., hegyi_summ, "plot_id") %>%
   left_join(., nmds_plots, "plot_id") %>%
-  left_join(., wi_sum, "plot_id") 
+  left_join(., wi_summ, "plot_id") 
 
 # Write files
 write.csv(plot_summ, "../dat/plot_summ.csv", row.names = FALSE)

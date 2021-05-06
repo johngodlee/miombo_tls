@@ -51,7 +51,7 @@ dat_resp <- dat %>%
   gather(key_resp, val_resp, -plot_id, -site, -man_clust)
 
 explan_names <- c("rich", "diam_mean", "tree_dens", "diam_cov", 
-    "stem_shannon", "tree_shannon", "mi_sum", "wi_sum", "ba")
+    "stem_shannon", "tree_shannon", "mi_mean", "wi_mean", "ba")
 
 dat_pred <- dat %>%
   dplyr::select(site, plot_id, all_of(explan_names)) %>%
@@ -76,7 +76,7 @@ dev.off()
 bivar_mod <- bivar %>%
   filter(
     key_resp %in% c("cover_mean", "chm_mean", "chm_sd", "rough_mean", "rc"),
-    key_pred %in% c("tree_shannon", "ba", "diam_cov", "mi_sum", "wi_sum"))
+    key_pred %in% c("tree_shannon", "ba", "diam_cov", "mi_mean", "wi_mean"))
 
 bivar_mod$key_resp_pretty <- names(resp_names)[
   match(bivar_mod$key_resp, resp_names)]
@@ -199,28 +199,28 @@ dev.off()
 
 # Standardize predictors
 dat_std <- dat %>%
-  mutate(across(c("tree_shannon", "tree_dens", "diam_cov", "wi_sum", "mi_sum", "ba"), 
+  mutate(across(c("tree_shannon", "tree_dens", "diam_cov", "wi_mean", "mi_mean", "ba"), 
       ~as.vector(scale(.x)), .names = "{.col}_std"))
 
 # Mixed effects models
 cover_mean_lmer <- lmer(cover_mean ~ tree_shannon_std +  
-  ba_std + diam_cov_std + mi_sum_std + wi_sum_std + (1 | site), 
+  ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
   data = dat_std, na.action = "na.fail")
 
 chm_mean_lmer <- lmer(chm_mean ~ tree_shannon_std + 
-  ba_std + diam_cov_std + mi_sum_std + wi_sum_std + (1 | site), 
+  ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
   data = dat_std, na.action = "na.fail")
 
 chm_sd_lmer <- lmer(chm_sd ~ tree_shannon_std + 
-  ba_std + diam_cov_std + mi_sum_std + wi_sum_std + (1 | site), 
+  ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
   data = dat_std, na.action = "na.fail")
 
 rough_mean_lmer <- lmer(rough_mean ~ tree_shannon_std + 
-	ba_std + diam_cov_std + mi_sum_std + wi_sum_std + (1 | site), 
+	ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
 	data = dat_std, na.action = "na.fail")
 
 rc_lmer <- lmer(rc ~ tree_shannon_std + 
-	ba_std + diam_cov_std + mi_sum_std + wi_sum_std + (1 | site), 
+	ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
 	data = dat_std, na.action = "na.fail")
 
 mod_list <- list(cover_mean_lmer, chm_mean_lmer, chm_sd_lmer, rough_mean_lmer, 
@@ -263,34 +263,34 @@ lapply(mod_list, summary)
 sink()
 
 # Models of just Kilwa, just Bicuar 
-cover_mean_lm_bicuar <- lm(cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std,
+cover_mean_lm_bicuar <- lm(cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std,
   data = dat_std[grepl("ABG", dat_std$plot_id),])
 
-cover_mean_lm_mtarure <- lm(cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+cover_mean_lm_mtarure <- lm(cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("TKW", dat_std$plot_id),])
 
-chm_mean_lm_bicuar <- lm(chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+chm_mean_lm_bicuar <- lm(chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("ABG", dat_std$plot_id),])
 
-chm_mean_lm_mtarure <- lm(chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+chm_mean_lm_mtarure <- lm(chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("TKW", dat_std$plot_id),])
 
-chm_sd_lm_bicuar <- lm(chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+chm_sd_lm_bicuar <- lm(chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("ABG", dat_std$plot_id),])
 
-chm_sd_lm_mtarure <- lm(chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+chm_sd_lm_mtarure <- lm(chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("TKW", dat_std$plot_id),])
 
-rough_mean_lm_bicuar <- lm(rough_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+rough_mean_lm_bicuar <- lm(rough_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("ABG", dat_std$plot_id),])
 
-rough_mean_lm_mtarure <- lm(rough_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+rough_mean_lm_mtarure <- lm(rough_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("TKW", dat_std$plot_id),])
 
-rc_lm_bicuar <- lm(rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+rc_lm_bicuar <- lm(rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("ABG", dat_std$plot_id),])
 
-rc_lm_mtarure <- lm(rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_sum_std + wi_sum_std, 
+rc_lm_mtarure <- lm(rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std + wi_mean_std, 
   data = dat_std[grepl("TKW", dat_std$plot_id),])
 
 mod_list_site <- list(

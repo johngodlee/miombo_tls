@@ -168,10 +168,11 @@ ImageJ (Fiji version 2.1.0/1.53c) was used to binarize hemispherical photos \cit
 
 From the stem measurements we calculated a number of indices to characterise whole-plot and subplot stand structure.
 
-We calculated the spatial mingling index ($M$) according to \citet{Gadow2002} at the plot level, with the adjustment for available species pool suggested by \citet{Hui2011}. The spatial mingling index is a spatially explicit estimate of the degree to which species are spatially mixed within a plot:
+We calculated the mean of the spatial mingling index ($M_{i}$) according to \citet{Gadow2002} at the plot level, with the adjustment for potential neighbourhood species pool suggested by \citet{Hui2011}. The spatial mingling index is a spatially explicit estimate of the degree to which species are spatially mixed within a plot:
 
 \begin{gather}
-	M = \sum_{i=1}^{N} (\frac{S_{i}}{n_{\text{max}}} \frac{1}{k} \sum_{j=1}^{k} v_{j})	\\
+	M = \overline{M_{i}} \\
+	M_{i} = \frac{S_{i}}{n_{\text{max}}} \frac{1}{k} \sum_{j=1}^{k} v_{j} \\
 	\text{with}\ v_{j} = \begin{cases}
 		0,& \text{neighbour $j$ same species as reference $i$} \\
 		1,& \text{otherwise}
@@ -187,17 +188,18 @@ where $k$ is the number of nearest neighbours considered for each reference tree
 	\label{mingling_both}
 \end{figure}
 
-We also calculated the winkelmass $W$ according to \citet{Gadow2002} at the plot level. The winkelmass estimates the degree of spatial uniformity in stem spatial distribution:
+We also calculated the mean of the winkelmass $W_{i}$ according to \citet{Gadow2002} at the plot level. The winkelmass estimates the degree of spatial uniformity in stem spatial distribution:
 
 \begin{gather}
-	W = \sum_{i=1}^{N} \frac{1}{k} \sum_{j=1}^{k} v_{j} \\
+	W = \overline{W_{i}} \\
+	W_{i} = \frac{1}{k} \sum_{j=1}^{k} v_{j} \\
 	\text{with}\ v_{j} = \begin{cases}
 		0,& \alpha_{j} \le \alpha_{0} \\
 		1,& \text{otherwise}
 	\end{cases} \\
 \end{gather}
 
-where $\alpha_{j}$ is the angle between consecutive neighbours and $\alpha_{0}$ is the principal angle, where $\alpha_{0} = 360 / k$. The value of the winkelmass increases with increasing spatial clumping (decreasing spatial regularity) of individuals (\autoref{wi_diagram}), and in a plot with random tree distribution will increase as more neighbours are considered (\autoref{wi_k}).
+where $\alpha_{j}$ is the angle between consecutive neighbours and $\alpha_{0}$ is the critical angle, where $\alpha_{0} = 360 / k$. The value of the winkelmass increases with increasing spatial clumping (decreasing spatial regularity) of individuals (\autoref{wi_diagram}), and in a plot with random tree distribution will increase as more neighbours are considered (\autoref{wi_k}).
 
 \begin{figure}[H]
 \centering
@@ -233,7 +235,7 @@ where $D_{j}$ is the stem diameter of neighbour tree $j$ and $L_{j}$ is the dist
 
 Within each subplot, a variable number of scans were recorded using a Leica HDS6100 phase-shift terrestrial laser scanner (TLS). The number and position of scans within a subplot was determined by the arrangement and density of canopy material in the subplot. Scan positions were arranged to minimise shadows within the canopy, and to maximise canopy penetration. Number of scans per subplot ranged between one and five in both Angola and Tanzania (\autoref{scan_settings}).
 
-Five Leica 6" planar tilt and turn targets were used at each subplot to align scans. To allow registration of scans among subplots, the location of each target was registered using a Leica VIVA GS10 GNSS unit, set up in post-processed kinematic (PPK) configuration with a base-station located \textapprox{}100 m from the edge of each 1 ha plot. The location of each target was measured for at least 4 minutes. Further, we used the TrimbleRTX GNSS post-processing service to precisely locate each target \citep{Chen2011}. When registering scans we discarded targets with location accuracy of >3 cm.
+Five Leica 6" planar tilt and turn cross-pattern reflective targets were used at each subplot to align scans. To allow registration of scans among subplots, the location of each target was registered using a Leica VIVA GS10 GNSS unit, set up in post-processed kinematic (PPK) configuration with a base-station located \textapprox{}100 m from the edge of each 1 ha plot. The location of each target was measured for at least 4 minutes. Further, we used the TrimbleRTX GNSS post-processing service to precisely locate each target \citep{Chen2011}. When registering scans we discarded targets with location accuracy of >3 cm. Scan registration for each subplot was conducted in Leica Cyclone (version 9.1). After registration, scan scenes were exported from Cyclone as PTX files, one per subplot.
 
 \begin{table}[H] \centering 
   \caption{Description of scan settings used for each scan.} 
@@ -260,12 +262,6 @@ Duration of scan & 6 minutes 44 seconds \\
 \hline \\[-1.8ex] 
 \end{tabular} 
 \end{table} 
-
-\subsection{Registration}
-
-Scan registration for each subplot was conducted in Leica Cyclone (version 9.1). Targets from each scan were aligned using Cyclone's automatic target acquisition. 
-
-After registration, scan scenes were exported from Cyclone as PTX files, one per subplot.
 
 \subsection{Voxelisation}
 

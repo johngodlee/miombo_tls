@@ -5,7 +5,6 @@
 # Packages
 library(dplyr)
 library(tidyr)
-library(viridis)
 library(ggplot2)
 
 # Import data
@@ -16,7 +15,7 @@ plot_summ <- read.csv("../dat/plot_summ.csv")
 cover_clean <- cover %>% 
   dplyr::select(plot_id, subplot, method, cover) %>%
   spread(method, cover) %>%
-  left_join(., plot_summ[,c("seosaw_id", "stem_dens", "diam_cov", "wi_sum", "ba")], 
+  left_join(., plot_summ[,c("seosaw_id", "stem_dens", "diam_cov", "wi_mean", "ba")], 
     by = c("plot_id" = "seosaw_id"))
 
 stopifnot(nrow(cover) / 2 == nrow(cover_clean))
@@ -26,12 +25,12 @@ cover_clean$tls_hemi_lm_err <- cover_clean$tls - cover_clean$hemi
 
 # Plot error vs. various stand structural attributes
 err_gather <- cover_clean %>%
-  dplyr::select(tls_hemi_lm_err, stem_dens, diam_cov, wi_sum, ba) %>%
+  dplyr::select(tls_hemi_lm_err, stem_dens, diam_cov, wi_mean, ba) %>%
   gather(key, value, -tls_hemi_lm_err) %>%
   mutate(key = case_when(
     key == "stem_dens" ~  "Stem density",
     key == "diam_cov" ~  "Coeff. var. stem diameter",
-    key == "wi_sum" ~  "Winkelmass",
+    key == "wi_mean" ~  "Winkelmass",
     key == "ba" ~  "Basal area",
     TRUE ~ NA_character_))
 
