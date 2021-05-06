@@ -214,7 +214,7 @@ wi_df_fil <- do.call(rbind,
   mutate(adj = factor(adj, levels = paste0("N = ", wi_samples))) 
 
 wi_map_plot <- ggplot() + 
-  geom_line(data = wi_df_fil, 
+  geom_point(data = wi_df_fil, 
     aes(x = x, y = y),
     fill = "darkgrey", shape = 21) + 
   facet_wrap(~adj, nrow = 1) + 
@@ -232,8 +232,19 @@ wi_plot + wi_map_plot +
   plot_layout(ncol = 1, heights = c(2,1))
 dev.off()
 
-wi_start <- 100
-wi_k_reps <- wi_list[[wi_start + 1]]
+# Wi with varying k
+
+# List of randomly located individuals
+xy_vec <- seq(0,100, 0.1)
+dat <- expand.grid(xy_vec, xy_vec)
+names(dat) <- c("x", "y")
+
+wi_k_reps <- list()
+wi_k_n <- 50
+wi_k_i <- 100
+for (i in seq_len(wi_k_n)) {
+  wi_k_reps[[i]] <- dat[sample(seq_len(nrow(dat)), wi_k_i, replace = TRUE),]
+}
 
 wi_k_df <- do.call(rbind, mclapply(seq_along(wi_k_reps), function(x) {
   message(x, "/", length(wi_k_reps))
@@ -269,6 +280,7 @@ write(
     texCmd(mi_n_reps, "minreps"),  # Number of replicates for Mi var with mingling
     texCmd(mi_n_sp, "minsp"),  # Number of species for Mi var with mingling
     texCmd(wi_reps, "wireps"),  # Number of replicates for Wi var with inc. irregularity
-    texCmd(wi_start, "wistart")
+    texCmd(wi_k_n, "wikn"),  # Number of replicates for Wi var. with k 
+    texCmd(wi_k_i, "wiki")  # Number of individuals for Wi var. with k 
     ),
   file = "../out/mingl_wink.tex")

@@ -216,7 +216,8 @@ fov.theta <- function(prop_crop, full_circle_radius_px, focal_length_mm, pixel_p
 #' @param k number of neighbours to consider
 #' @param adj logical, if TRUE the basic spatial mingling index is multiplied 
 #'     by Si/nmax, where Si is the number of species in the neighbourhood of 
-#'     the focal tree, and nmax is the total number of species in the data.
+#'     the focal tree, and nmax is the maximum number of species possible in the
+#'     neighbourhood, including the focal tree, i.e. k + 1.
 #'
 #' @return 
 #' 
@@ -234,14 +235,14 @@ spatialMingling <- function(x, y, sp, k = 4, adj = FALSE) {
     nngeo::st_nn(dat_sf, dat_sf, k = k+1, progress = FALSE))
 
   mi <- unlist(lapply(dists, function(i) {
-    1/k * sum(sp[i[1]] != sp[i[-1]])
+    1 / k * sum(sp[i[1]] != sp[i[-1]])
   }))
 
   if (adj) {
     si <- unlist(lapply(dists, function(i) {
       length(unique(sp[i[-1]]))
     }))
-    nmax <- length(unique(sp))
+    nmax <- k + 1
 
     out <- mi * (si/nmax)
   } else {
@@ -280,17 +281,18 @@ winkelmass <- function(x, y, k = 4) {
     nb_angles <- sort(unlist(lapply(nb_sfg, function(j) {
       angleCalc(focal_sfg, j)
     })))
-    aj <- nb_angles - lag(nb_angles)
+  
+    aj <- nb_angles - c(NA, head(nb_angles, -1))
     aj[1] <- nb_angles[k] - nb_angles[1]
     aj <- ifelse(aj > 180, 360 - aj, aj)
-    sum(aj > a0)
+    aj <- round(aj, 1)
+    sum(aj < a0)
   }))
 
   out <- 1 / k * wi
 
   return(out)
 }
-
 
 #' Calculate angle between two sf point objects
 #'

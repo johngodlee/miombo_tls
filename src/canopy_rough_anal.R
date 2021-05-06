@@ -30,7 +30,7 @@ gap_frac_summ <- gap_frac %>%
   summarise(cover_mean = mean(cover, na.rm = TRUE))
 
 # Join dataframes
-plot_data_new <- left_join(plot_data, plot_id_lookup, by = "plot_id") %>%
+plot_data_new <-  plot_data %>%
   rename(plot_id_new = seosaw_id)
 
 dat <- left_join(canopy, plot_data_new, by = "plot_id_new") %>%
