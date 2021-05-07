@@ -13,6 +13,7 @@ library(ggeffects)
 library(patchwork)
 library(lavaan)
 library(semPlot)
+library(xtable)
 
 source("functions.R")
 
@@ -236,11 +237,16 @@ wrap_plots(explan_plot_list) +
 dev.off()
 
 # Join stand structure with height profile data
+mod_resp_names <- c("layer_div", "auc_canopy", "dens_peak_height", 
+  "height_q99", "cum_lm_se", "cover")
+
 subplot_dat <- subplot_trees_summ %>%
   left_join(., profile_stats_all, c("plot_id", "subplot")) %>%
   mutate(across(c("rich", "diam_cov", "hegyi", "ba"), ~as.vector(scale(.x)), 
       .names = "{.col}_std")) %>%
-  mutate(site = ifelse(grepl("ABG", plot_id), "Bicuar", "Mtarure"))
+  mutate(site = ifelse(grepl("ABG", plot_id), "Bicuar", "Mtarure")) %>%
+  filter(across(ends_with("_std"), ~!is.na(.x))) %>%
+  filter(across(all_of(mod_resp_names), ~!is.na(.x)))
 
 # Bivariate plots of responses and predictors in models 
 mod_pred_names <- c("rich", "hegyi", "diam_cov", "ba")
@@ -249,8 +255,6 @@ mod_dat_pred <- subplot_dat %>%
   dplyr::select(site, plot_id, subplot, all_of(mod_pred_names)) %>%
   gather(key_pred, val_pred, -site, -plot_id, -subplot)
 
-mod_resp_names <- c("layer_div", "auc_canopy", "dens_peak_height", 
-  "height_q99", "cum_lm_se", "cover")
 
 mod_dat_resp <- subplot_dat %>%
   dplyr::select(site, plot_id, subplot, all_of(mod_resp_names)) %>%
@@ -284,37 +288,85 @@ dev.off()
 
 # Layer diversity vs. richness model
 layer_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | plot_id), 
+  (1 | site) + (1 | site:plot_id), 
   data = subplot_dat)
 
 # Area under curve (AUC) vs. richness model
 auc_canopy_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | plot_id),
+  (1 | site) + (1 | site:plot_id),
   data = subplot_dat)
 
 # Peak density height vs. richness model
 dens_peak_height_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | plot_id), 
+  (1 | site) + (1 | site:plot_id), 
   data = subplot_dat)
 
 # q99 height vs. richness model
 q99_height_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | plot_id), 
+  (1 | site) + (1 | site:plot_id), 
   data = subplot_dat)
 
 # Cumulative height profile linear model standard error vs richness model
 cum_lm_se_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | plot_id), 
+  (1 | site) + (1 | site:plot_id), 
   data = subplot_dat)
 
 # Gap fraction
 cover_mod <- lmer(cover ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | plot_id), 
+  (1 | site) + (1 | site:plot_id), 
   data = subplot_dat)
 
 # Make list of models
 mod_list <- list(layer_mod, auc_canopy_mod, dens_peak_height_mod,
   q99_height_mod, cum_lm_se_mod, cover_mod)
+
+# Find "best" models
+dredge_list <- lapply(mod_list, function(x) { 
+  ml_mod <- update(x, REML = FALSE, na.action = "na.fail")
+  dredge(ml_mod)
+  })
+
+sink(file = "../out/height_profile_dredge_mods.txt")
+dredge_list
+sink()
+
+sig_vars_dredge <- lapply(dredge_list, function(x) {
+  out <- x[1,!is.na(x[1,])]
+  c(gsub("\\s~.*", "", as.character((attributes(x)$global.call))[2]), 
+    mod_pred_names %in%
+      gsub("_std", "", 
+      names(out[,-which(names(out) %in% 
+          c("(Intercept)", "df", "logLik", "AICc", "delta", "weight")), 
+        drop = FALSE])))
+  })
+
+sig_vars_dredge_df <- as.data.frame(rbind(c("resp", mod_pred_names), 
+    do.call(rbind, sig_vars_dredge)))
+names(sig_vars_dredge_df) <- sig_vars_dredge_df[1,]
+sig_vars_dredge_df <- sig_vars_dredge_df[-1,]
+
+sig_vars_dredge_clean <- sig_vars_dredge_df %>% 
+  mutate(across(all_of(c("rich", "hegyi", "diam_cov", "ba")), 
+      ~case_when(
+        .x == TRUE ~ "\\checkmark",
+        .x == FALSE ~ "",
+        TRUE ~ .x))) %>%
+  mutate(resp = names(resp_names)[match(resp, resp_names)])
+
+sig_dredge_tab <- xtable(sig_vars_dredge_clean,
+  label = "sig_vars_dredge",
+  caption = "Explanatory variables included in the best model for each canopy structure variable.",
+  align = "crcccc",
+  display = c("s", "s", "s", "s", "s", "s"))
+
+names(sig_dredge_tab) <- c("Response", "Richness", "Hegyi", "CoV diam.", "Basal area")
+
+fileConn <- file("../out/height_profile_dredge_best.tex")
+writeLines(print(sig_dredge_tab, include.rownames = FALSE, 
+  table.placement = "H",
+  sanitize.text.function = function(x) {x}), 
+  fileConn)
+close(fileConn)
 
 # Look at model predicted values and random effects
 fe_df <- do.call(rbind, lapply(mod_list, function(x) {
@@ -466,7 +518,7 @@ mod_list_site <- list(
   cover_mod_bicuar, cover_mod_mtarure)
 
 # Get fixed effects slopes
-mod_pred <- do.call(rbind, lapply(mod_list_site, function(x) {
+mod_pred_site <- do.call(rbind, lapply(mod_list_site, function(x) {
   get_model_data(x, type = "est") %>%
   mutate(psig = case_when(
       p.value <= 0.05 ~ "*",
@@ -480,20 +532,24 @@ mod_pred <- do.call(rbind, lapply(mod_list_site, function(x) {
     term = names(pred_names)[match(term, pred_names)])
   }))
 
+mod_pred$site <- "Both"
+
+mod_pred_all <- rbind(mod_pred, mod_pred_site)
+
 pdf(file = "../img/height_profile_mod_rich_slopes_sites.pdf", height = 5, width = 12)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
-  geom_errorbarh(data = mod_pred, 
+  geom_errorbarh(data = mod_pred_all, 
     aes(xmin = conf.low, xmax = conf.high, y = term, colour = site),
     position = position_dodge(width = 0.5), height = 0) + 
-  geom_point(data = mod_pred,
+  geom_point(data = mod_pred_all,
     aes(x = estimate, y = term, fill = site),
     shape = 21, position = position_dodge(width = 0.5), colour = "black") + 
-  geom_text(data = mod_pred,
+  geom_text(data = mod_pred_all,
     aes(x = estimate, y = term, colour = site, label = psig),
     position = position_dodge(width = 0.5), size = 8) + 
-  scale_colour_manual(values = pal[1:2], guide = "none") + 
-  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  scale_colour_manual(values = pal[c(1,7,2)], guide = "none") + 
+  scale_fill_manual(name = "Site", values = pal[c(1,5,2)]) + 
   facet_wrap(~resp, scales = "free_x", nrow = 1) + 
   theme_bw() + 
   guides(fill = guide_legend(override.aes = list(size = 5))) +

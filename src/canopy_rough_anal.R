@@ -243,13 +243,13 @@ pdf(file = "../img/canopy_rough_slopes.pdf", height = 5, width = 12)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = mod_pred, 
-    aes(xmin = conf.low, xmax = conf.high, y = term, colour = group),
-    height = 0) + 
+    aes(xmin = conf.low, xmax = conf.high, y = term),
+    colour = "black", height = 0) + 
   geom_point(data = mod_pred,
-    aes(x = estimate, y = term, fill = group),
-    shape = 21, colour = "black") + 
+    aes(x = estimate, y = term),
+    size = 2, shape = 21, colour = "black", fill = pal[5]) + 
   geom_text(data = mod_pred,
-    aes(x = estimate, y = term, colour = group, label = psig),
+    aes(x = estimate, y = term, label = psig),
     size = 8) + 
   facet_wrap(~resp, scales = "free_x", nrow = 1) + 
   theme_bw() + 

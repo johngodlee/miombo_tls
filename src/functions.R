@@ -2,7 +2,7 @@
 # John Godlee (johngodlee@gmail.com)
 
 # Theme colours
-pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "grey", "#E0E0E0")
+pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "darkgrey", "#E0E0E0", "black")
 
 resp_names <- c(  
   "Total canopy foliage" = "auc_canopy",

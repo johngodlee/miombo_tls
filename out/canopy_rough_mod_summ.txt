@@ -1,44 +1,44 @@
+> lapply(mod_list, summary)
 [[1]]
-Linear mixed model fit by maximum likelihood  ['lmerMod']
-Formula: cover_mean ~ tree_shannon_std + ba_std + mi_mean_std + wi_mean_std +  
-    (1 | site)
+Linear mixed model fit by REML ['lmerMod']
+Formula: cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
    Data: dat_std
 
-     AIC      BIC   logLik deviance df.resid 
-   -21.5    -15.3     17.8    -35.5       11 
+REML criterion at convergence: -4.4
 
 Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.581 -0.629 -0.118  0.522  2.689 
+    Min      1Q  Median      3Q     Max 
+-1.2606 -0.5761 -0.0496  0.3397  2.1327 
 
 Random effects:
  Groups   Name        Variance Std.Dev.
- site     (Intercept) 0.00000  0.0000  
- Residual             0.00814  0.0902  
+ site     (Intercept) 0.0000   0.000   
+ Residual             0.0118   0.109   
 Number of obs: 18, groups:  site, 2
 
 Fixed effects:
                  Estimate Std. Error t value
-(Intercept)        0.3974     0.0213   18.69
-tree_shannon_std   0.0895     0.0538    1.67
-ba_std             0.0523     0.0269    1.94
-mi_mean_std       -0.0595     0.0542   -1.10
-wi_mean_std       -0.0678     0.0222   -3.05
+(Intercept)        0.3974     0.0256   15.51
+tree_shannon_std   0.0739     0.0694    1.07
+ba_std             0.0466     0.0337    1.38
+diam_cov_std       0.0203     0.0322    0.63
+mi_mean_std       -0.0469     0.0683   -0.69
+wi_mean_std       -0.0702     0.0271   -2.59
 
 Correlation of Fixed Effects:
-            (Intr) tr_sh_ ba_std m_mn_s
-tr_shnnn_st  0.000                     
-ba_std       0.000 -0.551              
-mi_mean_std  0.000 -0.911  0.568       
-wi_mean_std  0.000  0.112  0.049 -0.077
+            (Intr) tr_sh_ ba_std dm_cv_ m_mn_s
+tr_shnnn_st  0.000                            
+ba_std       0.000 -0.399                     
+diam_cv_std  0.000 -0.357 -0.271              
+mi_mean_std  0.000 -0.918  0.444  0.293       
+wi_mean_std  0.000  0.153  0.084 -0.138 -0.113
 convergence code: 0
 boundary (singular) fit: see ?isSingular
 
 
 [[2]]
 Linear mixed model fit by REML ['lmerMod']
-Formula: chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
+Formula: chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
    Data: dat_std
 
 REML criterion at convergence: 51.9
@@ -72,8 +72,7 @@ wi_mean_std  0.033  0.168  0.106 -0.129 -0.158
 
 [[3]]
 Linear mixed model fit by REML ['lmerMod']
-Formula: chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
+Formula: chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
    Data: dat_std
 
 REML criterion at convergence: 33.4
@@ -110,8 +109,7 @@ boundary (singular) fit: see ?isSingular
 
 [[4]]
 Linear mixed model fit by REML ['lmerMod']
-Formula: rough_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
+Formula: rough_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
    Data: dat_std
 
 REML criterion at convergence: -0.7
@@ -148,8 +146,7 @@ boundary (singular) fit: see ?isSingular
 
 [[5]]
 Linear mixed model fit by REML ['lmerMod']
-Formula: rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
+Formula: rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
    Data: dat_std
 
 REML criterion at convergence: 164.9
@@ -181,3 +178,4 @@ diam_cv_std  0.002 -0.353 -0.266
 mi_mean_std -0.035 -0.910  0.389  0.279       
 wi_mean_std  0.055  0.186  0.131 -0.119 -0.209
 
+> sink()
