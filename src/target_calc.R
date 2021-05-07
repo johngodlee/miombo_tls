@@ -96,7 +96,8 @@ coords_clean <- coords %>%
   dplyr::select(plot_id = seosaw_id, plot_name, subplot, target, point_id = PointID, 
     lon = Easting, lat = Northing,
     ground_elev = GroundLevel, antenna_elev = AntennaHeight, target_offset,
-    target_elev, country, utm, centre)
+    target_elev, country, utm, centre) %>%
+  filter(!(plot_id == "TKW_10" & subplot == "S8" & target == "T5"))
 
 ## Write to .csv
 write.csv(coords_clean, "../dat/target_coords.csv", 

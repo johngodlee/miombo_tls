@@ -1,10 +1,50 @@
 # Processing TLS data
 
+## Bugs and manual fixes
+
+* TKW_10 (S7) S8 - Bad subplot centre coordinates
+	* Seems closer to S9	
+	* 1 scan
+	* Cylinder is completely empty
+	* Centre currently recorded as: 
+		* 501265.5307
+		* 8994144.117
+	* Mistakenly recorded as a 2 scan plot, but only has one scan. Also has an erroneous T5 which I think was taken at the location of S8T1
+	* Got the centre coordinate of the scan and manually added it to centre_scan_coords.csv
+	* _DONE_
+
+* ABG_13 S7 - Bad subplot centre coordinates
+	* Only 4 targets, no centre, 1 scan
+	* Seems closer to S6
+	* `centre_scan_coords.csv` is wrong
+	* The translation matrix in the PTX file is wrong
+	* Need to get the correct center location, but can't because Cyclone is a pain
+
+* TKW_19 (W18) S2 - Bad TLS hemi-sim
+	* DSC_2614
+	* TLS hemi-sim completely white
+
+* ABG_13 S6 - Bad TLS hemi-sim
+	* Hemi photo generated from TLS was all smudged 
+	* DSC_1886
+	* 2 scans
+	* Raw LAZ has a lot of noise both above and below ground
+	* The ground height in the denoise laz seems sensible, but there are one or two low points which remain
+	* Center appears to be about 10 m off
+		* Old: P13S6TC, 480379.2093, 8319756.917
+		* New: 480408.030, 8319743.52
+		* Estimated new by drawing line between the two scans
+		* Didn't work, seems to have moved it closer to S5
+	* Replaced cylinder.rds with new version, 
+	* Re-processed height profile 
+	* Re-created hemi simulation, but it doesn't look that similar to the existing hemi-photo
+	* ABG_13 S7 also seems to be out of place, located around S6
+	* Maybe the centre targets are messed up for S6 and S7
+
 ## Non-TLS pre-processing
 
-* Gather non-TLS data sources: species richness, plot-level stocking density, Canopy dimensions, hemispherical photography LAI - `data_prep.R`
-* Clean target location data - `target_calc.R`
-
+1. Gather non-TLS data sources: species richness, plot-level stocking density, Canopy dimensions, hemispherical photography LAI - `data_prep.R`
+2. Clean target location data - `target_calc.R`
 
 ## TLS pre-processing - `subplot_process.sh` //
 
@@ -21,6 +61,7 @@
 2. Subset to 10 m radius cylindrical subplot - `cylinder_crop.sh`
 3. Classify ground points and re-calculate height - `hag.sh`
 4. Convert .laz to .csv - `laz_txt.sh`
+5. Convert .csv to .rds - `csv_compress.R`
 
 
 ## Gap fraction - `subplot_gap_frac.sh` //
@@ -50,9 +91,9 @@
 2. Subset to plot boundary - `plot_crop.sh`
 3. Define ground and re-classify height - `hag.sh`
 4. Convert .laz to .csv - `laz_txt.sh`
+4. Convert .csv to .rds - `csv_compress.R`
 
-
-## Data preparation 
+## TLS data preparation 
 
 * Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R` //
 * Calculate gap fraction, also hemispherical photos - `hemi.R` //
@@ -73,7 +114,6 @@
 2. Canopy cover will increase with species richness
 3. Canopy surface roughness will increase with tree species richness.
 	* Mixed effects model - `lmer(plot_rough ~ shannon + comp_index + (rich | site)`
-
 
 ### Grass 
 
@@ -122,4 +162,3 @@ Discarded stats:
 	* Shannon index - 
 	* Species richness - 
 
-## Notes

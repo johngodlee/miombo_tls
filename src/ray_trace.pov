@@ -16,4 +16,4 @@ camera {
 
 background { White }
 
-#include "/var/folders/_n/c5rvw2g9535118h_2t8bmhvh0000gn/T/tmp.jHVWVdI5je/P11S2.pov"
+#include "/Users/johngodlee/Desktop/test/P13S6.pov"

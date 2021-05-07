@@ -17,5 +17,4 @@ dev.off()
 
 # Errors:
 # ABG_13 S7
-# ABG_7 S8 - maybe
 # TKW_10 S8
