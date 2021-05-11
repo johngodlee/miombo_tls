@@ -58,7 +58,8 @@ nmds <- metaMDS(tree_ab_fil)
 nmds_plots <- as.data.frame(nmds$points) %>%
   rownames_to_column("plot_id") %>%
   mutate(site = ifelse(grepl("P", plot_id), "Bicuar", "Mtarure")) %>%
-  left_join(., plot_id_lookup, by = c("plot_id" = "plot_id"))
+  left_join(., plot_id_lookup, by = c("plot_id" = "plot_id")) %>%
+  mutate(paper_plot_id = paper_plot_id_lookup[match(seosaw_id, names(paper_plot_id_lookup))])
 
 nmds_species <- as.data.frame(nmds$species) %>%
   rownames_to_column("species")
@@ -69,7 +70,7 @@ ggplot() +
     aes(x = MDS1, y = MDS2, fill = site),
     shape = 21) +
   geom_label_repel(data = nmds_plots, 
-    aes(x = MDS1, y = MDS2, label = seosaw_id, colour = site)) +
+    aes(x = MDS1, y = MDS2, label = paper_plot_id, colour = site)) +
   scale_colour_manual(name = "Site", values = pal[1:2]) + 
   scale_fill_manual(name = "Site", values = pal[1:2]) + 
   guides(colour = FALSE) + 
@@ -87,9 +88,10 @@ bray_clust <- hclust(bray, method = "average")
 nmds_plots$bray_clust <- cutree(bray_clust, 3)
 nmds_plots$man_clust <- case_when(
   nmds_plots$plot_id %in% c("P1", "P2", "P3", "P4", "P5", "P6", "P7", 
-    "P8", "P10", "P11", "P12", "P14", "S5", "W11", "W18", "W26") ~ "1",
-  nmds_plots$plot_id %in% c("P9", "P13", "P15") ~ "2",
-  nmds_plots$plot_id %in% c("S3", "S7", "W9") ~ "3",
+    "P8", "P10", "P11", "P12", "P14") ~ "1",
+  nmds_plots$plot_id %in% c( "S5", "W11", "W18", "W26") ~ "2"
+  nmds_plots$plot_id %in% c("P9", "P13", "P15") ~ "3",
+  nmds_plots$plot_id %in% c("S3", "S7", "W9") ~ "4",
   TRUE ~ NA_character_)
 
 # Split by plot

@@ -1,6 +1,32 @@
 # Miscellaneous functions
 # John Godlee (johngodlee@gmail.com)
 
+paper_plot_id_lookup <- c(
+  "ABG_1" = "B1",
+  "ABG_2" = "B2",
+  "ABG_3" = "B3",
+  "ABG_4" = "B4",
+  "ABG_5" = "B5",
+  "ABG_6" = "B6",
+  "ABG_7" = "B7",
+  "ABG_8" = "B8",
+  "ABG_9" = "B9",
+  "ABG_10" = "B10",
+  "ABG_11" = "B11",
+  "ABG_12" = "B12",
+  "ABG_13" = "B13",
+  "ABG_14" = "B14",
+  "ABG_15" = "B15",
+  "TKW_7" = "M1",
+  "TKW_9" = "M2",
+  "TKW_10" = "M3",
+  "TKW_25" = "M4",
+  "TKW_13" = "M5",
+  "TKW_19" = "M6",
+  "TKW_21" = "M7"
+  )
+
+
 # Theme colours
 pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "darkgrey", "#E0E0E0", "black")
 
@@ -19,7 +45,7 @@ resp_names <- c(
   "Weibull shape" = "weib_shape",
   "Canopy cover" = "cover_mean",
   "Canopy height" = "chm_mean",
-  "Canopy height SD" = "chm_sd",
+  "Canopy roughness" = "chm_sd",
   "Roughness" = "rough_mean",
   "Roughness SD" = "rough_sd",
   "Rugosity" = "rc")
@@ -39,10 +65,12 @@ pred_names <- c(
   "Winkelmass" = "wi_mean_std",
   "Richness" = "rich",
   "Richness" = "rich_std",
-  "Hegyi" = "hegyi",
-  "Hegyi" = "hegyi_std",
+  "Hegyi crowding" = "hegyi",
+  "Hegyi crowding" = "hegyi_std",
   "CoV diam." = "diam_cov",
   "CoV diam." = "diam_cov_std",
+  "CoV crown area" = "crown_area_cov",
+  "CoV crown area" = "crown_area_cov_std",
   "Mean diam." = "diam_mean",
   "Mean diam." = "diam_mean_std",
   "Point density" = "point_dens",

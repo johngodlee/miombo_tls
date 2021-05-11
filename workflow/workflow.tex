@@ -267,7 +267,7 @@ Duration of scan & 6 minutes 44 seconds \\
 
 PTX files were converted to compressed LAZ files using PDAL \citep{}. The exact code used to extract and apply the PTX rotation matrix to each point in the PTX file can be found IN THIS APPENDIX HERE. 
 
-LAZ files were voxelised to different voxel sizes depending on the application of the data. For grass biomass estimation, we used 2 cm\textsuperscript{3} cubic voxels, while for subplot height profile estimation we used 5 cm\textsuperscript{3} voxels, and for whole plot canopy rugosity we used 10 cm\textsuperscript{3} voxels. WHY THO
+LAZ files were voxelised to different voxel sizes depending on the application of the data. For grass biomass estimation, we used 2 cm\textsuperscript{3} cubic voxels, while for subplot height profile estimation we used 5 cm\textsuperscript{3} voxels, and for whole plot canopy rugosity we used 10 cm\textsuperscript{3} voxels. Variation in voxel size reflects the spatial scale of each analysis, and is bounded by the beam divergence of the scanner over longer distances \citep{}. Choosing voxels that are too small can result in pock-marked representations of surfaces that are especially problematic when calculating larger scale canopy structure metrics, such as canopy top roughness, while voxels that are too large can result in an over-estimation of plant volume when estimating canopy foliage density at the subplot scale \citep{Seidel2012, Cifuentes2014}.
 
 \subsection{Noise reduction}
 
@@ -394,7 +394,7 @@ canopy height model smoothing. We used the pit-filling algorithm described in \c
 
 From the canopy height profile we extracted a number of statistics for use in statistical modelling. We calculated the mean and coefficient of variation of canopy height across the plot (canopy rugosity), following \citep{Parker2004}. We calculated the Topographic Ruggedness Index (TRI) as the mean of absolute differences between the heights of each column and the height of its eight surrounding cells \citep{Wilson2007}. From this we estimated the plot level mean TRI and coefficient of variation. 
 
-We also calculated a second measure of canopy rugosity ($R_{c}$) following \citet{Hardiman2011}, using all point cloud data rather than just the top surface:
+We also calculated a second measure of canopy rugosity ($R_{c}$) that considers the entire canopy profile, rather than just the canopy top, following \citet{Hardiman2011}:
 
 \begin{equation}
 	R_{c} = \sigma{}(\sigma{}G_{z})_{x}

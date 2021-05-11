@@ -199,7 +199,7 @@ wrap_plots(hist_list) +
 dev.off()
 
 # Bivariate plots of explan. variables
-explan_names <- c("rich", "hegyi", "diam_cov", "ba", "point_dens")
+explan_names <- c("rich", "hegyi", "diam_cov", "crown_area_cov", "ba", "point_dens")
 
 explan_mat <- t(combn(explan_names, 2)) %>%
   as.data.frame() %>%
@@ -242,19 +242,19 @@ mod_resp_names <- c("layer_div", "auc_canopy", "dens_peak_height",
 
 subplot_dat <- subplot_trees_summ %>%
   left_join(., profile_stats_all, c("plot_id", "subplot")) %>%
-  mutate(across(c("rich", "diam_cov", "hegyi", "ba"), ~as.vector(scale(.x)), 
+  mutate(across(c("rich", "diam_cov", "crown_area_cov", "hegyi"), 
+      ~as.vector(scale(.x)), 
       .names = "{.col}_std")) %>%
   mutate(site = ifelse(grepl("ABG", plot_id), "Bicuar", "Mtarure")) %>%
   filter(across(ends_with("_std"), ~!is.na(.x))) %>%
   filter(across(all_of(mod_resp_names), ~!is.na(.x)))
 
 # Bivariate plots of responses and predictors in models 
-mod_pred_names <- c("rich", "hegyi", "diam_cov", "ba")
+mod_pred_names <- c("rich", "hegyi", "diam_cov", "crown_area_cov")
 
 mod_dat_pred <- subplot_dat %>%
   dplyr::select(site, plot_id, subplot, all_of(mod_pred_names)) %>%
   gather(key_pred, val_pred, -site, -plot_id, -subplot)
-
 
 mod_dat_resp <- subplot_dat %>%
   dplyr::select(site, plot_id, subplot, all_of(mod_resp_names)) %>%
@@ -287,38 +287,69 @@ ggplot() +
 dev.off()
 
 # Layer diversity vs. richness model
-layer_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | site) + (1 | site:plot_id), 
+layer_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std + crown_area_cov_std + 
+  (1 | plot_id), 
   data = subplot_dat)
 
 # Area under curve (AUC) vs. richness model
-auc_canopy_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | site) + (1 | site:plot_id),
+auc_canopy_mod <- lmer(auc_canopy ~ rich_std + hegyi_std + diam_cov_std + crown_area_cov_std + 
+  (1 | plot_id),
   data = subplot_dat)
 
 # Peak density height vs. richness model
-dens_peak_height_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | site) + (1 | site:plot_id), 
+dens_peak_height_mod <- lmer(dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + crown_area_cov_std + 
+  (1 | plot_id), 
   data = subplot_dat)
 
 # q99 height vs. richness model
-q99_height_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | site) + (1 | site:plot_id), 
+q99_height_mod <- lmer(height_q99 ~ rich_std + hegyi_std + diam_cov_std + crown_area_cov_std + 
+  (1 | plot_id), 
   data = subplot_dat)
 
 # Cumulative height profile linear model standard error vs richness model
-cum_lm_se_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | site) + (1 | site:plot_id), 
+cum_lm_se_mod <- lmer(cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + crown_area_cov_std + 
+  (1 | plot_id), 
   data = subplot_dat)
 
 # Gap fraction
-cover_mod <- lmer(cover ~ rich_std + hegyi_std + diam_cov_std + ba_std + 
-  (1 | site) + (1 | site:plot_id), 
+cover_mod <- lmer(cover ~ rich_std + hegyi_std + diam_cov_std + crown_area_cov_std + 
+  (1 | plot_id), 
   data = subplot_dat)
 
 # Make list of models
 mod_list <- list(layer_mod, auc_canopy_mod, dens_peak_height_mod,
   q99_height_mod, cum_lm_se_mod, cover_mod)
+
+# Check richness models better or worse than model with only basal area
+layer_null_mod <- lmer(layer_div ~ hegyi_std + (1 | plot_id), data = subplot_dat)
+auc_canopy_null_mod <- lmer(auc_canopy ~ hegyi_std + (1 | plot_id), data = subplot_dat)
+dens_peak_height_null_mod <- lmer(dens_peak_height ~ hegyi_std + (1 | plot_id), data = subplot_dat)
+q99_height_null_mod <- lmer(height_q99 ~ hegyi_std + (1 | plot_id), data = subplot_dat)
+cum_lm_se_null_mod <- lmer(cum_lm_se ~ hegyi_std + (1 | plot_id), data = subplot_dat)
+cover_null_mod <- lmer(cover ~ hegyi_std + (1 | plot_id), data = subplot_dat)
+
+null_mod_list <- list(layer_null_mod, auc_canopy_null_mod,
+  dens_peak_height_null_mod, q99_height_null_mod, 
+  cum_lm_se_null_mod, cover_null_mod)
+
+stopifnot(length(mod_list) == length(null_mod_list))
+
+# Dataframe of model fit statistics
+mod_stat_df <- do.call(rbind, lapply(seq_along(mod_list), function(x) {
+  rsq = r.squaredGLMM(mod_list[[x]])
+  data.frame(
+    resp = names(mod_list[[x]]@frame)[1],
+    daic = AIC(null_mod_list[[x]]) - AIC(mod_list[[x]]),
+    dbic = BIC(null_mod_list[[x]]) - BIC(mod_list[[x]]),
+    rsqm = rsq[1],
+    rsqc = rsq[2],
+    nullrsq = r.squaredGLMM(null_mod_list[[x]]),
+    logl = logLik(mod_list[[x]]),
+    nulllogl = logLik(null_mod_list[[x]])
+  )
+}))
+
+write.csv(mod_stat_df, "../out/height_profile_mod_stat_df.csv", row.names = FALSE)
 
 # Find "best" models
 dredge_list <- lapply(mod_list, function(x) { 
@@ -329,6 +360,7 @@ dredge_list <- lapply(mod_list, function(x) {
 sink(file = "../out/height_profile_dredge_mods.txt")
 dredge_list
 sink()
+
 
 sig_vars_dredge <- lapply(dredge_list, function(x) {
   out <- x[1,!is.na(x[1,])]
@@ -346,20 +378,22 @@ names(sig_vars_dredge_df) <- sig_vars_dredge_df[1,]
 sig_vars_dredge_df <- sig_vars_dredge_df[-1,]
 
 sig_vars_dredge_clean <- sig_vars_dredge_df %>% 
-  mutate(across(all_of(c("rich", "hegyi", "diam_cov", "ba")), 
+ left_join(., mod_stat_df[,c("resp", "daic", "rsqc", "rsqm")], by = "resp") %>%
+  mutate(across(all_of(c("rich", "hegyi", "diam_cov", "crown_area_cov")), 
       ~case_when(
         .x == TRUE ~ "\\checkmark",
         .x == FALSE ~ "",
         TRUE ~ .x))) %>%
-  mutate(resp = names(resp_names)[match(resp, resp_names)])
+  mutate(resp = names(resp_names)[match(resp, resp_names)]) 
 
 sig_dredge_tab <- xtable(sig_vars_dredge_clean,
   label = "sig_vars_dredge",
-  caption = "Explanatory variables included in the best model for each canopy structure variable.",
-  align = "crcccc",
-  display = c("s", "s", "s", "s", "s", "s"))
+  caption = "Explanatory variables included in the best model for each canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the hegyi crowding index and the random effects of site and plot. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
+  align = "crccccccc",
+  display = c("s", "s", "s", "s", "s", "s", "f", "f", "f"),
+  digits = c( NA,   NA,  NA,  NA,  NA,  NA,  1,   2,   2))
 
-names(sig_dredge_tab) <- c("Response", "Richness", "Hegyi", "CoV diam.", "Basal area")
+names(sig_dredge_tab) <- c("Response", "Richness", "Hegyi crowding", "CoV diameter", "CoV crown area", "$\\Delta$AIC", "R\\textsuperscript{2}\\textsubscript{c}", "R\\textsuperscript{2}\\textsubscript{m}")
 
 fileConn <- file("../out/height_profile_dredge_best.tex")
 writeLines(print(sig_dredge_tab, include.rownames = FALSE, 
@@ -400,37 +434,6 @@ ggplot(re_df) +
   theme_bw() + 
   labs(x = "Species richness", y = "")
 dev.off()
-
-# Check richness models better or worse than model with only basal area
-layer_null_mod <- lmer(layer_div ~ ba_std + (1 | plot_id), data = subplot_dat)
-auc_canopy_null_mod <- lmer(auc_canopy ~ ba_std + (1 | plot_id), data = subplot_dat)
-dens_peak_height_null_mod <- lmer(dens_peak_height ~ ba_std + (1 | plot_id), data = subplot_dat)
-q99_height_null_mod <- lmer(height_q99 ~ ba_std + (1 | plot_id), data = subplot_dat)
-cum_lm_se_null_mod <- lmer(cum_lm_se ~ ba_std + (1 | plot_id), data = subplot_dat)
-cover_null_mod <- lmer(cover ~ ba_std + (1 | plot_id), data = subplot_dat)
-
-null_mod_list <- list(layer_null_mod, auc_canopy_null_mod,
-  dens_peak_height_null_mod, q99_height_null_mod, 
-  cum_lm_se_null_mod, cover_null_mod)
-
-stopifnot(length(mod_list) == length(null_mod_list))
-
-# Dataframe of model fit statistics
-mod_stat_df <- do.call(rbind, lapply(seq_along(mod_list), function(x) {
-  rsq = r.squaredGLMM(mod_list[[x]])
-  data.frame(
-    resp = names(mod_list[[x]]@frame)[1],
-    daic = AIC(null_mod_list[[x]]) - AIC(mod_list[[x]]),
-    dbic = BIC(null_mod_list[[x]]) - BIC(mod_list[[x]]),
-    rsqm = rsq[1],
-    rsqc = rsq[2],
-    nullrsq = r.squaredGLMM(null_mod_list[[x]]),
-    logl = logLik(mod_list[[x]]),
-    nulllogl = logLik(null_mod_list[[x]])
-  )
-}))
-
-write.csv(mod_stat_df, "../out/height_profile_mod_stat_df.csv", row.names = FALSE)
 
 # Get fixed effects slopes
 mod_pred <- do.call(rbind, lapply(mod_list, function(x) {

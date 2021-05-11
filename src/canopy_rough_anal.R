@@ -43,8 +43,7 @@ dat <- left_join(canopy, plot_data_new, by = "plot_id_new") %>%
   rename(plot_id = plot_id_new)
 
 # Bivariate models
-bivar_names <- c("cover_mean", "chm_mean", "chm_sd", "rough_mean", 
-  "rough_sd", "rc")
+bivar_names <- c("cover_mean", "chm_mean", "chm_sd", "rc")
 
 dat_resp <- dat %>%
   dplyr::select(man_clust, site, plot_id, all_of(bivar_names)) %>%
@@ -75,7 +74,7 @@ dev.off()
 
 bivar_mod <- bivar %>%
   filter(
-    key_resp %in% c("cover_mean", "chm_mean", "chm_sd", "rough_mean", "rc"),
+    key_resp %in% c("cover_mean", "chm_mean", "chm_sd", "rc"),
     key_pred %in% c("tree_shannon", "ba", "diam_cov", "mi_mean", "wi_mean"))
 
 bivar_mod$key_resp_pretty <- names(resp_names)[
@@ -215,16 +214,87 @@ chm_sd_lmer <- lmer(chm_sd ~ tree_shannon_std +
   ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
   data = dat_std, na.action = "na.fail")
 
-rough_mean_lmer <- lmer(rough_mean ~ tree_shannon_std + 
-	ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
-	data = dat_std, na.action = "na.fail")
-
 rc_lmer <- lmer(rc ~ tree_shannon_std + 
 	ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
 	data = dat_std, na.action = "na.fail")
 
-mod_list <- list(cover_mean_lmer, chm_mean_lmer, chm_sd_lmer, rough_mean_lmer, 
-  rc_lmer)
+mod_list <- list(cover_mean_lmer, chm_mean_lmer, chm_sd_lmer, rc_lmer)
+
+cover_mean_null_mod <- lmer(cover_mean ~ ba_std + (1 | site), data = dat_std)
+chm_mean_null_mod <- lmer(chm_mean ~ ba_std + (1 | site), data = dat_std)
+chm_sd_null_mod <- lmer(chm_sd ~ ba_std + (1 | site), data = dat_std)
+rc_null_mod <- lmer(rc ~ ba_std + (1 | site), data = dat_std)
+
+null_mod_list <- list(cover_mean_null_mod, chm_mean_null_mod, 
+  chm_sd_null_mod, rc_null_mod)
+
+stopifnot(length(mod_list) == length(null_mod_list))
+
+# Dataframe of model fit statistics
+mod_stat_df <- do.call(rbind, lapply(seq_along(mod_list), function(x) {
+  rsq = r.squaredGLMM(mod_list[[x]])
+  data.frame(
+    resp = names(mod_list[[x]]@frame)[1],
+    daic = AIC(null_mod_list[[x]]) - AIC(mod_list[[x]]),
+    dbic = BIC(null_mod_list[[x]]) - BIC(mod_list[[x]]),
+    rsqm = rsq[1],
+    rsqc = rsq[2],
+    nullrsq = r.squaredGLMM(null_mod_list[[x]]),
+    logl = logLik(mod_list[[x]]),
+    nulllogl = logLik(null_mod_list[[x]])
+  )
+}))
+
+dredge_list <- lapply(mod_list, function(x) { 
+  ml_mod <- update(x, REML = FALSE, na.action = "na.fail")
+  dredge(ml_mod)
+  })
+
+sink(file = "../out/height_profile_dredge_mods.txt")
+dredge_list
+sink()
+
+mod_pred_names <- c("tree_shannon", "ba", "diam_cov", "mi_mean", "wi_mean")
+
+sig_vars_dredge <- lapply(dredge_list, function(x) {
+  out <- x[1,!is.na(x[1,])]
+  c(gsub("\\s~.*", "", as.character((attributes(x)$global.call))[2]), 
+    mod_pred_names %in%
+      gsub("_std", "", 
+      names(out[,-which(names(out) %in% 
+          c("(Intercept)", "df", "logLik", "AICc", "delta", "weight")), 
+        drop = FALSE])))
+  })
+
+sig_vars_dredge_df <- as.data.frame(rbind(c("resp", mod_pred_names), 
+    do.call(rbind, sig_vars_dredge)))
+names(sig_vars_dredge_df) <- sig_vars_dredge_df[1,]
+sig_vars_dredge_df <- sig_vars_dredge_df[-1,]
+
+sig_vars_dredge_clean <- sig_vars_dredge_df %>% 
+ left_join(., mod_stat_df[,c("resp", "daic", "rsqc", "rsqm")], by = "resp") %>%
+  mutate(across(all_of(mod_pred_names), 
+      ~case_when(
+        .x == TRUE ~ "\\checkmark",
+        .x == FALSE ~ "",
+        TRUE ~ .x))) %>%
+  mutate(resp = names(resp_names)[match(resp, resp_names)]) 
+
+sig_dredge_tab <- xtable(sig_vars_dredge_clean,
+  label = "sig_vars_dredge",
+  caption = "Explanatory variables included in the best model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the hegyi crowding index and the random effects of site and plot. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
+  align = "crcccccccc",
+  display = c("s", "s", "s", "s", "s", "s", "s", "f", "f", "f"),
+  digits = c( NA,   NA,  NA,  NA,  NA,  NA,  NA,  1,   2,   2))
+
+names(sig_dredge_tab) <- c("Response", "Shannon", "Basal area", "CoV diameter", "Mingling", "Winkelmass", "$\\Delta$AIC", "R\\textsuperscript{2}\\textsubscript{c}", "R\\textsuperscript{2}\\textsubscript{m}")
+
+fileConn <- file("../out/canopy_rough_dredge_best.tex")
+writeLines(print(sig_dredge_tab, include.rownames = FALSE, 
+  table.placement = "H",
+  sanitize.text.function = function(x) {x}), 
+  fileConn)
+close(fileConn)
 
 mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
   get_model_data(x, type = "est") %>%

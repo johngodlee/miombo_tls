@@ -1,181 +1,360 @@
 > lapply(mod_list, summary)
 [[1]]
-Linear mixed model fit by REML ['lmerMod']
-Formula: cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
+Linear mixed
+  model fit by  REML
+ [lmerMod]
+Formula: 
+cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
+    wi_mean_std + (1 | site)
    Data: dat_std
 
-REML criterion at convergence: -4.4
+REML criterion at convergence: 
+-4.4
 
 Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--1.2606 -0.5761 -0.0496  0.3397  2.1327 
+    Min      1Q 
+-1.2606 -0.5761 
+ Median      3Q 
+-0.0496  0.3397 
+    Max 
+ 2.1327 
 
 Random effects:
- Groups   Name        Variance Std.Dev.
- site     (Intercept) 0.0000   0.000   
- Residual             0.0118   0.109   
-Number of obs: 18, groups:  site, 2
+ Groups  
+ site    
+ Residual
+ Name       
+ (Intercept)
+            
+ Variance Std.Dev.
+ 0.0000   0.000   
+ 0.0118   0.109   
+Number of obs: 18, groups:  
+site, 2
 
 Fixed effects:
-                 Estimate Std. Error t value
-(Intercept)        0.3974     0.0256   15.51
-tree_shannon_std   0.0739     0.0694    1.07
-ba_std             0.0466     0.0337    1.38
-diam_cov_std       0.0203     0.0322    0.63
-mi_mean_std       -0.0469     0.0683   -0.69
-wi_mean_std       -0.0702     0.0271   -2.59
+                 Estimate
+(Intercept)        0.3974
+tree_shannon_std   0.0739
+ba_std             0.0466
+diam_cov_std       0.0203
+mi_mean_std       -0.0469
+wi_mean_std       -0.0702
+                 Std. Error
+(Intercept)          0.0256
+tree_shannon_std     0.0694
+ba_std               0.0337
+diam_cov_std         0.0322
+mi_mean_std          0.0683
+wi_mean_std          0.0271
+                 t value
+(Intercept)        15.51
+tree_shannon_std    1.07
+ba_std              1.38
+diam_cov_std        0.63
+mi_mean_std        -0.69
+wi_mean_std        -2.59
 
 Correlation of Fixed Effects:
-            (Intr) tr_sh_ ba_std dm_cv_ m_mn_s
-tr_shnnn_st  0.000                            
-ba_std       0.000 -0.399                     
-diam_cv_std  0.000 -0.357 -0.271              
-mi_mean_std  0.000 -0.918  0.444  0.293       
-wi_mean_std  0.000  0.153  0.084 -0.138 -0.113
+            (Intr)
+tr_shnnn_st  0.000
+ba_std       0.000
+diam_cv_std  0.000
+mi_mean_std  0.000
+wi_mean_std  0.000
+            tr_sh_
+tr_shnnn_st       
+ba_std      -0.399
+diam_cv_std -0.357
+mi_mean_std -0.918
+wi_mean_std  0.153
+            ba_std
+tr_shnnn_st       
+ba_std            
+diam_cv_std -0.271
+mi_mean_std  0.444
+wi_mean_std  0.084
+            dm_cv_
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std  0.293
+wi_mean_std -0.138
+            m_mn_s
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std       
+wi_mean_std -0.113
 convergence code: 0
 boundary (singular) fit: see ?isSingular
 
 
 [[2]]
-Linear mixed model fit by REML ['lmerMod']
-Formula: chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
+Linear mixed
+  model fit by  REML
+ [lmerMod]
+Formula: 
+chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
+    wi_mean_std + (1 | site)
    Data: dat_std
 
-REML criterion at convergence: 51.9
+REML criterion at convergence: 
+51.9
 
 Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.474 -0.729  0.208  0.563  1.624 
+   Min     1Q 
+-1.474 -0.729 
+Median     3Q 
+ 0.208  0.563 
+   Max 
+ 1.624 
 
 Random effects:
- Groups   Name        Variance Std.Dev.
- site     (Intercept) 0.0706   0.266   
- Residual             1.2713   1.128   
-Number of obs: 18, groups:  site, 2
+ Groups  
+ site    
+ Residual
+ Name       
+ (Intercept)
+            
+ Variance Std.Dev.
+ 0.0706   0.266   
+ 1.2713   1.128   
+Number of obs: 18, groups:  
+site, 2
 
 Fixed effects:
-                 Estimate Std. Error t value
-(Intercept)         5.721      0.328   17.46
-tree_shannon_std    0.947      0.721    1.31
-ba_std              1.457      0.351    4.15
-diam_cov_std        0.212      0.334    0.63
-mi_mean_std        -0.188      0.720   -0.26
-wi_mean_std        -0.129      0.293   -0.44
+                 Estimate
+(Intercept)         5.721
+tree_shannon_std    0.947
+ba_std              1.457
+diam_cov_std        0.212
+mi_mean_std        -0.188
+wi_mean_std        -0.129
+                 Std. Error
+(Intercept)           0.328
+tree_shannon_std      0.721
+ba_std                0.351
+diam_cov_std          0.334
+mi_mean_std           0.720
+wi_mean_std           0.293
+                 t value
+(Intercept)        17.46
+tree_shannon_std    1.31
+ba_std              4.15
+diam_cov_std        0.63
+mi_mean_std        -0.26
+wi_mean_std        -0.44
 
 Correlation of Fixed Effects:
-            (Intr) tr_sh_ ba_std dm_cv_ m_mn_s
-tr_shnnn_st  0.009                            
-ba_std       0.010 -0.390                     
-diam_cv_std  0.001 -0.355 -0.268              
-mi_mean_std -0.021 -0.915  0.419  0.286       
-wi_mean_std  0.033  0.168  0.106 -0.129 -0.158
+            (Intr)
+tr_shnnn_st  0.009
+ba_std       0.010
+diam_cv_std  0.001
+mi_mean_std -0.021
+wi_mean_std  0.033
+            tr_sh_
+tr_shnnn_st       
+ba_std      -0.390
+diam_cv_std -0.355
+mi_mean_std -0.915
+wi_mean_std  0.168
+            ba_std
+tr_shnnn_st       
+ba_std            
+diam_cv_std -0.268
+mi_mean_std  0.419
+wi_mean_std  0.106
+            dm_cv_
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std  0.286
+wi_mean_std -0.129
+            m_mn_s
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std       
+wi_mean_std -0.158
 
 [[3]]
-Linear mixed model fit by REML ['lmerMod']
-Formula: chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
+Linear mixed
+  model fit by  REML
+ [lmerMod]
+Formula: 
+chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
+    wi_mean_std + (1 | site)
    Data: dat_std
 
-REML criterion at convergence: 33.4
+REML criterion at convergence: 
+33.4
 
 Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.206 -0.646 -0.091  0.844  1.243 
+   Min     1Q 
+-1.206 -0.646 
+Median     3Q 
+-0.091  0.844 
+   Max 
+ 1.243 
 
 Random effects:
- Groups   Name        Variance Std.Dev.
- site     (Intercept) 0.000    0.000   
- Residual             0.275    0.525   
-Number of obs: 18, groups:  site, 2
+ Groups  
+ site    
+ Residual
+ Name       
+ (Intercept)
+            
+ Variance Std.Dev.
+ 0.000    0.000   
+ 0.275    0.525   
+Number of obs: 18, groups:  
+site, 2
 
 Fixed effects:
-                 Estimate Std. Error t value
-(Intercept)        4.1332     0.1237   33.42
-tree_shannon_std   0.3278     0.3347    0.98
-ba_std             0.5470     0.1627    3.36
-diam_cov_std       0.5327     0.1556    3.42
-mi_mean_std       -0.1355     0.3295   -0.41
-wi_mean_std        0.0935     0.1306    0.72
+                 Estimate
+(Intercept)        4.1332
+tree_shannon_std   0.3278
+ba_std             0.5470
+diam_cov_std       0.5327
+mi_mean_std       -0.1355
+wi_mean_std        0.0935
+                 Std. Error
+(Intercept)          0.1237
+tree_shannon_std     0.3347
+ba_std               0.1627
+diam_cov_std         0.1556
+mi_mean_std          0.3295
+wi_mean_std          0.1306
+                 t value
+(Intercept)        33.42
+tree_shannon_std    0.98
+ba_std              3.36
+diam_cov_std        3.42
+mi_mean_std        -0.41
+wi_mean_std         0.72
 
 Correlation of Fixed Effects:
-            (Intr) tr_sh_ ba_std dm_cv_ m_mn_s
-tr_shnnn_st  0.000                            
-ba_std       0.000 -0.399                     
-diam_cv_std  0.000 -0.357 -0.271              
-mi_mean_std  0.000 -0.918  0.444  0.293       
-wi_mean_std  0.000  0.153  0.084 -0.138 -0.113
+            (Intr)
+tr_shnnn_st  0.000
+ba_std       0.000
+diam_cv_std  0.000
+mi_mean_std  0.000
+wi_mean_std  0.000
+            tr_sh_
+tr_shnnn_st       
+ba_std      -0.399
+diam_cv_std -0.357
+mi_mean_std -0.918
+wi_mean_std  0.153
+            ba_std
+tr_shnnn_st       
+ba_std            
+diam_cv_std -0.271
+mi_mean_std  0.444
+wi_mean_std  0.084
+            dm_cv_
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std  0.293
+wi_mean_std -0.138
+            m_mn_s
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std       
+wi_mean_std -0.113
 convergence code: 0
 boundary (singular) fit: see ?isSingular
 
 
 [[4]]
-Linear mixed model fit by REML ['lmerMod']
-Formula: rough_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
+Linear mixed
+  model fit by  REML
+ [lmerMod]
+Formula: 
+rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
+    wi_mean_std + (1 | site)
    Data: dat_std
 
-REML criterion at convergence: -0.7
+REML criterion at convergence: 
+164.9
 
 Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--1.141 -0.678 -0.122  0.589  2.081 
+    Min      1Q 
+-1.4494 -0.4639 
+ Median      3Q 
+-0.0599  0.3831 
+    Max 
+ 2.0165 
 
 Random effects:
- Groups   Name        Variance Std.Dev.
- site     (Intercept) 0.000    0.000   
- Residual             0.016    0.127   
-Number of obs: 18, groups:  site, 2
+ Groups  
+ site    
+ Residual
+ Name       
+ (Intercept)
+            
+ Variance Std.Dev.
+  2604     51     
+ 15168    123     
+Number of obs: 18, groups:  
+site, 2
 
 Fixed effects:
-                 Estimate Std. Error t value
-(Intercept)        0.9273     0.0298   31.08
-tree_shannon_std  -0.0639     0.0808   -0.79
-ba_std             0.1783     0.0392    4.54
-diam_cov_std       0.0345     0.0375    0.92
-mi_mean_std        0.0852     0.0795    1.07
-wi_mean_std        0.0136     0.0315    0.43
+                 Estimate
+(Intercept)         888.9
+tree_shannon_std   -190.5
+ba_std              -53.9
+diam_cov_std         39.7
+mi_mean_std         157.3
+wi_mean_std         -42.7
+                 Std. Error
+(Intercept)            46.7
+tree_shannon_std       79.1
+ba_std                 38.5
+diam_cov_std           36.5
+mi_mean_std            80.2
+wi_mean_std            33.7
+                 t value
+(Intercept)        19.02
+tree_shannon_std   -2.41
+ba_std             -1.40
+diam_cov_std        1.09
+mi_mean_std         1.96
+wi_mean_std        -1.27
 
 Correlation of Fixed Effects:
-            (Intr) tr_sh_ ba_std dm_cv_ m_mn_s
-tr_shnnn_st  0.000                            
-ba_std       0.000 -0.399                     
-diam_cv_std  0.000 -0.357 -0.271              
-mi_mean_std  0.000 -0.918  0.444  0.293       
-wi_mean_std  0.000  0.153  0.084 -0.138 -0.113
-convergence code: 0
-boundary (singular) fit: see ?isSingular
-
-
-[[5]]
-Linear mixed model fit by REML ['lmerMod']
-Formula: rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +      wi_mean_std + (1 | site)
-   Data: dat_std
-
-REML criterion at convergence: 164.9
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--1.4494 -0.4639 -0.0599  0.3831  2.0165 
-
-Random effects:
- Groups   Name        Variance Std.Dev.
- site     (Intercept)  2604     51     
- Residual             15168    123     
-Number of obs: 18, groups:  site, 2
-
-Fixed effects:
-                 Estimate Std. Error t value
-(Intercept)         888.9       46.7   19.02
-tree_shannon_std   -190.5       79.1   -2.41
-ba_std              -53.9       38.5   -1.40
-diam_cov_std         39.7       36.5    1.09
-mi_mean_std         157.3       80.2    1.96
-wi_mean_std         -42.7       33.7   -1.27
-
-Correlation of Fixed Effects:
-            (Intr) tr_sh_ ba_std dm_cv_ m_mn_s
-tr_shnnn_st  0.015                            
-ba_std       0.018 -0.378                     
-diam_cv_std  0.002 -0.353 -0.266              
-mi_mean_std -0.035 -0.910  0.389  0.279       
-wi_mean_std  0.055  0.186  0.131 -0.119 -0.209
+            (Intr)
+tr_shnnn_st  0.015
+ba_std       0.018
+diam_cv_std  0.002
+mi_mean_std -0.035
+wi_mean_std  0.055
+            tr_sh_
+tr_shnnn_st       
+ba_std      -0.378
+diam_cv_std -0.353
+mi_mean_std -0.910
+wi_mean_std  0.186
+            ba_std
+tr_shnnn_st       
+ba_std            
+diam_cv_std -0.266
+mi_mean_std  0.389
+wi_mean_std  0.131
+            dm_cv_
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std  0.279
+wi_mean_std -0.119
+            m_mn_s
+tr_shnnn_st       
+ba_std            
+diam_cv_std       
+mi_mean_std       
+wi_mean_std -0.209
 
 > sink()
