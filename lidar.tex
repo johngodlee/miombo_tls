@@ -74,7 +74,7 @@ Canopy structure describes the spatial distribution and density of canopy foliag
 
 At continental scales, variation in canopy height and canopy cover, two coarse measures of canopy structure both of which have been shown to affect woody productivity and correlate with woody biomass \citep{}, can largely be explained by climate and edaphic data \citep{GEDI}. Increased resource availability allows for larger trees and greater canopy closure \citep{}. At the scale of a single tree community however, where variation in climate and soil may be negligible, variation in canopy structure is thought to be affected principally by an interacting combination of tree canopy species composition \citep{}, and disturbance history through its effect on stand physical structure \citep{}. However, empirical testing of these mechanisms thought to drive canopy structure in natural wooded ecosystems remains sparse across many biomes \citep{}.
 
-Following established biodiversity-ecosystem function theory, the niche partitioning of canopy space, i.e. the spatial complementarity of individual tree canopies, is thought to be a key mechanism underlying positive biodiversity-productivity effects in wooded ecosystems \citep{Pretzsch2014, Barry2019}. Biodiversity-ecosystem function theory predicts that crown complementarity and thus canopy complexity and foliage density should increase with tree diversity in the local neighbourhood, increasing standing biomass and woody productivity, as coexisting species must occupy non-identical niche space to avoid competitive exclusion \citep{}.
+Following established biodiversity-ecosystem function theory, the niche partitioning of canopy space, i.e. the spatial complementarity of individual tree canopies, is thought to be a key mechanism underlying positive biodiversity-productivity effects in wooded ecosystems \citep{Pretzsch2014, Barry2019}. Biodiversity-ecosystem function theory predicts that crown complementarity and thus canopy complexity and foliage density should increase with tree diversity in the local neighbourhood, increasing standing biomass and woody productivity, as coexisting species must occupy non-identical niche space to avoid competitive exclusion \citep{}. 
 
 As well as the species diversity of trees in a local neighbourhood, the spatial distribution and relative size of those trees, i.e. stand structure, is also expected to affect canopy structural complexity. Heterogeneity in tree size, whether a result of species diversity, disturbance history or some other factor, is expected to increase crown complexity and overall canopy density as individuals of different sizes occupy different parts of the vertical canopy space \citep{}. Additionally, clustering of individuals in space is expected to increase canopy structural heterogeneity across a stand, but ultimately decrease total foliage density due to an increase in competitive interactions \citep{}. Clustering may occur as a result of disturbance history, or as a result of strong facilitation effects among individuals in a hostile environment \citep{Ratcliffe2017}.
 
@@ -95,7 +95,7 @@ Measurements were conducted at two sites, the first in Bicuar National Park, sou
 \begin{figure}[H]
 \centering
 	\includegraphics[width=\textwidth]{map}
-	\caption{Location of study sites within southern Africa (a), and of 1 ha plots within each site. The blue polygons denote the boundaries of protected areas which encompass the majority of study sites, Bicuar National Park in Angola (b), and Mtarure Forest Reserve in Tanzania (c). The background of each site map is a re-classified version of the GlobCover global land cover classification \citep{Globcover}.}
+	\caption{Location of study sites within southern Africa (left), and of 1 ha plots within each site (right). The black outlines in each site map denote the boundaries of protected areas which encompass the majority of study sites, Bicuar National Park in Angola (top), and Mtarure Forest Reserve in Tanzania (bottom). The background of each site map is a re-classified version of White's vegetation map \citep{White1983}. Note that all maps are on different scales.}
 	\label{map}
 \end{figure}
 
@@ -147,7 +147,7 @@ To explore variation in tree species composition among plots and sites, we condu
 
 Bivariate plots showed that subplot species diversity, measured by species richness of the tree neighbourhood around each 10 m diameter subplot, appeared to have weak but positive effects on canopy layer diversity and total canopy cover (\autoref{subplot_canopy_bivar}). The Hegyi crowding index and both stand structural diversity metrics had strong positive effects on canopy complexity, for all metrics except for uniformity of foliage distribution and height of peak foliage density. The two sites in our study had similar bivariate relationships, with interaction effects of site in the bivariate linear models being non-significant in all cases \todo{(supp. material)}.
 
-Linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across different measures of canopy structure, but the effect sizes were not significant (slope standard errors not overlapping zero) for any model (\autoref{height_profile_mod_rich_slopes_sites}). One exception is the negative effect of richness on canopy height in Mtarure only. As in the bivariate plots, the Hegyi crowding index had strong positive effects on three of six canopy complexity metrics. Variation in stem diameter had a positive effect on layer diversity and total foliage density, and a marginally significant positive effect on canopy height. Variation in crown area did not have consistent effects on any canopy complexity metric.
+Linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across different measures of canopy structure, but the effect sizes were not significant (slope standard errors not overlapping zero) for any model (\autoref{height_profile_mod_rich_slopes_sites}). One exception is the negative effect of richness on canopy height in Mtarure only. As in the bivariate plots, the Hegyi crowding index had strong positive effects on three of six canopy complexity metrics. Heterogeneity of stem diameter had a positive effect on layer diversity and total foliage density, and a marginally significant positive effect on canopy height. Variation in crown area was only seen to have significant effects in Bicuar plots, where it correlated with a decrease in vertical uniformity of foliage distribution, and total canopy foliage density.
 
 \begin{figure}[H]
 \centering
@@ -162,7 +162,7 @@ The model selection process showed that the best model for layer diversity inclu
 
 \subsection{Canopy rugosity}
 
-Similar to the subplot analyses, at the whole-plot scale tree species diversity, measured here by the shannon index, tended to have weak positive effects on canopy complexity metrics, while stand structural diversity metrics had stronger positive effects (\autoref{canopy_rough_mod_bivar}). Strong positive relationships of basal area on canopy complexity are driven mostly by two plots with particularly low basal area in Mtarure, M3 and M4. These plots are sparse thorny savanna, dominated by \textit{Senegalia} spp. (\autoref{nmds}). Indeed, linear models using only plots in bicuar show divergent relationships. These two plots also have particularly low canopy cover, canopy height, and canopy top roughness, despite having similar tree species diversity and spatial distribution of trees (winkelmass) as other plots.
+Similar to the subplot analyses, at the whole-plot scale tree species diversity, measured here by the Shannon index, tended to have weak positive effects on canopy complexity metrics, while stand structural diversity metrics had stronger positive effects (\autoref{canopy_rough_mod_bivar}). Strong positive relationships of basal area on canopy complexity are driven mostly by two plots with particularly low basal area in Mtarure, M3 and M4. These plots are sparse thorny savanna, dominated by \textit{Senegalia} spp. (\autoref{nmds}). Indeed, linear models using only plots in bicuar show divergent relationships. These two plots also have particularly low canopy cover, canopy height, and canopy top roughness, despite having similar tree species diversity and spatial distribution of trees (winkelmass) as other plots.
 
 \begin{figure}[H]
 \centering
@@ -171,7 +171,7 @@ Similar to the subplot analyses, at the whole-plot scale tree species diversity,
 	\label{canopy_rough_mod_bivar}
 \end{figure}
 
-Linear mixed effects models show that 
+Linear mixed effects models show that increased spatial clustering of trees causes a decrease in canopy cover. Increased spatial mingling of tree species causes an increase in canopy rugosity, while in contrast an increase in overall tree species diversity appears to cause a decrease in canopy rugosity. An increase in the heterogeneity of stem diameter causes an increase in canopy top roughness.
 
 \begin{figure}[H]
 \centering
@@ -202,7 +202,7 @@ Variance of plot canopy height and plot roughness was larger in Mtarure than Bic
 \begin{figure}[H]
 \centering
 	\includegraphics[width=\textwidth]{plot_subplot_bivar}
-	\caption{Bivariate plots of canopy structural metrics at the subplot and plot-level. Each point represents the mean values of a single plot. Points and linear model fits are coloured according to site. The black linear model combines both sites. Error bars on points are the standard deviation of mean subplot metrics across the plot.}
+	\caption{Bivariate plots of canopy structural metrics at the subplot (y axis) and plot level (x axis). Each point represents the mean values of a single plot. Points and linear model fits are coloured according to site. The black linear model combines both sites. Error bars on points are the standard deviation of mean subplot metrics across the plot.}
 	\label{plot_subplot_bivar}
 \end{figure}
 
@@ -219,6 +219,8 @@ Canopy structure at the plot level was less well predicted by stand structure an
 
 
 \section{Conclusion}
+
+\include{out/mod_bivar_lm_summ}
 
 \printbibliography
 

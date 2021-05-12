@@ -286,6 +286,56 @@ ggplot() +
   labs(x = "", y = "")
 dev.off()
 
+# Linear models of explans and responses
+mod_dat_bivar_split <- split(mod_dat_bivar, list(mod_dat_bivar$key_resp, mod_dat_bivar$key_pred))
+
+mod_dat_bivar_lm_list <- lapply(mod_dat_bivar_split, function(x) {
+  mod <- lm(x$val_resp ~ x$val_pred)
+  mod_int <- lm(x$val_resp ~ x$val_pred * x$site)
+  return(list(unique(x$key_resp), unique(x$key_pred), mod, mod_int))
+    })
+
+mod_bivar_lm_summ <- do.call(rbind, lapply(mod_dat_bivar_lm_list, function(x) {
+  mod_int_summ <- summary(x[[4]])
+  data.frame(resp = x[[1]], pred = x[[2]], 
+    mod_est = mod_int_summ$coefficients[2], mod_se = mod_int_summ$coefficients[6], 
+    mod_f = mod_int_summ$fstatistic[1], 
+    mod_dof1 = mod_int_summ$df[1],
+    mod_dof2 = mod_int_summ$df[2],
+    mod_rsq = mod_int_summ$r.squared,
+    pred_t = mod_int_summ$coefficients[14],
+    pred_p = mod_int_summ$coefficients[14],
+    int_t = mod_int_summ$coefficients[12],
+    int_p = mod_int_summ$coefficients[16])
+    }))
+
+mod_bivar_lm_summ_clean <- mod_bivar_lm_summ %>% 
+  mutate(
+    resp = names(resp_names)[match(resp, resp_names)],
+    pred = names(pred_names)[match(pred, pred_names)],
+    slope = pmFormat(mod_est, mod_se, dx = 1), 
+    mod_rsq = sprintf("%.2f", mod_rsq), 
+    mod_f = paste0(sprintf("%.1f", mod_f), "(", mod_dof1, ",", mod_dof2, ")"),
+    pred_t = paste(sprintf("%.2f", pred_t), pFormat(pred_p, asterisks = TRUE)),
+    int_t = paste(sprintf("%.2f", int_t), pFormat(int_p, asterisks = TRUE))) %>% 
+  dplyr::select(resp, pred, slope, mod_f, mod_rsq, pred_t, int_t)
+
+mod_bivar_lm_summ_tab <- xtable(mod_bivar_lm_summ_clean,
+  label = "mod_bivar_lm_summ",
+  caption = "Summary statistics of bivariate linear models for subplot canopy complexity metrics. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error. R\\textsuperscript{2} refers to the whole model. Pred. T refers to the t-value of the slope of the predictor term in the model, while Int. T refers to the t-value of the interaction of the predictor and the effect of site. Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05, .<0.1).",
+  align = "crrrrrll",
+  display = c("s", "s", "s", "s", "s", "s", "s", "s"))
+
+names(mod_bivar_lm_summ_tab) <- c("Response", "Predictor", "Slope", "F", "R\\textsuperscript{2}", "Pred. T", "Int. T")
+
+fileConn <- file("../out/mod_bivar_lm_summ.tex")
+writeLines(print(mod_bivar_lm_summ_tab, include.rownames = FALSE, 
+  table.placement = "H",
+  sanitize.text.function = function(x) {x}), 
+  fileConn)
+close(fileConn)
+
+
 # Layer diversity vs. richness model
 layer_mod <- lmer(layer_div ~ rich_std + hegyi_std + diam_cov_std + crown_area_cov_std + 
   (1 | plot_id), 
