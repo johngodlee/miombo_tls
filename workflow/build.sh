@@ -20,6 +20,7 @@ cp ../img/hemi_tls_ex.png img
 cp ../img/mingling_both.pdf img
 cp ../img/wi_diagram.pdf img
 cp ../img/wi_k.pdf img
+cp ../img/workflow_diag.pdf img
 
 
 # Adjust some snippets

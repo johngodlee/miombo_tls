@@ -53,32 +53,6 @@ pdf(file = "../img/site_map.pdf", width = 4, height = 5.5)
 site_map
 dev.off()
 
-# Get plot centres
-plot_centre <- plots %>% 
-  group_by(plot_id) %>%
-  summarise(
-    lon = mean(lon, na.rm = TRUE),
-    lat = mean(lat, na.rm = TRUE)) %>%
-  mutate(site = if_else(grepl("ABG", plot_id), "AGO", "TZA"))
-
-stopifnot(nrow(plot_centre) == 22)
-
-plot_centre_split <- split(plot_centre, plot_centre$site)
-
-plot_centre_fix <- list()
-plot_centre_fix$AGO <- plot_centre_split$AGO %>%
-  st_as_sf(., coords = c("lon", "lat")) %>%
-  st_set_crs(UTMProj4("33S")) %>%
-  st_transform(., 4326) %>%
-  cbind(., as.data.frame(st_coordinates(.)))
-
-plot_centre_fix$TZA <- plot_centre_split$TZA %>%
-  st_as_sf(., coords = c("lon", "lat")) %>%
-  st_set_crs(UTMProj4("37S")) %>%
-  st_transform(., 4326) %>%
-  cbind(., as.data.frame(st_coordinates(.)))
-
-plot_centre_wgs <- do.call(rbind, plot_centre_fix)
 
 white_fil <- white %>% 
   filter(leg_short_ %in% c(

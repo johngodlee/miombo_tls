@@ -8,6 +8,7 @@ library(tidyr)
 library(vegan)
 library(tibble)
 library(ggplot2)
+library(BIOMASS)
 library(ggrepel)
 
 source("functions.R")
@@ -15,6 +16,7 @@ source("functions.R")
 # Import data
 stems_all <- read.csv("../dat/stems_all.csv")
 plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_loc <- read.csv("../dat/plot_centre.csv")
 
 # Make abundance matrix, stems and trees
 stem_ab <- stems_all %>% 
@@ -89,7 +91,7 @@ nmds_plots$bray_clust <- cutree(bray_clust, 3)
 nmds_plots$man_clust <- case_when(
   nmds_plots$plot_id %in% c("P1", "P2", "P3", "P4", "P5", "P6", "P7", 
     "P8", "P10", "P11", "P12", "P14") ~ "1",
-  nmds_plots$plot_id %in% c( "S5", "W11", "W18", "W26") ~ "2"
+  nmds_plots$plot_id %in% c( "S5", "W11", "W18", "W26") ~ "2",
   nmds_plots$plot_id %in% c("P9", "P13", "P15") ~ "3",
   nmds_plots$plot_id %in% c("S3", "S7", "W9") ~ "4",
   TRUE ~ NA_character_)
@@ -150,14 +152,52 @@ hegyi_summ <- hegyi_join %>%
     hegyi_sd = sd(hegyi),
     hegyi_cov = hegyi_sd / hegyi_mean * 100)
 
+# Biomass
+genus_species <- strsplit(stems_all$species_name_clean, " ")
+stems_all$genus <- unlist(lapply(genus_species, "[[", 1))
+stems_all$species <- unlist(lapply(genus_species, "[[", 2))
+
+wd <- getWoodDensity(stems_all$genus, stems_all$species, 
+  stand = stems_all$plot_id_new,
+  region = "AfricaTrop") 
+
+wd_missing <- wd %>% 
+  filter(!levelWD %in% c("genus", "species")) %>%
+  group_by(genus, species) %>%
+  tally() %>%
+  arrange(desc(n))
+
+stems_all_wd <- cbind(stems_all, wd[,4:7])
+
+stems_all_loc <- left_join(stems_all_wd, plot_loc, 
+  by = c("plot_id_new" = "plot_id"))
+
+stems_all_loc$agb <- computeAGB(stems_all_loc$diam, stems_all_loc$meanWD, 
+  coord = data.frame(stems_all_loc$X, stems_all_loc$Y),
+  WD = stems_all_loc$meanWD)
+
+diam_agb_plot <- ggplot() + 
+  geom_point(data = stems_all_loc, aes(x = diam, y = agb, fill = plot_id), 
+    shape = 21, colour = "black") + 
+  theme_classic() + 
+  theme(legend.position = "none") + 
+  labs(x = "DBH (cm)", y = expression("AGB"~(t~ha^-1))) + 
+  theme(axis.ticks = element_blank(),
+    axis.text = element_blank())
+
+pdf(file = "../img/diam_agb.pdf", width = 3, height = 3)
+diam_agb_plot
+dev.off()
+
 # Summarise plot level statistics
-plot_summ <- stems_all %>% 
+plot_summ <- stems_all_loc %>% 
   group_by(plot_id) %>%
   summarise(
     rich = length(unique(species_name_clean)),
     diam_sd = sd(diam, na.rm = TRUE),
     diam_mean = mean(diam, na.rm = TRUE),
     ba = sum(pi * (diam/2)^2, na.rm = TRUE),
+    agb = sum(agb, na.rm = TRUE),
     stem_dens = n(),
     tree_dens = length(unique(tree_id))
     ) %>%

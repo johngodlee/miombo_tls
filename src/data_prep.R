@@ -272,11 +272,11 @@ corners_fil <- corners_clean %>%
 # Summarise stem data from entire plot
 tza_seosaw_stems_clean <- tza_seosaw_stems %>%
   dplyr::select(plot_id_new = plot_id, tree_id, species_name_clean, 
-    x_grid, y_grid, diam, alive, measurement_date)
+    x_grid, y_grid, diam, height, alive, measurement_date)
 
 ago_seosaw_stems_clean <- ago_seosaw_stems %>%
   dplyr::select(plot_id_new = plot_id, tree_id, species_name_clean, 
-    x_grid, y_grid, diam, alive, measurement_date)
+    x_grid, y_grid, diam, height, alive, measurement_date)
 
 stems_all <- bind_rows(tza_seosaw_stems_clean, ago_seosaw_stems_clean) %>%
   group_by(plot_id_new) %>%
@@ -285,6 +285,34 @@ stems_all <- bind_rows(tza_seosaw_stems_clean, ago_seosaw_stems_clean) %>%
   ungroup() %>%
   filter(alive == "A" | alive == "a" | is.na(alive)) %>%
   inner_join(., plot_id_lookup, c("plot_id_new" = "seosaw_id")) 
+
+# Get plot centres
+plot_centre <- corners_fil %>% 
+  group_by(plot_id) %>%
+  summarise(
+    lon = mean(lon, na.rm = TRUE),
+    lat = mean(lat, na.rm = TRUE)) %>%
+  mutate(site = if_else(grepl("ABG", plot_id), "AGO", "TZA"))
+
+stopifnot(nrow(plot_centre) == 22)
+
+plot_centre_split <- split(plot_centre, plot_centre$site)
+
+plot_centre_fix <- list()
+plot_centre_fix$AGO <- plot_centre_split$AGO %>%
+  st_as_sf(., coords = c("lon", "lat")) %>%
+  st_set_crs(UTMProj4("33S")) %>%
+  st_transform(., 4326) %>%
+  cbind(., as.data.frame(st_coordinates(.)))
+
+plot_centre_fix$TZA <- plot_centre_split$TZA %>%
+  st_as_sf(., coords = c("lon", "lat")) %>%
+  st_set_crs(UTMProj4("37S")) %>%
+  st_transform(., 4326) %>%
+  cbind(., as.data.frame(st_coordinates(.)))
+
+plot_centre_wgs <- do.call(rbind, plot_centre_fix) %>% 
+  st_drop_geometry()
 
 # Final checks
 stopifnot(all(plot_id_lookup$plot_id %in% stems_all$plot_id))
@@ -302,3 +330,5 @@ write.csv(dpm_merge, "../dat/dpm.csv", row.names = FALSE)
 write.csv(hemi_photos_merge, "../dat/hemi_photos.csv", row.names = FALSE)
 
 write.csv(corners_fil, "../dat/plot_corners.csv", row.names = FALSE)
+
+write.csv(plot_centre_wgs, "../dat/plot_centre.csv", row.names = FALSE)

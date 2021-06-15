@@ -44,6 +44,19 @@ ggplot() +
   coord_flip()
 dev.off()
 
+pdf(file = "../img/height_profile_schem.pdf", width = 3, height = 3)
+ggplot() + 
+  geom_line(data = all_bins, 
+    aes(x = z_round, y = vol_frac, colour = plot_id, group = plot_subplot), 
+    alpha = 0.75) + 
+  theme_classic() + 
+  labs(x = "Elev. (m)", y = "Gap frac.") + 
+  coord_flip() +
+  theme(legend.position = "none",
+    axis.ticks = element_blank(),
+    axis.text = element_blank())
+dev.off()
+
 pdf(file = "../img/height_profile_plot_facet.pdf", height = 15, width = 15)
 ggplot() + 
   geom_line(data = all_bins, 

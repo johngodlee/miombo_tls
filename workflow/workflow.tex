@@ -263,6 +263,15 @@ Duration of scan & 6 minutes 44 seconds \\
 \end{tabular} 
 \end{table} 
 
+\begin{figure}[H]
+\centering
+	\includegraphics[width=\textwidth]{workflow_diag}
+	\caption{Schematic diagram summarising the data processing and analysis workflow for the TLS data. Processing steps are labelled according to the principal software used during that step.}
+	\label{workflow_diag}
+\end{figure}
+
+
+
 \subsection{Voxelisation}
 
 PTX files were converted to compressed LAZ files using PDAL \citep{}. The exact code used to extract and apply the PTX rotation matrix to each point in the PTX file can be found IN THIS APPENDIX HERE. 
@@ -394,7 +403,7 @@ canopy height model smoothing. We used the pit-filling algorithm described in \c
 
 From the canopy height profile we extracted a number of statistics for use in statistical modelling. We calculated the mean and coefficient of variation of canopy height across the plot (canopy rugosity), following \citep{Parker2004}. We calculated the Topographic Ruggedness Index (TRI) as the mean of absolute differences between the heights of each column and the height of its eight surrounding cells \citep{Wilson2007}. From this we estimated the plot level mean TRI and coefficient of variation. 
 
-We also calculated a second measure of canopy rugosity ($R_{c}$) that considers the entire canopy profile, rather than just the canopy top, following \citet{Hardiman2011}:
+We also calculated a second measure of canopy rugosity ($R_{c}$) that considers the entire canopy profile, rather than just the canopy top, following \citet{Hardiman2011}
 
 \begin{equation}
 	R_{c} = \sigma{}(\sigma{}G_{z})_{x}
