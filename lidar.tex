@@ -1,98 +1,53 @@
 \documentclass[11pt,a4paper]{article}
 
-% Define page geometry
-\usepackage{geometry} \geometry{left=2.2cm, right=2.2cm, top=2.2cm, bottom=2cm}
-\parskip 0.15cm 
-\setlength{\parindent}{0cm} 
-\usepackage{pdflscape}
-\usepackage[document]{ragged2e}
+\usepackage{mynotes}
 
-% Text formatting
-\usepackage[T1]{fontenc}  % Set font
+\graphicspath{ {img/} }
 
-\usepackage{lineno}  % Line numbers
-
-\usepackage{amssymb}  % Symbols
-\usepackage{textcomp}
-\newcommand{\textapprox}{\raisebox{0.5ex}{\texttildelow}}  % Command for a good tilde
-
-\linespread{1.5}  % Linespacing
-
-\usepackage{xcolor} \newcommand{\todo}[1]{\textcolor{red}{\textbf{#1}}}   %
-
-\usepackage{lineno}
-
-% Tables
-\usepackage{multirow} \setlength{\tabcolsep}{4pt}
-
-% Image handling
-\usepackage{graphicx} 
-
-\makeatletter \g@addto@macro\@floatboxreset\centering  
-\makeatother
-
-\graphicspath{ {img/} }  % Define image path
-
-\usepackage{subfig}  % Compound figures
-
-\usepackage{float}  % Precise figure location
-
-% Bibliography management
-\usepackage[style=authoryear, natbib=true, backend=biber]{biblatex}
 \addbibresource{lidar.bib}
-
-% Links within document, nice figure formatting
-\usepackage[breaklinks]{hyperref} \definecolor{links}{RGB}{0,0,0} \hypersetup{
-	breaklinks, colorlinks=true, linkcolor=links, anchorcolor=links,
-	citecolor=links, filecolor=links, menucolor=links, runcolor=links,
-	urlcolor=links, pdfauthor={John L. Godlee} }
-	\def\subsectionautorefname{section} \def\subsubsectionautorefname{section}
-
-\newcommand{\beginsupplement}{% 
-	\setcounter{table}{0}
-	\renewcommand{\thetable}{S\arabic{table}}% 
-	\setcounter{figure}{0}
-	\renewcommand{\thefigure}{S\arabic{figure}}% 
-}
      
 % Variables
 \include{out/ptn}
 
-\newcommand{\titletext}{Species diversity and stand structure as drivers of canopy complexity in southern African woodlands}
+\title{Species diversity and stand structure as drivers of canopy complexity in southern African woodlands}
+\author{John L. Godlee}
+\date{\today}
 
 \begin{document}
 
-{\LARGE{\titletext{}}}
+\maketitle{}
 
 \linenumbers
 
-\section*{Abstract}
-
-African savannas are experiencing strong directional shifts in woody cover and ecosystem structure, driven primarily by human-induced climate change, with consequences for ecosystem function, importantly productivity and carbon dynamics. However, the patch dynamics of savanna-woodland mosaics are complex. Disturbance and resource availability have been shown to interact to determine canopy cover and the transition to either an open canopy savanna or a more closed canopy forest-like ecosystem. There is unexplained variation in canopy closure and the rates of woody thickening. The biodiversity of trees in the local neighbourhood may act as a key mediator at the nexus of environmental drivers of woody cover. Here, I used terrestrial LiDAR to measure canopy cover and complexity, along with metrics of tree species diversity and spatial structure, to determine the effect of local tree neighbourhood diversity on canopy structure.
+\begin{abstract}
+Atmospheric CO\textsuperscript{2} enrichment and human-induced climate change are expected to drive woody encroachment and an increase in tree cover across African savannas, with consequences for ecosystem function, particularly related to carbon dynamics. The patch dynamics of savanna-woodland mosaics are complex however, as woody growth is mediated by seasonal fire that is itself driven by woody canopy structure. It is unclear how variation in existing tree species composition and stand structure in this ecosystem affects canopy structure, and how this might determine future vegetation dynamics. In this study, I used terrestrial LiDAR at two miombo savanna sites, in Angola and Tanzania, measuring canopy cover and canopy structure to explore relationships between tree species diversity, stand structure, and canopy structure. I found that \todo{WHAT}
+\end{abstract}
 
 \section{Introduction}
 
-Canopy structure describes the spatial distribution and density of canopy foliage, comprising the primary interface between trees, the atmosphere and sunlight. Canopy structural complexity, i.e. the spatial heterogeneity of foliage distribution through the canopy, has been positively linked to canopy productivity \citep{Hardiman2011,Chen2012,Law2001,Baldocchi2001,Morin2015}. The characterisation of tree canopy structure in wooded ecosystems constitutes a long-standing field of research that has been fundamental to interpreting, modelling, and improving understanding of ecosystem function \citep{Watt1947, Whittaker1969, Horn1971, Maarel1996}. It is therefore essential to understand the drivers of variation in canopy structural complexity to improve modelling of earth-atmosphere carbon fluxes.
+% Woody encroachment and ecological change
+Atmospheric CO\textsubscript{2} enrichment is expected to drive woody encroachment, i.e. proliferation of trees in previously non-wooded areas, and woody thickening, i.e. increased growth of trees in currently wooded areas, across the savanna biome over the coming century \citep{Criado2020, Stevens2016, Mitchard2013}. As atmospheric CO\textsubscript{2} concentrations increase, C\textsubscript{3} trees are expected to gain a competitive edge over C\textsubscript{4} grasses due to differences in photosynthetic pathway \citep{Buitenwerf2012}, with cascading effects on canopy cover, grass growth, and therefore disturbance regime \citep{Bond2012}. If realised, woody encroachment and thickening will have significant effects on the global carbon cycle, as more CO\textsubscript{2}, as well as myriad other effects on ecosystem structure \citep{Donohue2013}. Indeed, tropical savannas have been identified as the fastest increasing component of the terrestrial carbon sink \citep{Sitch2015}. Previous studies however, have reported wide variation in rates of woody encroachment and thickening \citep{Mitchard2013}, particularly in disturbance-prone savannas such as miombo woodlands in southern Africa \citep{Lewis2009}, and it is unclear how the fertilisation effect of atmospheric CO\textsubscript{2} enrichment will interact other ecosystem properties to alter vegetation \citep{Korner2017, Reich2014}.
 
-At continental scales, variation in canopy height and canopy cover, two coarse measures of canopy structure both of which have been shown to affect woody productivity and correlate with woody biomass \citep{}, can largely be explained by climate and edaphic data \citep{GEDI}. Increased resource availability allows for larger trees and greater canopy closure \citep{}. At the scale of a single tree community however, where variation in climate and soil may be negligible, variation in canopy structure is thought to be affected principally by an interacting combination of tree canopy species composition \citep{}, and disturbance history through its effect on stand physical structure \citep{}. However, empirical testing of these mechanisms thought to drive canopy structure in natural wooded ecosystems remains sparse across many biomes \citep{}.
+% Southern African woodlands 
+Savanna vegetation is defined by the coexistence of trees and grasses \citep{Scholes1997}. In the tropical mesic savannas of southern Africa, disturbance by fire and herbivory are the main limitations on tree cover, preventing the competitive exclusion of shade-sensitive C\textsubscript{4} grasses where climatic conditions would otherwise allow for closed canopy forest \citep{Sankaran2005}. C\textsubscript{4} grasses also provide the main fuel source for seasonal fires in these savannas \citep{Frost1996}, producing a positive feedback where an increase in tree cover reduces grass fuel load, reducing fire frequency and intensity, increasing tree cover, and so on \citep{Staver2015}. As such, even small perturbations resulting in a change in tree cover can lead to large changes in vegetation structure if critical thresholds of tree cover are crossed \citep{Hirota2011}. Previous research has sought to identify environmental factors which affect tree cover and its responses to atmospheric CO\textsubscript{2} enrichment, but few have considered the functional role of the existing tree community and its effect on ecosystem processes.
 
-Following established biodiversity-ecosystem function theory, the niche partitioning of canopy space, i.e. the spatial complementarity of individual tree canopies, is thought to be a key mechanism underlying positive biodiversity-productivity effects in wooded ecosystems \citep{Pretzsch2014, Barry2019}. Biodiversity-ecosystem function theory predicts that crown complementarity and thus canopy complexity and foliage density should increase with tree diversity in the local neighbourhood, increasing standing biomass and woody productivity, as coexisting species must occupy non-identical niche space to avoid competitive exclusion \citep{}. 
+% Crown complementarity
+Canopy structure describes the spatial distribution of tree canopy foliage \citep{Lowman2004}. Canopy structural complexity, i.e. the spatial heterogeneity of foliage distribution within the canopy, has been linked to increased net ecosystem productivity \citep{Hardiman2011,Chen2012,Law2001,Baldocchi2001,Morin2015}, increased resilience of productivity \citep{Pretzsch2014}, reduced understorey light penetration \citep{Scheuermann2018, Fotis2018}, and greater moderation of understorey micro-climate \citep{Wright2017}. Furthermore, in temperate and boreal forests, functional differences among coexisting tree species in their vertical and horizontal canopy occupation provides a link between species diversity, canopy structural complexity and canopy density, with canopy structure constituting a mechanism for observed positive biodiversity-ecosystem function effects in wooded ecosystems \citep{Pretzsch2014, Barry2019}. In tropical savannas, tree species diversity might therefore influence ecosystem-level woody thickening in response to elevated atmospheric CO\textsubscript{2}, where diverse tree communities are less limited by competition due to niche separation, and can more effectively increase foliage density and reduce understorey light penetration, excluding grass and thus reducing disturbance. 
 
-As well as the species diversity of trees in a local neighbourhood, the spatial distribution and relative size of those trees, i.e. stand structure, is also expected to affect canopy structural complexity. Heterogeneity in tree size, whether a result of species diversity, disturbance history or some other factor, is expected to increase crown complexity and overall canopy density as individuals of different sizes occupy different parts of the vertical canopy space \citep{}. Additionally, clustering of individuals in space is expected to increase canopy structural heterogeneity across a stand, but ultimately decrease total foliage density due to an increase in competitive interactions \citep{}. Clustering may occur as a result of disturbance history, or as a result of strong facilitation effects among individuals in a hostile environment \citep{Ratcliffe2017}.
+% Stand structure
+As well as the species diversity of trees in a local neighbourhood, the spatial distribution and relative size of those trees, i.e. stand structure, is also expected to affect canopy structural complexity \citep{Stark2015}. Heterogeneity in tree size, whether a result of species diversity, disturbance history or some other factor, is expected to increase canopy complexity and canopy density as individuals of different sizes occupy different parts of the vertical canopy space \citep{Panzou2020}, and may differ in light requirements \citep{CharlesDominique2018}. Additionally, clustering of individuals in space is expected to increase canopy structural heterogeneity across the wider savanna landscape, but ultimately decrease total foliage density due to an increase in competitive interactions \citep{Dohn2017}. Clustering may occur as a result of disturbance history, or as a result of strong facilitation effects among individuals in stressful environments \citep{Ratcliffe2017}. More diverse communities may allow more dense clustering, as differences in canopy occupancy among species can reduce the negative density dependency effect that would occur among individuals from the same species.
 
-The direction of relationships between species diversity, stand structure, and canopy complexity is unclear. While biodiversity-ecosystem function theory presents a species diversity-centric view, whereby diversity affects stand structure and canopy structure, it is possible that aspects of stand structure may influence observed species diversity through sampling effects. Woodlands with greater stem density are likely to have greater species diversity, for example, simply because there are more stems which could potentially constitute different species \citep{}. It is important therefore to account for variation in stem density within models predicting the effects of structural and species diversity on canopy structure, and to design measures of structural diversity that are not conflated with stem density.
+% LiDAR
+Canopy structure is multi-dimensional and has previously been explained using a plethora of simple metrics that originated in forest and community ecology \citep{Kershaw2017}. Assessments of canopy structure have most often modelled tree canopies as a series of ellipses (2D), ellipsoids or cones (3D) based on field measurements with measuring tapes \citep{Jucker2015}. Measurements of this kind are time consuming and yet are an over-simplification of canopy structure. Alternatively, canopy cover is often measured using indirect optical methods which partition sky from canopy material, i.e. with hemispherical photography or the commonly used LAI-2000, providing a 2D representation of the canopy but lacking information on vertical canopy structure \citep{Jonckheere2004}. In recent years, particularly in temperate and boreal forests, LiDAR (Light Detection And Ranging) has emerged as a suitable technology for rapidly and precisely assessing canopy structure in 3D, conserving information on 3D structure of the calibre that is required to understand it's complexities \citep{Muir2018, Calders2020}.
 
-While much work in the field of forest management has been done to test biotic drivers of tree canopy structure in temperate \citep{} and boreal forests \citep{}, mostly to inform commercial forestry management, similar work in the tropics is comparatively scarce \citep{}. In dry tropical woodlands and savannas especially, tree canopy structure and its effect on ecosystem productivity has received little attention, possibly due to the misplaced assumption that woody productivity in these ecosystems does not represent a globally significant carbon flux \citep{}, or that tree canopies in these smaller stature woodlands do not interact and compete for resources to the same degree as in large stature forests \citep{}. In recent years however, it has been shown that dry tropical woodlands represent the largest uncertainty in our estimates of the terrestrial carbon cycle \citep{Quere2018, Ahlstrom2015}. \citet{Sitch2015} demonstrated the dominant role of the dry tropics in driving variability in the terrestrial carbon sink, and showed that the dry tropics are the fastest increasing component of the terrestrial carbon sink. Part of this uncertainty arises from our lacking a nuanced understanding of how species composition and structure affect ecosystem function in these ecosystems, which conceptually underpins the Dynamic Global Vegetation Models (DGVMs) fed into global carbon dynamics models. The pertinence of this knowledge gap has prompted further research of the biotic drivers of variation in productivity in the dry tropics, and momentum in this field of research is building, to create general theories of the ecosystem function of the dry tropics \citep{}.
-
-Canopy structure is multi-dimensional and has previously been explained using a plethora of simple metrics that originated in forest and community ecology \citep{}. Assessments of canopy structure in the dry tropical have most often modelled tree canopies as a series of ellipses (2D) or ellipsoids (3D) based on field measurements with measuring tapes \citep{}. Measurements of this kind are time consuming and yet are an over-simplification of canopy structure \citep{}. Alternatively, canopy cover is often measured using indirect optical methods which partition sky from canopy material, i.e. with hemispherical photography or the commonly used LAI-2000, providing a 2D representation of the canopy but lacking information on vertical canopy structure. In recent years, particularly in temperate and boreal forests, LiDAR (Light Detection And Ranging) has emerged as a suitable technology for rapidly and precisely assessing canopy structure in 3D, conserving information on 3D structure of the calibre that is required to understand it's complexities \citep{}.
-
-In this study we applied terrestrial LiDAR techniques to woodland-savanna mosaics at two sites in southern Africa, with the aim of increasing our understanding of how various metrics of tree canopy structural complexity are affected by tree neighbourhood diversity and stand structure. Our overarching contention is that neighbourhoods of greater tree diversity and greater structural diversity allow greater canopy complexity and foliage density, resulting in higher productivity, and ultimately a more `forest-like' community, rather than an open canopy savanna.
+% In this study
+In this study I applied terrestrial LiDAR techniques to woodland-savanna mosaics at two sites in southern Africa, with the aim of increasing our understanding of how various metrics of tree canopy structural complexity are affected by tree neighbourhood diversity and stand structure. Our overarching contention is that neighbourhoods of greater tree diversity and greater structural diversity allow greater canopy complexity and foliage density, resulting in higher productivity, and ultimately a more `forest-like' community, rather than an open canopy savanna. Thus, more diverse savannas might more effectively increase growth under elevated atmospheric CO\textsubscript{2} and are more likely to experience woody thickening. We also consider the functional differences among species in these communities and assess how combinations of these functional groups affect canopy structure.
 
 \section{Materials and methods}
 
 \subsection{Study sites}
 
-Measurements were conducted at two sites, the first in Bicuar National Park, southwest Angola (S15.1$^\circ$, E14.8$^\circ$), and the second in and around Mtarure Forest Reserve, southeast Tanzania (S9.0$^\circ$, E39.0$^\circ$) (\autoref{map}). At each site, 1 ha (100x100 m) plots were sited in areas of miombo woodland vegetation, across a gradient of stem density. In Angola, 15 plots were sampled, while in Tanzania, seven were sampled following the curtailment of fieldwork due to COVID-19 travel restrictions. Fieldwork was conducted between February and April at both sites, during the peak growth period of each site in order to capture the highest foliage volume in the canopy.
+Measurements were conducted at two sites, the first in Bicuar National Park, southwest Angola (S15.1$^\circ$, E14.8$^\circ$), and the second in and around Mtarure Forest Reserve, southeast Tanzania (S9.0$^\circ$, E39.0$^\circ$) (\autoref{map}). At each site, 1 ha (100x100 m) plots were located in areas of miombo woodland vegetation, across a gradient of stem density. In Angola, 15 plots were sampled, while in Tanzania, seven were sampled following the curtailment of fieldwork due to COVID-19 travel restrictions. Fieldwork was conducted between February and April at both sites, during the peak growth period of each site in order to capture the greatest foliage volume in the canopy.
 
 \begin{figure}[H]
 \centering
@@ -103,19 +58,19 @@ Measurements were conducted at two sites, the first in Bicuar National Park, sou
 
 \subsection{Field measurements}
 
-Within each 1 ha plot we identified each stem >5 cm stem diameter to species, measured stem diameter (diameter at breast height - 1.3 m) and recorded stem location within the plot using tap measures. Each 1 ha plot was further subdivided into nine 10 m diameter circular subplots arranged in a regular grid, with a 15 m buffer from the plot edge and 35 m between subplots. For each subplot, we identified woody stems >5 cm diameter with canopy material inside the subplot. We measured the distance and direction from the subplot centre to each of these stems, as well as their projected crown area as an ellipse of two perpendicular crown diameter measurements.
+Within each 1 ha plot we identified each stem >5 cm stem diameter to species, measured stem diameter (Diameter at Breast Height - 1.3 m) and recorded stem location within the plot using tape measures. Each 1 ha plot was further subdivided into nine 10 m diameter circular subplots arranged in a regular grid, with a 15 m buffer from the plot edge and 35 m between subplots. For each subplot, we recorded the woody stems >5 cm diameter with canopy material inside the subplot. We measured the distance and direction from the subplot centre to each of these stems, as well as their projected crown area as an ellipse of two perpendicular crown diameter measurements.
 
-Within each subplot, a variable number of scans were recorded using a Leica HDS6100 phase-shift Terrestrial Laser Scanner (TLS) \citep{Leica}. The number and position of scans within a subplot was determined by the arrangement of canopy material in the subplot. Scan positions were arranged to minimise shadows within the canopy of the subplot, and to maximise canopy penetration. The number of scans per subplot ranged between one and five in both sites. 
+Within each subplot, a variable number of scans were recorded using a Leica HDS6100 phase-shift Terrestrial Laser Scanner (TLS). The number and position of scans within a subplot was determined by the arrangement of canopy material in the subplot. Scan positions were arranged to minimise shadows within the canopy of the subplot, and to maximise canopy penetration. The number of scans per subplot ranged between one and five in both sites. 
 
 \subsection{Data analysis}
 
 \subsubsection{Scan processing}
 
-Point clouds from scans in each subplot were registered and unified using Leica Cyclone (version 9.1) \citep{Cyclone}, using five reflective targets visible to all scans. Point clouds were voxelised to cubic voxel sizes of different sizes depending on the application of the data. For subplot height profile estimation and gap fraction we used 5 cm\textsuperscript{3} voxels, and for whole plot canopy rugosity we used 10 cm\textsuperscript{3} voxels. Voxels were classed as filled if they intersected with one or more points. Variation in voxel size reflects the spatial scale of each analysis, and is bounded by the beam divergence of the scanner over longer distances \citep{}. Choosing voxels that are too small can result in pock-marked representations of surfaces that are especially problematic when calculating larger scale canopy structure metrics, such as canopy top roughness, while voxels that are too large can result in an over-estimation of plant volume when estimating canopy foliage density at the subplot scale \citep{Seidel2012, Cifuentes2014}. We used a noise reduction algorithm from \citet{} to discard points based on mean nearest neighbour distances. This effectively removed `ghost points' produced by partial interceptions and also removed many erroneous returns caused by airborne dust particles, which was common at our study sites. Raw points clouds for each subplot had a mean of \textapprox{}\rawpt{} points, \textapprox{}\voxelpt{} points after voxelisation, and \textapprox{}\subpt{} points after noise reduction.
+Point clouds from scans in each subplot were registered and unified using Leica Cyclone (version 9.1), using five reflective cross targets visible to all scans. Point clouds were voxelised to cubic voxel sizes of different sizes depending on the application of the data. For subplot height profile estimation and gap fraction we used 5 cm\textsuperscript{3} voxels, and for whole plot canopy rugosity we used 10 cm\textsuperscript{3} voxels. Voxels were classified as filled if they intersected with one or more points. Variation in voxel size reflects the spatial scale of each analysis, and is bounded by the beam divergence of the scanner over longer distances \citep{}. Choosing voxels that are too small can result in pock-marked representations of surfaces that are especially problematic when calculating larger scale canopy structure metrics, such as canopy top roughness, while voxels that are too large can result in an over-estimation of plant volume when estimating canopy foliage density at the subplot scale \citep{Seidel2012, Cifuentes2014}. We used the noise reduction algorithm from \citet{Rusu2008} to discard points based on mean nearest neighbour distances. This effectively removed `ghost points' produced by partial interceptions and also removed many erroneous returns caused by airborne dust particles, which was common at our study sites. Raw points clouds for each subplot had a mean of \textasciitilde{}\rawpt{} points, \textasciitilde{}\voxelpt{} points after voxelisation, and \textasciitilde{}\subpt{} points after noise reduction.
 
 Ground points were classified using the Progressive Morphological Filter (PMF) from \citet{Zhang2003}. Point cloud height was reclassified height based on this revised ground layer by measuring the vertical distance between the nearest ground point and each point.
 
-We used ray-tracing to calculate canopy cover at the subplot centre from multiple TLS scans. Hemispherical images were created using the POV-ray software \citep{}. Voxels were converted to matt black cubes filling the voxel volume, with a white sky box and no light source. A `camera' with a 180\textdegree{} fisheye lens was placed at the subplot centre within POV-Ray, at a height of 1.8 m pointing directly upwards. The images produced by POV-Ray were analysed using Hemiphot \citep{Steege} to estimate canopy cover as the proportion of pixels filled by canopy material.
+We used ray-tracing to calculate canopy cover at the subplot centre from multiple TLS scans. Hemispherical images were created using the POV-ray software \citep{}. Voxels were converted to matt black cubes filling the voxel volume, with a white sky box and no light source. A `camera' with a 180\textdegree{} fisheye lens was placed at the subplot centre within POV-Ray, at a height of 1.8 m pointing directly upwards. The images produced by POV-Ray were analysed using Hemiphot \citep{HemiPhot} to estimate canopy cover as the proportion of pixels filled by canopy material.
 
 We calculated a number of metrics to describe different aspects of canopy complexity within each subplot in addition to canopy cover. Canopy height was measured as the 99th percentile of height of canopy material within the subplot. Layer diversity was calculated using Shannon entropy on foliage density of 0.5 m height bins through the tree canopy. The uniformity of foliage distribution was calculated by fitting a linear model to the cumulative foliage density profile, then extracting the standard error on the slope estimate of this linear model. The height of peak foliage density was calculated by fitting a loess model to the foliage height profile and extracting the height at which foliage density peaked.  
 
@@ -131,7 +86,7 @@ At the plot level, we estimated the regularity of species spatial distribution u
 
 \subsection{Statistical analysis}
 
-Linear mixed effects models tested the effects of tree species diversity and stand structural diversity on canopy complexity. Mixed models were used to account for the highly nested sampling design of subplots within plots and plots within sites. Two sets of models were conducted, the first at the subplot level with random effects for plot nested within site, and the second at the plot level with random effects for site only. Separate models were fitted for each canopy complexity metric, resulting in six models at the subplot level and five models at the plot level. We compared the AIC values and Akaike weights of all models for a particular canopy complexity metric to find the `best model', i.e. the model which minimised variance in the fitted values, with penalties for complex model structure \citep{Akaike}.
+Linear mixed effects models tested the effects of tree species diversity and stand structural diversity on canopy complexity. Mixed models were used to account for the highly nested sampling design of subplots within plots and plots within sites. Two sets of models were conducted, the first at the subplot level with random effects for plot nested within site, and the second at the plot level with random effects for site only. Separate models were fitted for each canopy complexity metric, resulting in six models at the subplot level and five models at the plot level. We compared the AIC values and Akaike weights of all models for a particular canopy complexity metric to find the `best model', i.e. the model which minimised variance in the fitted values, with penalties for complex model structure \citep{Akaike1992}.
 
 To explore variation in tree species composition among plots and sites, we conducted a Non-metric Multi-dimensional Scaling (NMDS) analysis using tree species abundance in each plot. We excluded species with only one individual across all plots.  
 
@@ -158,7 +113,7 @@ Linear mixed effects models showed that species richness of the subplot neighbou
 	\label{height_profile_mod_rich_slopes_sites}
 \end{figure}
 
-The model selection process showed that the best model for layer diversity included species richness. Stand structural diversity metrics were included in the best models for all canopy complexity metrics except for canopy cover, which was predicted solely by the Hegyi crowding index. Models of layer diversity, total foliage density, and canopy cover were predicted well by a combination of crowding and stand structural diversity. Models of height of peak foliage density, canopy height, and uniformity of foliage distribution were poorly constrained by the available fixed effects, with R\textsuperscript{2}\textsubscript{m} of \textapprox{}5\%. The majority of the total model effect on canopy height came from the random effects of site and plot identity.
+The model selection process showed that the best model for layer diversity included species richness. Stand structural diversity metrics were included in the best models for all canopy complexity metrics except for canopy cover, which was predicted solely by the Hegyi crowding index. Models of layer diversity, total foliage density, and canopy cover were predicted well by a combination of crowding and stand structural diversity. Models of height of peak foliage density, canopy height, and uniformity of foliage distribution were poorly constrained by the available fixed effects, with R\textsuperscript{2}\textsubscript{m} of \textasciitilde{}5\%. The majority of the total model effect on canopy height came from the random effects of site and plot identity.
 
 \include{out/height_profile_dredge_best}
 
