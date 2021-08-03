@@ -19,7 +19,7 @@ bicuar <- st_read("../dat/site_shp/bicuar/WDPA_Mar2018_protected_area_350-shapef
 mtarure <- st_read("../dat/site_shp/mtarure/mtarure.shp")
 africa <- st_read("../dat/site_shp/africa/africa.shp")
 white <- st_read("/Volumes/john/whiteveg/whiteveg_poly_joined.shp")
-plots <- read.csv("../dat/plot_corners.csv")
+plots <- read.csv("../dat/plot_centre.csv")
 
 # Join shapes
 pa <- list(bicuar, mtarure)
@@ -53,7 +53,6 @@ pdf(file = "../img/site_map.pdf", width = 4, height = 5.5)
 site_map
 dev.off()
 
-
 white_fil <- white %>% 
   filter(leg_short_ %in% c(
       "Dry deciduous forest & 2 grassland",
@@ -69,19 +68,36 @@ white_fil <- white %>%
     leg_short_ == "Dry miombo woodland" ~ "Dry miombo", 
     leg_short_ == "East African coastal mosaic" ~ "Coastal forest mosaic"))
 
-
+latLong2UTM <- function(x, y) {
+  unlist(lapply(1:length(x), function(z) {
+    paste((floor((as.numeric(x[z]) + 180) / 6) %% 60) + 1,
+      ifelse(as.numeric(y[z]) < 0, "S", "N"),
+      sep = "")
+  }))
+}
+UTMProj4 <- function(x){
+  unlist(lapply(1:length(x), function(y) {
+    paste0(
+      "+proj=utm +zone=",
+      gsub("[A-z]", "", as.character(x[y])),
+      ifelse(gsub("[0-9]", "", as.character(x[y])) == "S", " +south", ""),
+      " +ellps=WGS84")
+  }))
+}
 # Maps for each PA
 site_maps <- lapply(pa, function(x) {
 
   if (any(grepl("Bicuar", unlist(x)))) { 
-    plot_centre_fix_fil <- plot_centre_fix$AGO
+    plot_centre_fix_fil <- st_as_sf(plots[plots$site == "AGO",], coords = c("X", "Y"))
     plot_pal <- pal[1]
     plot_title <- "Bicuar"
   } else {
-    plot_centre_fix_fil <- plot_centre_fix$TZA 
+    plot_centre_fix_fil <- plots[plots$site == "TZA",]
     plot_pal <- pal[2]
     plot_title <- "Mtarure"
   }
+
+  st_crs(plot_centre_fix_fil) <- 4326
 
   plot_extent <- extent(plot_centre_fix_fil)
   pa_extent <- extent(x)
@@ -113,12 +129,18 @@ site_maps <- lapply(pa, function(x) {
   scale_x <- seq(plyr::round_any(max_extent[1], 0.2, round), plyr::round_any(max_extent[2], 0.2, round), 0.2)
   scale_y <- seq(plyr::round_any(max_extent[3], 0.2, round), plyr::round_any(max_extent[4], 0.2, round), 0.2)
 
+  plot_mean_coords <- apply(st_coordinates(plot_centre_fix_fil), 2, mean)
+  site_crs <- UTMProj4(latLong2UTM(plot_mean_coords[1], plot_mean_coords[2]))
+  plot_centre_fix_fil_utm <- st_transform(plot_centre_fix_fil, site_crs)
+  plot_centre_df_utm <- as.data.frame(st_coordinates(plot_centre_fix_fil_utm))
+  white_x_utm <- st_transform(white_x, site_crs)
+  x_utm <- st_transform(x, site_crs)
+
   p <- ggplot() + 
-    geom_sf(data = white_x, aes(fill = leg_plot)) +
-    geom_sf(data = x, colour = "black", size = 1, fill = NA) + 
-    geom_point(data = plot_centre_fix_fil, aes(x = X, y = Y), 
-      shape = 21, size = 3, fill = plot_pal, colour = "black", 
-      position = "jitter") + 
+    geom_sf(data = white_x_utm, aes(fill = leg_plot)) +
+    geom_sf(data = x_utm, colour = "black", size = 1, fill = NA) + 
+    geom_point(data = plot_centre_df_utm, aes(x = X, y = Y),
+      position = "jitter", shape = 21, size = 3, fill = plot_pal, colour = "black") + 
     scale_fill_manual(name = "", values = white_x_pal) + 
     theme_classic() + 
     theme(legend.position = "bottom") + 
