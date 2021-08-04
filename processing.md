@@ -107,15 +107,16 @@
 * Plot canopy height variation - `canopy_rough_anal.R` //
 * Hemispherical photos - `hemi_anal.R` //
 
-## Hypotheses
+### Hypotheses
 
 1. Vertical canopy profiles will become more complex as tree species richness increases.
-	* Mixed models - `lmer(layer_diversity ~ rich_subplot + comp_index + (rich | plot | site))`
+	* Mixed model - `lmer(layer_diversity ~ rich_subplot + comp_index + (rich | plot | site))`
 2. Canopy cover will increase with species richness
+	* Mixed model - `lmer(cover ~ rich_subplot + (rich | plot | site))` 
 3. Canopy surface roughness will increase with tree species richness.
-	* Mixed effects model - `lmer(plot_rough ~ shannon + comp_index + (rich | site)`
+	* Mixed model - `lmer(plot_rough ~ shannon + comp_index + (rich | site)`
 
-### Grass 
+#### Grass 
 
 1. Species richness will correlate negatively with understorey biomass due to an increase in canopy packing, therefore decreasing light penetration.
 	* Path analysis - `rich_subplot -> gap_frac -> grass_biomass` //

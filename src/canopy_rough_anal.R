@@ -281,7 +281,7 @@ sig_vars_dredge_clean <- sig_vars_dredge_df %>%
   mutate(resp = names(resp_names)[match(resp, resp_names)]) 
 
 sig_dredge_tab <- xtable(sig_vars_dredge_clean,
-  label = "sig_vars_dredge",
+  label = "canopy_rough_sig_vars_dredge",
   caption = "Explanatory variables included in the best model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the hegyi crowding index and the random effects of site and plot. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
   align = "crcccccccc",
   display = c("s", "s", "s", "s", "s", "s", "s", "f", "f", "f"),
