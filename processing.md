@@ -98,23 +98,26 @@
 * Generate height foliage distribution profile, cumulative distribution, AUC, canopy top height - `height_profile.R` //
 * Calculate gap fraction, also hemispherical photos - `hemi.R` //
 * Grassy biomass volume estimation: - `grass.R` //
-* Plot canopy height variation - `canopy_rough.R` //
+* Calculate canopy height variation - `canopy_rough.R` //
 
 ## Analysis 
 
 * Subplot height profiles - `height_profile.anal.R` //
-* Grassy biomass volume - `grass_anal.R` //
 * Plot canopy height variation - `canopy_rough_anal.R` //
 * Hemispherical photos - `hemi_anal.R` //
 
+* Grassy biomass volume - `grass_anal.R` //
+
 ### Hypotheses
 
-1. Vertical canopy profiles will become more complex as tree species richness increases.
-	* Mixed model - `lmer(layer_diversity ~ rich_subplot + comp_index + (rich | plot | site))`
-2. Canopy cover will increase with species richness
-	* Mixed model - `lmer(cover ~ rich_subplot + (rich | plot | site))` 
-3. Canopy surface roughness will increase with tree species richness.
-	* Mixed model - `lmer(plot_rough ~ shannon + comp_index + (rich | site)`
+* Higher species diversity leads to higher canopy structural complexity and canopy cover
+	1. Vertical canopy profile complexity
+		* Mixed model - `lmer(layer_diversity ~ rich_subplot + comp_index + (rich | plot | site))`
+	2. Canopy cover 
+		* Mixed model - `lmer(cover ~ rich_subplot + (rich | plot | site))` 
+	3. Canopy surface roughness
+		* Mixed model - `lmer(plot_rough ~ shannon + comp_index + (rich | site)`
+* Indirect effect of species diversity on canopy structure via stand structure (var. in DBH and height)
 
 #### Grass 
 
@@ -129,7 +132,7 @@
 
 * Explan:
 	* Stand structure
-		* Hegyi index - Increases with increasing stem diameter and proximity to subplot centre. 
+		* Hegyi index - Crowding - Increases with increasing stem diameter and proximity to subplot centre. 
 		* Basal area - of trees within subplot
 		* CoV stem diameter - of trees within subplot
 	* Species diversity
@@ -145,14 +148,14 @@
 Discarded stats:
 
 * Point density - not variable enough at low competition, covaries with Hegyi
-* Max canopy height - Too stochastics within a subplot.
+* Max canopy height - Too stochastic within a subplot.
 
 ### Whole plot
 
 * Stand structure
 	* Basal area - 
 	* Stem density (tree density?) - 
-	* Spatial mingling index - Increases with species mixing
+	* Spatial mingling index - Increases with species mixing, increases with number of species
 	* Winkelmass - Increases with irregularity of stem layout
 * Canopy structure
 	* Canopy height model SD - Roughness of canopy top - 

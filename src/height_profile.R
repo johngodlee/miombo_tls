@@ -17,9 +17,9 @@ file_list <- list.files(path = "../dat/tls/height_profile", pattern = "*.rds",
 plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 
 # Define parameters 
-voxel_dim <- 0.05
-z_width <- 0.5
-cylinder_radius <- 1000
+voxel_dim <- 0.05  # 5 cm^3
+z_width <- 0.5  # 50 cm, for effective number of layers
+cylinder_radius <- 1000  # 10 m
 
 # Calculate maximum 1 voxel layer volume
 layer_vol <- pi * cylinder_radius^2 * voxel_dim
@@ -47,7 +47,7 @@ profile_stat_list <- lapply(file_list, function(x) {
     bin_tally <- dat %>% 
       filter(
         z_round > 0,
-        z_round < quantile(z_round, c(0.999))
+        z_round < quantile(z_round, c(0.999))  # Above-ground and <99.9th percentile in height
         ) %>%
       group_by(z_round) %>%
       tally() %>% 
@@ -59,14 +59,14 @@ profile_stat_list <- lapply(file_list, function(x) {
         vol_frac = vol / layer_vol) %>%
       as.data.frame()
 
-    # Filter to above ground, find first local minima above 1.3 m
+    # Filter to above ground, then filter to above first local minima above 1.3 m
     troughs <- bin_tally$z_round[findPeaks(-bin_tally$n, m = 10)]
     minima <- troughs[troughs > 1.3][1]
 
     bin_fil <- bin_tally %>%
       filter(z_round > minima)
 
-    # Smooth
+    # loess smooth fit
     lo <- loess(bin_fil$n~bin_fil$z_round, span = 0.1)
     bin_fil$n_loess <- predict(lo)
     bin_fil$vol_loess <- bin_fil$n_loess * voxel_dim

@@ -27,21 +27,14 @@ out_list <- lapply(file_list, function(x) {
   # Read data
   dat <- readRDS(x)
 
-  # Round to 10 cm
-  dat10 <- dat %>%
+  # Round to 10 and 50 cm in X,Y and Z, to speed up processing
+  dat50 <- dat %>%
     mutate(
-      xr = round(X, digits = 1),
-      yr = round(Y, digits = 1),
-      zr = round(Z, digits = 1))
+      xr = round(X/0.5)*0.5,
+      yr = round(Y/0.5)*0.5)
 
-  # Get percentiles of height within each column
-  h_summ <- dat10[, .(z99= quantile(zr, 0.99, names = FALSE)), by = list(xr,yr)]
-
-  # General Additive Model to smooth canopy height over X-Y
-  gam_mod <- gam(z99 ~ te(xr, yr), data = h_summ)
-
-  # Get predicted values of height from GAM
-  h_summ$zp <- predict(gam_mod)
+  # Get 99th percentile of height within each column, i.e. the top
+  h_summ <- dat50[, .(z99= quantile(Z, 0.99, names = FALSE)), by = list(xr,yr)]
 
   # Convert dataframe to lidR::LAS object
   h_las <- h_summ
@@ -51,7 +44,8 @@ out_list <- lapply(file_list, function(x) {
   las <- LAS(h_las)
 
   # Pit-filling algorithm - Khosravipour et al. (2014) 
-  chm <- grid_canopy(las, res = 0.5, 
+  # 5 m resolution
+  chm <- grid_canopy(las, res = 5, 
     pitfree(thresholds = c(0, 2, 5, 10, 20), max_edge = c(0, 1)))
 
   # Convert pit-filled raster to dataframe
@@ -73,7 +67,7 @@ out_list <- lapply(file_list, function(x) {
   rough_sd <- sd(values(chm_rough), na.rm = TRUE)
 
   # Calculate R_{c} - Canopy rugosity, sensu Hardiman et al. 2011
-  rc <- dat10 %>%
+  rc <- dat %>%
     mutate(
       xr = round(X, digits = 0),
       yr = round(Y, digits = 0),
