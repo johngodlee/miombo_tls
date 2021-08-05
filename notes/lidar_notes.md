@@ -1,12 +1,12 @@
-% Notes from meeting with Steve Hancock - LiDAR, and reading
+# Notes from meeting with Steve Hancock - LiDAR, and reading
 
-# Software packages 
+## Software packages 
 
 [PyLiDAR](http://www.pylidar.org/en/latest/) - [Github repository](https://github.com/Ffisegydd/pylidar)
 
 [TreeSeg](https://github.com/apburt/treeseg) - Extracting individual trees from TLS data - Also Balsi 2018, Lindberg 2017.
 
-# My goals
+@@ My goals
 
 I want to measure:
 
@@ -18,7 +18,7 @@ I want to measure:
 
 I want to get more accurate and time efficient measurements of canopy complexity in my woodlands. Measuring canopy areas and canopy heights with tape measures and the laser range finder is not very accurate or efficient, so I'm keen to change this.
 
-# Conversation with Steve Hancock
+@@ Conversation with Steve Hancock
 
 Foliage Height Diversity. 
 
@@ -39,7 +39,7 @@ If I wanted to scale these measurements up I'd be wanting to look at remote sens
 
 There are more complicated methods that allow for creating hulls from points to outline tree trunks, canopies etc.. These generally require multiple scans and lots of laborious pointing and clicking to line up the points in a 3D space - See papers with Cald(v?)ers - QSM (Quantitative Structure Modelling). They might be useful when looking at crown complexity and how that affects woody biomass. 
 
-# Hashimoto et al. 2004 - Estimating forest structure indices for evaluation of forest bird habitats by an airborne laser scanner
+@@ Hashimoto et al. 2004 - Estimating forest structure indices for evaluation of forest bird habitats by an airborne laser scanner
 
 Different metrics:
 
@@ -56,7 +56,7 @@ $$ FHD = -\sum{p_i log_e p_i}$$
 Where pi is the proportion of horizontal vegetation coverage in the ith layer.
 
 
-# Jupp et al. 2009 - Estimating forest LAI profiles and structural parameters using a ground-based laser called "Echidna"
+@@ Jupp et al. 2009 - Estimating forest LAI profiles and structural parameters using a ground-based laser called "Echidna"
 
 The accuracy of LAI measurements with available methods is questionable.
 
@@ -89,7 +89,7 @@ At high zenith angles, i.e. near vertical, there is high variance in Pgap (propo
 
 At mid zeniths, the path lengths through the canopy are long, the laser may not emerge from the canopy at full range. 
 
-# Moorthy et al. 2011 - Field characterization of olive (Olea europaea L.) tree crown architecture using terrestrial laser scanning data
+@@ Moorthy et al. 2011 - Field characterization of olive (Olea europaea L.) tree crown architecture using terrestrial laser scanning data
 
 Phase-based vs. Time of Flight methods of TLS:
 
@@ -109,7 +109,7 @@ The ILRIS-3D (scanner make) point cloud data was processed using a cross-setiona
 
 Foliage architecture was calculated from points above a given height (i.e. the bottom of the crown) using an algorithm.
 
-# Wagner et al. 2018 -  Individual tree crown delineation in a highly diverse tropical forest using very high resolution satellite images
+@@ Wagner et al. 2018 -  Individual tree crown delineation in a highly diverse tropical forest using very high resolution satellite images
 
 WorldView-2 satellite imagery - Commercially available
 
@@ -132,7 +132,7 @@ The method in this paper relies on border detection
 
 Blanchard et al. (2016) said that across the tropics, DBH and crown area have a tight allometry. So that suggests that Biomass could be reliably estimated from inverse modelling of crown size of trees.
 
-# Radtke and Bolstad 2001 - Laser point-quadrat sampling for estimating foliage-height profiles in broad-leaved forests
+@@ Radtke and Bolstad 2001 - Laser point-quadrat sampling for estimating foliage-height profiles in broad-leaved forests
 
 They don't use LiDAR, rather a laser range finder with a single beam, like the Nikon Forestry Pro.
 
@@ -152,7 +152,7 @@ In the paper they use the leaf area index estimator equation in MacArthur and Ho
 
 Rumple index can be used to measure the roughness of a surface as its ratio of flat to projected surface area (see Seidl et al. 2012a,b)
 
-# Zhu et al. 2018 - Improving leaf area index (LAI) estimation by correcting for clumping and woody effects using terrestrial laser scanning
+@@ Zhu et al. 2018 - Improving leaf area index (LAI) estimation by correcting for clumping and woody effects using terrestrial laser scanning
 
 In hemi-photography, woody components were always included in the photos used to estimate LAI, so really they were measuring plant area index (PAI). Also, leaf angle is assumed to be random in hemispherical photographic calculated estimates of LAI, which use the gap fraction.
 
@@ -198,7 +198,7 @@ A Random Forest algorithm was used to separate foliage material from woody mater
 
 NOT FINISHED
 
-# Wang et al. 2020 - Assessing structural changes at the forest edge using kernel density estimation
+@@ Wang et al. 2020 - Assessing structural changes at the forest edge using kernel density estimation
 
 They used Airborne LiDAR data.
 
@@ -219,7 +219,7 @@ They identified three parameters which act as indicators of the KDE curves:
 * Len - the full width at half maximum value of the kernel density curves. Degree of steepness of the estimated Gaussian curves.
 * Auc - the area under the curve of the KDE. Evaluates the smoothness of the curve.
 
-# Staver et al. 2019 - Spatial patterning among savanna trees in high-resolution, spatiall extensive data
+@@ Staver et al. 2019 - Spatial patterning among savanna trees in high-resolution, spatiall extensive data
 
 They used airborne LiDAR to examine tree clustering patterns. 
 
@@ -237,7 +237,7 @@ Maybe the estimates of light extinction with canopy coverage are over-estimated.
 
 Is it possible to test leaf inclination using the TLS I am taking to Angola?
 
-# Li et al. 2018 - Retrieving 2-D Leaf Angle Distributions for Deciduous Trees From Terrestrial Laser Scanner Data
+@@ Li et al. 2018 - Retrieving 2-D Leaf Angle Distributions for Deciduous Trees From Terrestrial Laser Scanner Data
 
 Leaf angle distribution has an influence on the transmission of radiation within vegetation the canopy, and the distribution of PAR. 
 
@@ -273,7 +273,7 @@ Leaf points were voxelized using the voxel-based canopy profiling method.
 
 FINISH
 
-# Balduzzi et al. 2011 - The Properties of Terrestrial Laser System Intensity for Measuring Leaf Geometries: A Case Study with Conference Pear Trees (Pyrus Communis)
+@@ Balduzzi et al. 2011 - The Properties of Terrestrial Laser System Intensity for Measuring Leaf Geometries: A Case Study with Conference Pear Trees (Pyrus Communis)
 
 A general index for describing leaf inclination is the Leaf Angle Distribution (LAD)
 
