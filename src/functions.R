@@ -1,6 +1,22 @@
 # Miscellaneous functions
 # John Godlee (johngodlee@gmail.com)
 
+#' Create LaTeX newcommand output
+#'
+#' @param x atomic vector to export
+#' @param name LaTeX variable name 
+#'
+#' @return string
+#' 
+commandOutput <- function(x, name){ 
+  paste0("\\newcommand{\\",
+    ifelse(missing(name), deparse(substitute(x)), name), 
+    "}{", 
+    x, 
+    "}"
+  )
+}
+
 paper_plot_id_lookup <- c(
   "ABG_1" = "B1",
   "ABG_2" = "B2",
@@ -28,6 +44,7 @@ paper_plot_id_lookup <- c(
 
 
 # Theme colours
+clust_pal <- c("#E58606", "#5D69B1", "#52BCA3", "#99C945")
 pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "darkgrey", "#E0E0E0", "black")
 
 resp_names <- c(  
@@ -646,4 +663,73 @@ pFormat <- function(p, lev = c(0.001, 0.01, 0.05), round = TRUE, digits = 2,
     }
   }
   return(unlist(out))
+}
+
+#' Generate a species by site abundance matrix
+#'
+#' @param x dataframe of individual records
+#' @param site_id column name string of site IDs
+#' @param species_id column name string of species names
+#' @param fpc optional column name string of sampling weights of each record, 
+#'     between 0 and 1 
+#' @param abundance optional column name string with an alternative abundance 
+#'     measure such as biomass, canopy cover, body length
+#'
+#' @return dataframe of species abundances (columns) per site (rows)
+#' 
+#' @examples
+#' x <- data.frame(site_id = rep(c("A", "B", "C"), each = 3), 
+#'   species_id = sample(c("a", "b", "c", "d"), 9, replace = TRUE), 
+#'   fpc = rep(c(0.5, 0.6, 1), each = 3), 
+#'   abundance = seq(1:9))
+#' abMat(x, "site_id", "species_id")
+#' abMat(x, "site_id", "species_id", "fpc")
+#' abMat(x, "site_id", "species_id", "fpc", "abundance")
+#' 
+#' @export
+#' 
+abMat <- function(x, site_id, species_id, fpc = NULL, abundance = NULL) {
+  # If no fpc or abundance, make 1
+  if (is.null(fpc)) {
+    x$fpc <- 1
+  } else {
+  	x$fpc <- x[[fpc]]
+  }
+  if (is.null(abundance)) {
+    x$abundance <- 1 
+  } else {
+  	x$abundance <- x[[abundance]]
+  }
+
+  x$abundance <- x$abundance / x$fpc
+
+  # Count number of species and sites
+  comm_df <- aggregate(x$abundance, by = list(x[[site_id]], x[[species_id]]), 
+    simplify = FALSE, drop = FALSE, FUN = sum)
+
+  # Replace NULL with zero
+  comm_df$x <- unlist(lapply(comm_df$x, function(y) {
+      if(is.null(y)) {
+        0
+      } else {
+        y
+      }
+    }))
+  
+  # Make names tidy
+  names(comm_df) <- c("x","y","z")
+  comm_df$x <- factor(comm_df$x)
+  comm_df$y <- factor(comm_df$y)
+
+  # Spread to matrix
+  comm <- with(comm_df, {
+    out <- matrix(nrow = nlevels(x), ncol = nlevels(y),
+      dimnames = list(levels(x), levels(y)))
+    out[cbind(x, y)] <- z
+    out
+  })
+
+  comm <- as.data.frame(comm)
+
+  return(comm)
 }

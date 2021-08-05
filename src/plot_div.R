@@ -18,15 +18,16 @@ stems_all <- read.csv("../dat/stems_all.csv")
 plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 plot_loc <- read.csv("../dat/plot_centre.csv")
 
-# Make abundance matrix, stems and trees
-stem_ab <- stems_all %>% 
-  group_by(plot_id, species_name_clean) %>%
-  tally() %>%
-  spread(species_name_clean, n) %>%
-  column_to_rownames("plot_id") %>%
-  mutate(across(everything(), ~ifelse(is.na(.x), 0, .x)))
+# Basal area abundance matrix by genus
+stems_all$genus <- gsub("\\s.*", "", stems_all$species_name_clean)
+stems_all$ba <- pi * (stems_all$diam/2)^2
 
-tree_ab <- stems_all %>%
+ba_mat <- abMat(stems_all[stems_all$genus != "Indet" & !is.na(stems_all$ba),], 
+  "plot_id", "genus", abundance = "ba")
+
+# Tree abundance matrix, by species
+tree_mat <- stems_all %>%
+  filter(!grepl("indet", species_name_clean)) %>%
   dplyr::select(plot_id, species_name_clean, tree_id) %>%
   distinct() %>%
   group_by(plot_id, species_name_clean) %>%
@@ -35,13 +36,11 @@ tree_ab <- stems_all %>%
   column_to_rownames("plot_id") %>%
   mutate(across(everything(), ~ifelse(is.na(.x), 0, .x)))
 
-tree_ab_fil <- tree_ab[,colSums(tree_ab) > 1]
+tree_ab_fil <- tree_mat[,colSums(tree_mat) > 1]
 
 # Calculate Shannon diversity
-stem_shannon <- diversity(stem_ab)
-tree_shannon <- diversity(tree_ab)
-
-shannon <- data.frame(stem_shannon, tree_shannon, plot_id = names(stem_shannon))
+tree_shannon <- diversity(tree_ab_fil)
+shannon <- data.frame(tree_shannon, plot_id = names(tree_shannon))
 
 # Aggregate to trees
 trees_all <- stems_all %>%
@@ -55,7 +54,7 @@ trees_all <- stems_all %>%
     species_name_clean = first(na.omit(species_name_clean)))
 
 # NMDS of plots
-nmds <- metaMDS(tree_ab_fil)
+nmds <- metaMDS(ba_mat)
 
 nmds_plots <- as.data.frame(nmds$points) %>%
   rownames_to_column("plot_id") %>%
@@ -75,7 +74,7 @@ ggplot() +
     aes(x = MDS1, y = MDS2, label = paper_plot_id, colour = site)) +
   scale_colour_manual(name = "Site", values = pal[1:2]) + 
   scale_fill_manual(name = "Site", values = pal[1:2]) + 
-  guides(colour = FALSE) + 
+  guides(colour = "none") + 
   geom_text_repel(data = nmds_species, 
     aes(x = MDS1, y = MDS2, label = species), 
     segment.alpha = 0, size = 2) + 
@@ -84,16 +83,16 @@ ggplot() +
   labs(x = "NMDS 1", y = "NMDS 2")
 dev.off()
 
-bray <- vegdist(tree_ab)
+bray <- vegdist(ba_mat)
 bray_clust <- hclust(bray, method = "average")
 
-nmds_plots$bray_clust <- cutree(bray_clust, 3)
+nmds_plots$bray_clust <- cutree(bray_clust, 4)
 nmds_plots$man_clust <- case_when(
   nmds_plots$plot_id %in% c("P1", "P2", "P3", "P4", "P5", "P6", "P7", 
     "P8", "P10", "P11", "P12", "P14") ~ "1",
   nmds_plots$plot_id %in% c( "S5", "W11", "W18", "W26") ~ "2",
-  nmds_plots$plot_id %in% c("P9", "P13", "P15") ~ "3",
-  nmds_plots$plot_id %in% c("S3", "S7", "W9") ~ "4",
+  nmds_plots$plot_id %in% c("P9", "P13", "P15", "W9") ~ "3",
+  nmds_plots$plot_id %in% c("S3", "S7") ~ "4",
   TRUE ~ NA_character_)
 
 # Split by plot
@@ -173,8 +172,7 @@ stems_all_loc <- left_join(stems_all_wd, plot_loc,
   by = c("plot_id_new" = "plot_id"))
 
 stems_all_loc$agb <- computeAGB(stems_all_loc$diam, stems_all_loc$meanWD, 
-  coord = data.frame(stems_all_loc$X, stems_all_loc$Y),
-  WD = stems_all_loc$meanWD)
+  coord = data.frame(stems_all_loc$X, stems_all_loc$Y))
 
 diam_agb_plot <- ggplot() + 
   geom_point(data = stems_all_loc, aes(x = diam, y = agb, fill = plot_id), 
@@ -185,7 +183,7 @@ diam_agb_plot <- ggplot() +
   theme(axis.ticks = element_blank(),
     axis.text = element_blank())
 
-pdf(file = "../img/diam_agb.pdf", width = 3, height = 3)
+pdf(file = "../img/diam_agb.pdf", height = 5, width = 8)
 diam_agb_plot
 dev.off()
 

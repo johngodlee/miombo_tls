@@ -27,7 +27,7 @@ out_list <- lapply(file_list, function(x) {
   # Read data
   dat <- readRDS(x)
 
-  # Round to 10 and 50 cm in X,Y and Z, to speed up processing
+  # Round to 10 cm in X,Y and Z, to speed up processing
   dat50 <- dat %>%
     mutate(
       xr = round(X/0.5)*0.5,
@@ -44,8 +44,8 @@ out_list <- lapply(file_list, function(x) {
   las <- LAS(h_las)
 
   # Pit-filling algorithm - Khosravipour et al. (2014) 
-  # 5 m resolution
-  chm <- grid_canopy(las, res = 5, 
+  # 50 cm resolution
+  chm <- grid_canopy(las, res = 0.5, 
     pitfree(thresholds = c(0, 2, 5, 10, 20), max_edge = c(0, 1)))
 
   # Convert pit-filled raster to dataframe

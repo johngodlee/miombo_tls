@@ -69,7 +69,19 @@ gap_frac_spread <- gap_frac_gather %>%
   pivot_wider(id_cols = c(site, plot_id, subplot_id), 
     names_from = var, values_from = c("hemi", "tls"))
 
-# Model 
+# Correlation validation
+cor_summ <- cor.test(gap_frac_spread$tls_cover, gap_frac_spread$hemi_cover)
+
+cor_stat <- paste0("$r$(",cor_summ$parameter, ") = ", 
+  format(cor_summ$estimate, digits = 2), ", ", pFormat(cor_summ$p.value))
+
+write(
+  c(
+    commandOutput(cor_stat, "hemiCor")
+    ),
+  file = "../out/hemi_cor.tex")
+
+# Mixed model 
 cover_mod <- lmer(tls_cover ~ hemi_cover + (hemi_cover | plot_id), 
   data = gap_frac_spread)
 

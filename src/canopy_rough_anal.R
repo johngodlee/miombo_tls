@@ -206,10 +206,6 @@ cover_mean_lmer <- lmer(cover_mean ~ tree_shannon_std +
   ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
   data = dat_std, na.action = "na.fail")
 
-chm_mean_lmer <- lmer(chm_mean ~ tree_shannon_std + 
-  ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
-  data = dat_std, na.action = "na.fail")
-
 chm_sd_lmer <- lmer(chm_sd ~ tree_shannon_std + 
   ba_std + diam_cov_std + mi_mean_std + wi_mean_std + (1 | site), 
   data = dat_std, na.action = "na.fail")

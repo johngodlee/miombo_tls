@@ -3,13 +3,46 @@
 # 2021-08-04
 
 # Packages
+library(dplyr)
 library(plotly)
+library(ggplot2)
+library(scico)
+library(patchwork)
+
+source("functions.R")
 
 # Import data
 h_summ <- readRDS("../dat/gam_points.rds")
 chm_nona <- readRDS("../dat/chm_points.rds")
 
-# Filter to one plot
+# Filter to one plot from each vegetation type and clean
+plot_per_clust <- c("ABG_1", "TKW_13", "ABG_13", "TKW_7")
+
+chm_nona_clean <- chm_nona %>%
+  mutate(Z = case_when(
+      plot_id_new == "TKW_13" & Z > 20 ~ NA_real_,
+      plot_id_new == "TKW_7" & Z > 11 ~ NA_real_,
+      TRUE ~ Z), 
+    paper_plot_id = paper_plot_id_lookup[match(plot_id_new, names(paper_plot_id_lookup))]) %>%
+  filter(plot_id_new %in% plot_per_clust) %>%
+  group_by(paper_plot_id) %>%
+  mutate(
+    x = x - min(x, na.rm = TRUE),
+    y = y - min(y, na.rm = TRUE))
+
+# Create plot of vegetation types
+pdf(file = "../img/veg_type_tile.pdf", width = 12, height = 12)
+ggplot() + 
+  geom_tile(data = chm_nona_clean, aes(x = x, y = y, fill = Z, colour = Z), 
+    size = 0.5) + 
+  scale_fill_scico(name = "Height (m)", palette = "bamako") + 
+  scale_colour_scico(name = "Height (m)", palette = "bamako") + 
+  facet_wrap(~paper_plot_id, scales = "free") + 
+  theme_bw() + 
+  labs(x = "", y = "")
+dev.off()
+
+# Filter to one plot that looks good
 h_summ_fil <- h_summ[h_summ$plot_id_new == "ABG_1",]
 chm_nona_fil <- chm_nona[chm_nona$plot_id_new == "ABG_1",]
 

@@ -1,4 +1,3 @@
-> dredge_list
 [[1]]
 Global model call: lmer(formula = layer_div ~ rich_std + hegyi_std + diam_cov_std + 
     crown_area_cov_std + (1 | plot_id), data = subplot_dat, REML = FALSE, 
@@ -131,4 +130,3 @@ Models ranked by AICc(x)
 Random terms (all models): 
 ‘1 | plot_id’
 
-> sink()
