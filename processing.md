@@ -144,10 +144,10 @@
 
 Discarded stats:
 
-* Point density - not variable enough at low competition, covaries with Hegyi
-* Max canopy height - Too stochastic within a subplot.
-* Peak foliage density height - uninformative
-* Point CoV - Coefficient of Variation of point height distribution - uninformative, covaries with uniformity of height profile
+* ~~Point density - not variable enough at low competition, covaries with Hegyi~~
+* ~~Max canopy height - Too stochastic within a subplot.~~
+* ~~Peak foliage density height - uninformative~~
+* ~~Point CoV - Coefficient of Variation of point height distribution - uninformative, covaries with uniformity of height profile~~
 
 ### Whole plot
 
@@ -159,9 +159,12 @@ Discarded stats:
 * Canopy structure
 	* Canopy height model SD - Roughness of canopy top - 
 	* Rugosity - Whole canopy uniformity (sensu Hardiman et al. (2011))
-	* Mean canopy topographic roughness index - Increases with waviness of canopy, from {raster}
 	* Canopy cover mean - subplot centre from TLS
 * Species diversity
 	* Shannon index - 
 	* Species richness - 
+
+Discarded stats:
+
+* ~~Mean canopy topographic roughness index - Increases with waviness of canopy, from {raster}~~
 
