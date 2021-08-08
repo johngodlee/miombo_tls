@@ -1,27 +1,30 @@
 > summary(cover_mod)
-Linear mixed model fit by REML ['lmerMod']
-Formula: tls_cover ~ hemi_cover + (hemi_cover | plot_id)
-   Data: gap_frac_spread
-
-REML criterion at convergence: -214.5
-
-Scaled residuals: 
-   Min     1Q Median     3Q    Max 
--2.020 -0.600 -0.284  0.551  3.688 
+Linear mixed-effects model fit by REML
+  Data: gap_frac_spread 
+     AIC  BIC logLik
+  -196.6 -177  104.3
 
 Random effects:
- Groups   Name        Variance Std.Dev. Corr 
- plot_id  (Intercept) 0.00418  0.0647        
-          hemi_cover  0.02174  0.1474   -0.83
- Residual             0.01705  0.1306        
-Number of obs: 197, groups:  plot_id, 22
+ Formula: ~1 | plot_id
+        (Intercept) Residual
+StdDev:     0.03463   0.1335
 
-Fixed effects:
-            Estimate Std. Error t value
-(Intercept)   0.1019     0.0226    4.51
-hemi_cover    1.2505     0.0575   21.76
+Fixed effects:  tls_cover ~ hemi_cover * site 
+                         Value Std.Error  DF t-value p-value
+(Intercept)             0.1292   0.02350 173   5.499  0.0000
+hemi_cover              1.1867   0.05895 173  20.130  0.0000
+siteMtarure            -0.0817   0.04116  20  -1.985  0.0610
+hemi_cover:siteMtarure  0.1337   0.09890 173   1.352  0.1781
+ Correlation: 
+                       (Intr) hm_cvr stMtrr
+hemi_cover             -0.785              
+siteMtarure            -0.571  0.448       
+hemi_cover:siteMtarure  0.468 -0.596 -0.777
 
-Correlation of Fixed Effects:
-           (Intr)
-hemi_cover -0.831
+Standardized Within-Group Residuals:
+    Min      Q1     Med      Q3     Max 
+-1.8651 -0.6218 -0.2635  0.5209  3.7429 
+
+Number of Observations: 197
+Number of Groups: 22 
 > sink()

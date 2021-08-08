@@ -37,7 +37,6 @@ names(canopy_clean)[1] <- "plot_id"
 subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean, by = c("plot_id", "subplot")) %>%
   full_join(., gap_frac_clean, by = c("plot_id", "subplot"))
 
-subplot_all$man_clust <- as.character(subplot_all$man_clust)
 subplot_all$man_clust <- plot_all$man_clust[match(subplot_all$plot_id, plot_all$plot_id)]
 
 gap_frac_plot <- gap_frac_clean %>% 

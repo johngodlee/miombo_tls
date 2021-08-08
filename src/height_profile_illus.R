@@ -130,25 +130,25 @@ canopy_plot <- ggplot() +
     fill = "darkgrey") + 
   geom_line(data = bin_fil, aes(x = z_round, y = vol / 1000000), colour = "black") + 
   geom_line(data = bin_fil, aes(x = z_round, y = vol_loess / 1000000), colour = "green") + 
-  geom_vline(xintercept = troughs50, colour = "blue") +
-  geom_vline(xintercept = peaks50, colour = "red") +
-  geom_vline(xintercept = dens_peak_height, 
-    size = 1.5, colour = "orange", linetype = 2) + 
-  geom_errorbarh(aes(
-      xmin = mean(n_rep) - sd(n_rep), 
-      xmax = mean(n_rep) + sd(n_rep), 
-      y = (max(bin_fil$vol) / 1000000) - 0.0002) , 
-    height = 0.0001) + 
-  geom_point(aes(x = mean(n_rep), y = (max(bin_fil$vol) / 1000000) - 0.0002),
-    shape = 21, colour = "black", size = 5, fill = "grey") + 
-  geom_vline(xintercept = height_q[2], 
+  geom_vline(xintercept = troughs50[1], colour = "blue") +
+#  geom_vline(xintercept = peaks50, colour = "red") +
+#  geom_vline(xintercept = dens_peak_height, 
+#    size = 1.5, colour = "orange", linetype = 2) + 
+#  geom_errorbarh(aes(
+#      xmin = mean(n_rep) - sd(n_rep), 
+#      xmax = mean(n_rep) + sd(n_rep), 
+#      y = (max(bin_fil$vol) / 1000000) - 0.0002) , 
+#    height = 0.0001) + 
+#  geom_point(aes(x = mean(n_rep), y = (max(bin_fil$vol) / 1000000) - 0.0002),
+#    shape = 21, colour = "black", size = 5, fill = "grey") + 
+  geom_vline(xintercept = height_q[3], 
     size = 1.5, colour = "cyan", linetype = 2) + 
-  geom_line(aes(x = c(min(peaks50), max(peaks50)), 
-      y = rep(max(bin_fil$vol) / 1000000, 2)),
-    size = 1.5, linetype = 3) + 
-  geom_point(aes(x = c(min(peaks50), max(peaks50)), 
-      y = rep(max(bin_fil$vol) / 1000000, 2)),
-    shape = 15, size = 5) + 
+#  geom_line(aes(x = c(min(peaks50), max(peaks50)), 
+#      y = rep(max(bin_fil$vol) / 1000000, 2)),
+#    size = 1.5, linetype = 3) + 
+#  geom_point(aes(x = c(min(peaks50), max(peaks50)), 
+#      y = rep(max(bin_fil$vol) / 1000000, 2)),
+#    shape = 15, size = 5) + 
   theme_bw() + 
   labs(x = "Height (m)", y = expression("Foliage"~"volume"~(m^3)))
 

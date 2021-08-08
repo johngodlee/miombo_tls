@@ -4,7 +4,7 @@
 
 library(dplyr)
 library(tidyr)
-library(lme4)
+library(nlme)
 library(ggplot2)
 library(ggeffects)
 library(patchwork)
@@ -72,51 +72,25 @@ gap_frac_spread <- gap_frac_gather %>%
 # Correlation validation
 cor_summ <- cor.test(gap_frac_spread$tls_cover, gap_frac_spread$hemi_cover)
 
-cor_stat <- paste0("$r$(",cor_summ$parameter, ") = ", 
+cor_stat <- paste0("$r$(",cor_summ$parameter, ")=", 
   format(cor_summ$estimate, digits = 2), ", ", pFormat(cor_summ$p.value))
+
+# Mixed model 
+cover_mod <- lme(tls_cover ~ hemi_cover*site, random = ~1|plot_id, 
+  data = gap_frac_spread)
+
+lme_stat <- paste0("$\\beta$(", cover_mod$fixDF$X[4], ")=",
+  format(cover_mod$coefficients$fixed[4], digits = 2), "\\pm", 
+  format(cover_mod$varFix[4,4], digits = 2), ", p=", 
+  pFormat(anova(cover_mod)[4,4]))
 
 write(
   c(
-    commandOutput(cor_stat, "hemiCor")
+    commandOutput(cor_stat, "hemiCor"),
+    commandOutput(lme_stat, "hemiLme")
     ),
   file = "../out/hemi_cor.tex")
 
-# Mixed model 
-cover_mod <- lmer(tls_cover ~ hemi_cover + (hemi_cover | plot_id), 
-  data = gap_frac_spread)
-
-cover_re <- as.data.frame(ggpredict(cover_mod, 
-    terms = c("hemi_cover", "plot_id"), type = "re")) %>%
-  mutate(site = if_else(grepl("ABG", group), "Bicuar", "Mtarure"))
-
-cover_re_plot <- ggplot() + 
-    geom_line(data = cover_re, 
-      aes(x = x, y = predicted, group = group, colour = site)) + 
-    scale_colour_manual(name = "Site", values = pal[1:2]) + 
-    theme_bw() + 
-    labs(x = "Hemispherical photo", y = "Terrestrial LiDAR") + 
-    theme(
-      axis.title.x = element_blank())
-
-cover_fe <- as.data.frame(ggpredict(cover_mod, 
-    terms = c("hemi_cover"), type = "fe")) 
-
-cover_fe_plot <- ggplot() + 
-    geom_ribbon(data = cover_fe, 
-      aes(x = x, ymin = conf.low, ymax = conf.high), 
-      alpha = 0.5) + 
-    geom_line(data = cover_fe, 
-      aes(x = x, y = predicted)) + 
-    theme_bw() + 
-    labs(x = "Hemispherical photo", y = "Terrestrial LiDAR") 
-
-pdf(file = "../img/tls_hemi_mod_fe_re.pdf", width = 8, height = 5)
-wrap_plots(cover_re_plot, cover_fe_plot) + 
-  plot_layout(
-    ncol = 1,
-    guides = "collect") &
-  theme(legend.position = "bottom")
-dev.off()
 
 sink("../out/cover_hemi_tls_mod_summ.txt")
 summary(cover_mod)

@@ -5,6 +5,7 @@ drawio() {
 }
 
 drawio drawio/subplot.drawio img/subplot.pdf
+drawio drawio/plot.drawio img/plot.pdf
 drawio drawio/tls.drawio img/tls.pdf
 drawio drawio/crown.drawio img/crown.pdf
 drawio drawio/winkelmass.drawio img/winkelmass.pdf
