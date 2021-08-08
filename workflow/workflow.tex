@@ -195,17 +195,17 @@ where $\mu_{i}$ is the mean distance from point $i$ to all $k$ nearest neighbour
 
 \subsection{Foliage density profiles}
 
-To calculate subplot foliage density profiles, first the 5 cm\textsuperscript{3} voxelised point cloud was cropped to a 10 m diameter cylinder of infinite height. Ground points were identified using \texttt{filters.pmf} (Progressive Morphological Filter - PMF) in PDAL (sensu \citealt{Zhang2003}), and the height above ground of all points was calculated using \texttt{filters.hag\_nn} (Nearest Neighbour) in PDAL. Points below ground level and above the 99.9th percentile of height were excluded from further analyses. Height profile points were exported to XYZ coordinates then imported into R for further processing. 
+To calculate subplot foliage density profiles, the 5 cm\textsuperscript{3} voxelised point cloud was first cropped to a 10 m diameter cylinder of infinite height. Ground points were identified using \texttt{filters.pmf} (Progressive Morphological Filter - PMF) in PDAL (sensu \citealt{Zhang2003}), and the height above ground of all points was calculated using \texttt{filters.hag\_nn} (Nearest Neighbour) in PDAL. Points below ground level and above the 99.9th percentile of height were excluded from further analyses. Height profile points were exported to XYZ coordinates then imported into R for further processing. 
 
 In R, foliage density was calculated in 5 cm layers as the proportion of filled 5 cm\textsuperscript{3} voxels. A loess model with a span of 0.1 was fitted to the foliage density values in each layer to estimate the foliage density profile (\autoref{height_profile_illus}). The foliage density profile was further filtered to only tree canopy material, by discarding all points below the first local minima in the foliage density profile above 1.3 m, using a rolling window of 50 cm.
 
-Multiple statistics were extracted from the foliage density profile for use in statistical analyses. Total canopy foliage density was calculated as the area under the curve of the foliage density profile, using trapezoid estimation. The Effective Number of Layers (ENL) in the foliage density profile was used to estimate canopy structural complexity, using the true-numbers equivalent of the Shannon diversity index on the foliage density of 50 cm layers (sensu \citep{Ehbrecht2016}):
+Multiple statistics were extracted from the foliage density profile for use in statistical analyses. Total canopy foliage density was calculated as the area under the curve of the canopy foliage density profile, using trapezoid estimation. The Effective Number of Layers (ENL) in the foliage density profile was used to estimate canopy structural complexity, using the true-numbers equivalent of the Shannon diversity index on the foliage density of 50 cm layers (sensu \citep{Ehbrecht2016}):
 
 \begin{equation}
 	\text{ENL} = \text{exp}\Big{(} - \sum_{i=1}^{N} p_{i} \text{ln} p_{i} \Big{)}
 \end{equation}
 
-Where $N$ is the number of 50 cm bins in the height profile, and $p_{i}$ is the proportion of filled voxels in layer $i$ (foliage density).
+Where $N$ is the number of 50 cm bins in the height profile, and $p_{i}$ is the proportion of filled voxels in layer $i$ (foliage density). While \citet{Ehbrecht2016} used 1 m layers, their study was conducted in temperate deciduous forest where the maximum height of the sampled forest stands was 40 m, whereas the maximum canopy height in this study was only 22 m. Both \citet{Ehbrecht2016} and \citet{Montes2004} assert that layer thickness is largely arbitrary, but should be determined with respect to the variability within the canopy, thus in the sparse and highly variable savanna tree canopies measured in this study, narrower layers were chosen. 
 
 To describe the uniformity of the foliage density distribution through the canopy, a linear model of foliage density with height was fitted. Under a completely even distribution of foliage material through the canopy, the standard error of the linear model tends to zero, while clumping causes deviations from this uniform distribution and increases the standard error.
 
@@ -218,7 +218,7 @@ To describe the uniformity of the foliage density distribution through the canop
 
 \subsection{Canopy closure}
 
-Subplot canopy closure, i.e. the proportion of the sky hemisphere occluded by plant material, a.k.a. gap fraction or site factor \citep{Jennings1999}, was measured by simulating a hemispherical image at the centre of the subplot using the point cloud data from all scans per subplot. The point cloud was first cropped to a 20 m diameter cylinder around the subplot centre using PDAL. Points below 1.3 m and within a 50 cm sphere around the subplot centre at 1.3 m height were discarded, to prevent the simulated hemispherical image being occluded by understorey vegetation. POV-Ray was used to simulate the hemispherical image using ray-tracing \citep{Povray2004}. Filled voxels were represented in POV-Ray as non-reflective black 5 cm\textsuperscript{3} cubes, with a white uniform sky box and no light source. POV-Ray produced an image with identical qualities to that of the real hemispherical photograph, using a fisheye lens with an equisolid projection and a view angle of 180\textdegree, located at the subplot centre at 1.3 m above the ground, with the top of the camera facing magnetic north and the camera facing directly to zenith, producing a circular image of 4016x4016 pixels.
+Subplot canopy closure, i.e. the proportion of the sky hemisphere occluded by plant material, a.k.a. gap fraction or site factor \citep{Jennings1999}, was measured by simulating a hemispherical image at the centre of the subplot using the point cloud data from all scans per subplot. The point cloud was first cropped to a 20 m diameter cylinder around the subplot centre using PDAL. Points below 1.3 m and within a 50 cm sphere around the subplot centre at 1.3 m height were discarded, to prevent the simulated hemispherical image being occluded by understorey vegetation. POV-Ray was used to simulate the hemispherical image using ray-tracing \citep{Povray2004}. Filled voxels were represented in POV-Ray as non-reflective black cubes filling the 5 cm\textsuperscript{3} voxel volume, with a white uniform sky box and no light source. POV-Ray produced an image with identical qualities to that of the real hemispherical photograph, using a fisheye lens with an equisolid projection and a view angle of 180\textdegree, located at the subplot centre at 1.3 m above the ground, with the top of the camera facing magnetic north and the camera facing directly to zenith, producing a circular image of 4016x4016 pixels.
 
 Hemiphot \citep{HemiPhot} was used to estimate closure from both the hemispherical photographs and the TLS POV-Ray simulation. Hemiphot calculates canopy closure in 90 evenly sized concentric rings. To obtain the total closure of a circular image:
 
@@ -228,7 +228,7 @@ Hemiphot \citep{HemiPhot} was used to estimate closure from both the hemispheric
 
 Where $G_{\alpha{}}$ is the fraction of unfilled pixels in ring $\alpha{}$, $A_{\alpha{}}$ is the sky area of the ring segment, and $A_{\text{tot}}$ is the total sky area of the hemisphere.
 
-Canopy closure estimates from the TLS were validated using estimates from hemispherical photography. A Pearson's correlation analysis showed that both methods were highly correlated (\hemiCor{}). TLS estimates of closure were almost exclusively higher than hemispherical photography estimates, except in a few subplots with particularly low canopy closure. At higher canopy closure the over-estimation of canopy closure by TLS was larger (\autoref{tls_hemi_compare}). This finding is in agreement with previous studies which have found that that the magnitude of TLS closure over-estimation depends on gap size distribution, where a site with greater canopy cover and a gap fraction dominated by small within crown gaps will have a larger overestimate than a more open site with a gap fraction dominated by large between crown gaps \citep{Seidel2012}. A linear mixed model which accounted for the nested sampling of subplots within plots was used to identify if sites differed significantly in their relationship between hemispherical photography and TLS estimates of canopy closure. There was no significant difference in model fixed effect slope between plots in Bicuar National Park, Angola, and those in Mtarure, Tanzania (\hemiLme{}). 
+Canopy closure estimates from the TLS were validated using estimates from hemispherical photography. A Pearson's correlation analysis showed that both methods were highly correlated (\hemiCor{}). TLS estimates of closure were almost exclusively higher than hemispherical photography estimates, except in a few subplots with particularly low canopy closure. At higher canopy closure the over-estimation of canopy closure by TLS was larger (\autoref{tls_hemi_compare}). This finding is in agreement with previous studies which have found that that the magnitude of TLS canopy closure over-estimation depends on gap size distribution, where a site with greater canopy cover and a gap fraction dominated by small within crown gaps will have a larger over-estimate than a more open site with a gap fraction dominated by large between crown gaps \citep{Seidel2012}. A linear mixed model which accounted for the nested sampling of subplots within plots was used to identify if sites differed significantly in their relationship between hemispherical photography and TLS estimates of canopy closure. There was no significant difference in model fixed effect slope between plots in Bicuar National Park, Angola, and those in Mtarure, Tanzania (\hemiLme{}). 
 
 \begin{figure}
 \centering
@@ -238,16 +238,25 @@ Canopy closure estimates from the TLS were validated using estimates from hemisp
 \end{figure}
 
 \begin{figure}
-\centering
-	\includegraphics[width=\linewidth]{hemi_tls_ex}
-	\caption{Comparison of hemispherical images for a subplot in Bicuar National Park, Angola. The left image is generated from a hemispherical photograph, while the right image is generated from a multi-scan point cloud modelled as cubic voxels with POV-Ray (right). The hemispherical photograph (left) shows some blooming, especially in the tree on the bottom right of the image, where light is seen `bleeding' through the darker canopy material, causing an under-estimation in canopy closure.}
+	\begin{subfigure}{0.45\linewidth}
+		\includegraphics[width=\linewidth]{hemi_hemi}
+		\caption{}
+		\label{hemi_hemi}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.45\linewidth}
+		\includegraphics[width=\linewidth]{hemi_tls}
+		\caption{}
+		\label{hemi_tls}
+	\end{subfigure}
+	\caption{Comparison of hemispherical images for a subplot in Bicuar National Park, Angola. (a) A hemispherical photograph, and (b) a multi-scan point cloud modelled as cubic voxels with POV-Ray. The hemispherical photograph (left) shows some blooming, especially in the tree on the bottom right of the image, where light is seen `bleeding' through the darker canopy material, causing an under-estimation in canopy closure.}
 	\label{hemi_tls_ex}
 \end{figure}
 
 \subsection{Whole plot canopy metrics}
 
 The canopy height of each 1 ha plot was estimated using unified point clouds from all subplots. The unified point cloud was voxelised to 10 cm\textsuperscript{3}, and the 99th percentile of height from each 10 cm\textsuperscript{2} column was taken as the canopy height. Maximum height was not used as this occasionally constituted a severe outlier which skewed further 
-canopy surface model smoothing. The point cloud was then cropped to the plot boundaries, located using PPK GNSS, similar to the TLS targets. A pit-filling algorithm described in \citet{Khosravipour2014} was used to smooth the canopy surface model, at a resolution of 50 cm, by removing gaps within trees caused by incomplete penetration of the LiDAR beam (\autoref{P1_both}). 
+canopy surface model smoothing. The point cloud was then cropped to the plot boundaries, located using PPK GNSS similar to the TLS targets. A pit-filling algorithm described in \citet{Khosravipour2014} was used to smooth the canopy surface model, at a resolution of 50 cm, by removing gaps within trees caused by incomplete penetration of the LiDAR beam (\autoref{P1_both}). 
 
 \begin{figure}
 	\begin{subfigure}{0.45\linewidth}
@@ -261,11 +270,11 @@ canopy surface model smoothing. The point cloud was then cropped to the plot bou
 		\caption{}
 		\label{P1_pit}
 	\end{subfigure}
-	\caption{Top-down view of a 1 ha plot in Bicuar National Park. a) shows the point cloud after voxelisation, noise reduction, and taking the 99th percentile of stem height in each 5 cm vertical bin. b) shows the same point cloud after pit filling to generate a smooth canopy height profile. Points are coloured according to point height from the ground.}
+	\caption{Top-down view of a 1 ha plot in Bicuar National Park. (a) The point cloud after voxelisation, noise reduction, and taking the 99th percentile of stem height in each 5 cm vertical bin. (b) The same point cloud after pit filling to generate a smooth canopy height profile. Points are coloured according to point height from the ground.}
 	\label{P1_both}
 \end{figure}
 
-Mean canopy height across the plot and the coefficient of variation of canopy height were extracted from the canopy surface model for use in statistical analyses. A second measure of canopy rugosity ($R_{c}$) was also calculated that considers the entire canopy profile, rather than just the canopy surface, sensu \citet{Hardiman2011}. $R_{c}$ first calculates the standard deviation of foliage density in 50 cm\textsuperscript{2} columns across the plot ($\sigma{}G_{z}$), then calculates the standard deviation of those standard deviations: 
+Mean canopy height across the plot and the coefficient of variation of canopy height were extracted from the canopy surface model for use in statistical analyses. The coefficient of variation of canopy height describes canopy structural diversity. Canopy rugosity ($R_{c}$) was also calculated to describe structural complexity across the entire canopy profile, rather than just the canopy surface, sensu \citet{Hardiman2011}. $R_{c}$ first calculates the standard deviation of foliage density in 50 cm\textsuperscript{2} columns across the plot ($\sigma{}G_{z}$), then calculates the standard deviation of those standard deviations: 
 
 \begin{equation}
 	R_{c} = \sigma{}(\sigma{}G_{z})_{x}
@@ -310,7 +319,7 @@ Where $k$ is the number of nearest neighbours considered for each reference tree
 
 \subsection{Spatial clustering of stems}
 
-The winkelmass ($W$) estimates the degree of spatial uniformity in stem spatial distribution. Here, $W$ was calculated at the plot level as the mean of $W_{i}$) according to \citet{Gadow2002}: 
+The winkelmass ($W$) was calculated to estimate the degree of spatial uniformity in stem spatial distribution. Here, $W$ was calculated at the plot level as the mean of $W_{i}$) according to \citet{Gadow2002}: 
 
 \begin{align}
 \begin{split}
@@ -354,7 +363,7 @@ An adapted version of the Iterative Hegyi Index ($H_{i}$) was used to estimate t
 	H_{i} = log\sum_{j=1}^{n} (\frac{1}{L_{ij}} D_{j})
 \end{equation}
 
-Where $n$ is the numebr of stems with canopy material within the subplot, $D_{j}$ is the stem diameter of stem $j$ and $L_{ij}$ is the distance of stem $j$ from the subplot centre $i$. $H_{i}$ uses an iterative method for choosing active canopy occupants at the subplot centre, where the nearest individual to the subplot centre from each of 12 equally sized sectors is classified as the active stem (\autoref{hegyi}).
+Where $n$ is the number of stems with canopy material within the subplot, $D_{j}$ is the stem diameter of stem $j$ and $L_{ij}$ is the distance of stem $j$ from the subplot centre $i$. $H_{i}$ uses an iterative method for choosing active canopy occupants at the subplot centre, where the nearest individual to the subplot centre from each of 12 equally sized sectors is classified as the active stem (\autoref{hegyi}). $H_{i}$ was preferred over stem density to describe stem crowding in subplots because it is sensitive to how close a stem is to the subplot centre, which will affect canopy closure even if the number of stems in the subplot remains the same. 
 
 \begin{figure}
 	\includegraphics[width=0.6\linewidth]{hegyi}
