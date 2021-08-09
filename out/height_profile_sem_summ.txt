@@ -1,0 +1,37 @@
+> summary(mod_spec, .progressBar = FALSE)
+
+Structural Equation Model of mod_spec 
+
+Call:
+  cover ~ ba_cov + rich
+  ba_cov ~ rich
+
+    AIC      BIC
+ 18.000   41.356
+
+---
+Tests of directed separation:
+
+ No independence claims present. Tests of directed separation not possible.
+
+Global goodness-of-fit:
+
+  Fisher's C = 0 with P-value = 1 and on 0 degrees of freedom
+
+---
+Coefficients:
+
+  Response Predictor Estimate Std.Error DF Crit.Value P.Value Std.Estimate    
+     cover    ba_cov   0.0167    0.0270 85     0.6165  0.5392       0.0629    
+     cover      rich   0.0298    0.0321 85     0.9299  0.3551       0.1093    
+    ba_cov      rich   0.3540    0.0982 86     3.6045  0.0005       0.3437 ***
+
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05
+
+---
+Individual R-squared:
+
+  Response method Marginal Conditional
+     cover   none     0.02        0.19
+    ba_cov   none     0.12        0.12
+> sink()

@@ -1,0 +1,96 @@
+> plot_dredge_list
+[[1]]
+Global model call: lme.formula(fixed = cover_mean ~ rich + ba_sum + ba_cov + mi_mean + 
+    wi_mean, data = plot_all_mod, random = ~1 | man_clust, method = "ML", 
+    na.action = "na.fail")
+---
+Model selection table 
+    (Int)  ba_cov  ba_sum    mi_men     rch   wi_men df logLik  AICc delta
+9  0.4829                           0.10070           4 11.301 -11.5  0.00
+11 0.4856         0.05300           0.08335           5 12.807 -10.6  0.91
+25 0.4781                           0.08151 -0.04844  5 12.484 -10.0  1.56
+20 0.4710 0.06414 0.06276                   -0.08028  6 14.785  -9.9  1.59
+13 0.4888                 -0.050430 0.12170           5 12.355  -9.7  1.82
+18 0.4658 0.07536                           -0.08873  5 12.119  -9.2  2.29
+19 0.4766         0.07423                   -0.07573  5 12.048  -9.1  2.43
+27 0.4808         0.05413           0.06322 -0.04973  6 14.305  -9.0  2.55
+10 0.4786 0.03617                   0.08882           5 11.955  -8.9  2.62
+   weight
+9   0.184
+11  0.117
+25  0.085
+20  0.083
+13  0.074
+18  0.059
+19  0.055
+27  0.051
+10  0.050
+ [ reached getOption("max.print") -- omitted 23 rows ]
+Models ranked by AICc(x) 
+Random terms (all models): 
+‘1 | man_clust’
+
+[[2]]
+Global model call: lme.formula(fixed = chm_mean ~ rich + ba_sum + ba_cov + mi_mean + 
+    wi_mean, data = plot_all_mod, random = ~1 | man_clust, method = "ML", 
+    na.action = "na.fail")
+---
+Model selection table 
+   (Int)   ba_cov ba_sum   mi_men    rch  wi_men df logLik AICc delta weight
+11 5.649           1.259          0.8421          5 -23.13 61.3  0.00  0.592
+15 5.618           1.377  0.32020 0.6702          6 -22.38 64.4  3.13  0.124
+27 5.665           1.255          0.9094  0.1664  6 -22.84 65.3  4.06  0.078
+12 5.657 -0.06925  1.263          0.8637          6 -23.08 65.8  4.54  0.061
+7  5.589           1.693  0.73050                 5 -25.64 66.3  5.02  0.048
+3  5.531           1.626                          4 -27.68 66.4  5.17  0.045
+31 5.631           1.363  0.28920 0.7318  0.1111  7 -22.24 69.7  8.43  0.009
+16 5.621 -0.02634  1.377  0.31490 0.6813          7 -22.37 69.9  8.67  0.008
+4  5.514 -0.09723  1.649                          5 -27.63 70.3  9.00  0.007
+ [ reached getOption("max.print") -- omitted 23 rows ]
+Models ranked by AICc(x) 
+Random terms (all models): 
+‘1 | man_clust’
+
+[[3]]
+Global model call: lme.formula(fixed = chm_cov ~ rich + ba_sum + ba_cov + mi_mean + 
+    wi_mean, data = plot_all_mod, random = ~1 | man_clust, method = "ML", 
+    na.action = "na.fail")
+---
+Model selection table 
+   (Int) ba_cov  ba_sum  mi_men     rch  wi_men df logLik  AICc delta weight
+12 76.10  5.665  -5.654          -7.232          6 -63.71 147.1  0.00  0.279
+11 76.78         -5.360          -5.461          5 -66.81 148.6  1.56  0.127
+10 76.43  5.364                  -8.990          5 -66.87 148.7  1.67  0.121
+9  77.05                         -7.221          4 -68.95 149.0  1.91  0.107
+3  76.63         -7.358                          4 -69.25 149.6  2.50  0.080
+7  77.14         -8.139 -4.5400                  5 -67.85 150.7  3.64  0.045
+4  75.85  5.878 -12.550                          5 -68.15 151.3  4.24  0.033
+19 76.92         -7.013                  2.7560  5 -68.67 152.3  5.28  0.020
+28 76.01  5.849  -5.646          -7.595 -0.7544  7 -63.65 152.5  5.44  0.018
+ [ reached getOption("max.print") -- omitted 23 rows ]
+Models ranked by AICc(x) 
+Random terms (all models): 
+‘1 | man_clust’
+
+[[4]]
+Global model call: lme.formula(fixed = rc ~ rich + ba_sum + ba_cov + mi_mean + wi_mean, 
+    data = plot_all_mod, random = ~1 | man_clust, method = "ML", 
+    na.action = "na.fail")
+---
+Model selection table 
+   (Int) ba_cov ba_sum mi_men    rch wi_men df logLik  AICc delta weight
+3  903.5        -93.47                       4 -111.7 234.4  0.00  0.380
+19 899.1        -97.88               -26.19  5 -111.2 237.4  2.97  0.086
+11 901.3        -76.68        -32.00         5 -111.2 237.4  2.97  0.086
+9  915.0                      -67.94         4 -113.2 237.6  3.16  0.078
+4  898.6 -28.45 -85.88                       5 -111.3 237.7  3.29  0.074
+1  924.1                                     3 -115.2 238.1  3.70  0.060
+7  903.6        -93.75 -2.759                5 -111.7 238.3  3.92  0.054
+27 892.7        -75.49        -46.39 -39.54  6 -110.2 240.0  5.64  0.023
+25 907.2                      -78.85 -34.81  5 -112.6 240.2  5.77  0.021
+ [ reached getOption("max.print") -- omitted 23 rows ]
+Models ranked by AICc(x) 
+Random terms (all models): 
+‘1 | man_clust’
+
+> sink()

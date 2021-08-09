@@ -68,7 +68,7 @@ resp_names <- c(
   "Rugosity" = "rc")
 
 pred_names <- c(
-  "Basal area" = "ba",
+  "Basal area" = "ba_sum",
   "Basal area" = "ba_std",
   "Stem Shannon" = "stem_shannon",
   "Stem Shannon" = "stem_shannon_std",

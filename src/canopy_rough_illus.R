@@ -28,7 +28,14 @@ chm_nona_clean <- chm_nona %>%
   group_by(paper_plot_id) %>%
   mutate(
     x = x - min(x, na.rm = TRUE),
-    y = y - min(y, na.rm = TRUE))
+    y = y - min(y, na.rm = TRUE)) %>%
+  mutate(paper_plot_id = case_when(
+      paper_plot_id == "B1" ~ "Cluster 1: B1",
+      paper_plot_id == "B13" ~ "Cluster 3: B13",
+      paper_plot_id == "M1" ~ "Cluster 4: M1",
+      paper_plot_id == "M5" ~ "Cluster 2: M1",
+      TRUE ~ NA_character_))
+
 
 # Create plot of vegetation types
 pdf(file = "../img/veg_type_tile.pdf", width = 12, height = 12)

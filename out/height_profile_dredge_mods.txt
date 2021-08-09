@@ -1,132 +1,74 @@
+> dredge_list
 [[1]]
-Global model call: lmer(formula = layer_div ~ rich_std + hegyi_std + diam_cov_std + 
-    crown_area_cov_std + (1 | plot_id), data = subplot_dat, REML = FALSE, 
-    na.action = "na.fail")
+Global model call: lme.formula(fixed = layer_div ~ hegyi + rich + ba_cov, data = subplot_all_mod, 
+    random = ~1 | man_clust/plot_id, method = "ML", na.action = "na.fail")
 ---
 Model selection table 
-   (Int) crw_are_cov_std dim_cov_std hgy_std rch_std df logLik   AICc delta weight
-7  13.89                       1.277   2.139          5 -473.1  956.6  0.00  0.469
-8  13.88       -0.443000       1.604   2.222          6 -472.7  958.0  1.37  0.236
-15 13.89                       1.257   2.052  0.2303  6 -472.9  958.4  1.82  0.189
-16 13.87       -0.475700       1.605   2.128  0.2665  7 -472.5  959.7  3.10  0.099
-6  13.89        0.795000               2.176          5 -477.9  966.2  9.63  0.004
-14 13.88        0.762400               2.082  0.2709  6 -477.7  968.0 11.36  0.002
-5  13.85                               2.485          4 -480.6  969.5 12.93  0.001
-13 13.84                               2.323  0.4112  5 -480.2  970.7 14.09  0.000
-11 14.12                       1.525          0.9524  5 -484.3  979.0 22.44  0.000
-12 14.12        0.004848       1.521          0.9518  6 -484.3  981.2 24.59  0.000
- [ reached getOption("max.print") -- omitted 6 rows ]
+  (Int) ba_cov   hgy    rch df logLik   AICc delta weight
+4 12.72 0.8211 2.175         6 -479.7  971.9  0.00  0.579
+8 12.72 0.7623 2.071 0.3160  7 -479.4  973.5  1.56  0.266
+3 12.60        2.434         5 -482.7  975.7  3.80  0.087
+7 12.62        2.231 0.5228  6 -481.8  976.2  4.28  0.068
+6 12.94 1.0680       0.9901  6 -491.5  995.5 23.54  0.000
+2 12.96 1.3460               5 -494.5  999.3 27.35  0.000
+5 12.82              1.3900  5 -495.7 1001.7 29.79  0.000
+1 12.80                      4 -501.6 1011.5 39.53  0.000
 Models ranked by AICc(x) 
 Random terms (all models): 
-‘1 | plot_id’
+‘1 | man_clust’, ‘1 | plot_id %in% man_clust’
 
 [[2]]
-Global model call: lmer(formula = auc_canopy ~ rich_std + hegyi_std + diam_cov_std + 
-    crown_area_cov_std + (1 | plot_id), data = subplot_dat, REML = FALSE, 
-    na.action = "na.fail")
+Global model call: lme.formula(fixed = auc_canopy ~ hegyi + rich + ba_cov, data = subplot_all_mod, 
+    random = ~1 | man_clust/plot_id, method = "ML", na.action = "na.fail")
 ---
 Model selection table 
-   (Int) crw_are_cov_std dim_cov_std hgy_std rch_std df logLik AICc delta weight
-8  25320         -2887.0        4865    7684          6  -1821 3654  0.00  0.417
-7  25420                        2754    7194          5  -1822 3655  1.01  0.251
-16 25290         -2971.0        4847    7387   803.8  7  -1821 3656  1.77  0.172
-15 25400                        2694    6961   615.7  6  -1822 3657  2.93  0.096
-5  25320                                7867          4  -1826 3659  5.22  0.031
-13 25300                                7470   990.5  5  -1825 3661  6.78  0.014
-6  25360           760.5                7595          5  -1825 3661  6.88  0.013
-14 25340           656.3                7283   877.4  6  -1825 3663  8.59  0.006
-11 26230                        3507          2881.0  5  -1834 3679 25.18  0.000
-12 26200         -1496.0        4621          3055.0  6  -1834 3681 26.58  0.000
- [ reached getOption("max.print") -- omitted 6 rows ]
+  (Int) ba_cov  hgy    rch df logLik AICc delta weight
+4 25470   1823 6990         6  -1846 3704  0.00  0.383
+3 25350        7534         5  -1847 3705  0.48  0.302
+7 25330        7083 1200.0  6  -1847 3706  1.77  0.158
+8 25440   1676 6733  793.5  7  -1846 3706  1.80  0.156
+6 25100   2571      2855.0  6  -1857 3727 23.22  0.000
+5 24720             3785.0  5  -1860 3730 25.60  0.000
+2 25480   3431              5  -1860 3730 25.92  0.000
+1 24870                     4  -1864 3736 32.33  0.000
 Models ranked by AICc(x) 
 Random terms (all models): 
-‘1 | plot_id’
+‘1 | man_clust’, ‘1 | plot_id %in% man_clust’
 
 [[3]]
-Global model call: lmer(formula = dens_peak_height ~ rich_std + hegyi_std + diam_cov_std + 
-    crown_area_cov_std + (1 | plot_id), data = subplot_dat, REML = FALSE, 
-    na.action = "na.fail")
+Global model call: lme.formula(fixed = cum_lm_se ~ hegyi + rich + ba_cov, data = subplot_all_mod, 
+    random = ~1 | man_clust/plot_id, method = "ML", na.action = "na.fail")
 ---
 Model selection table 
-   (Int) crw_are_cov_std dim_cov_std hgy_std rch_std df logLik  AICc delta weight
-10 7.571          0.6703                     -0.4443  5 -433.7 877.9  0.00  0.171
-2  7.525          0.5451                              4 -435.0 878.3  0.46  0.136
-14 7.520          0.6005              0.4211 -0.5650  6 -433.0 878.4  0.58  0.128
-3  7.519                     0.44530                  4 -435.8 879.9  2.01  0.062
-12 7.570          0.5902     0.10820         -0.4485  6 -433.7 879.9  2.08  0.060
-15 7.499                     0.49070  0.4938 -0.5400  6 -433.7 880.0  2.12  0.059
-11 7.558                     0.54400         -0.3866  5 -434.8 880.0  2.16  0.058
-6  7.494          0.4948              0.2047          5 -434.8 880.0  2.17  0.058
-4  7.524          0.4943     0.06725                  5 -435.0 880.4  2.56  0.048
-16 7.519          0.5089     0.12320  0.4243 -0.5707  7 -432.9 880.5  2.66  0.045
- [ reached getOption("max.print") -- omitted 6 rows ]
+  (Int)  ba_cov  hgy  rch df logLik AICc delta weight
+3 55040         7904       5  -2022 4054  0.00  0.383
+4 54860 -2726.0 8715       6  -2021 4056  1.42  0.188
+7 55010         7283 1553  6  -2022 4056  1.95  0.145
+1 56160                    4  -2024 4057  3.02  0.085
+8 54790 -3201.0 7911 2389  7  -2021 4057  3.16  0.079
+5 55860              4039  5  -2024 4058  3.58  0.064
+2 56150  -649.4            5  -2024 4059  5.10  0.030
+6 55770 -2055.0      4762  6  -2023 4059  5.33  0.027
 Models ranked by AICc(x) 
 Random terms (all models): 
-‘1 | plot_id’
+‘1 | man_clust’, ‘1 | plot_id %in% man_clust’
 
 [[4]]
-Global model call: lmer(formula = height_q99 ~ rich_std + hegyi_std + diam_cov_std + 
-    crown_area_cov_std + (1 | plot_id), data = subplot_dat, REML = FALSE, 
-    na.action = "na.fail")
+Global model call: lme.formula(fixed = cover ~ hegyi + rich + ba_cov, data = subplot_all_mod, 
+    random = ~1 | man_clust/plot_id, method = "ML", na.action = "na.fail")
 ---
 Model selection table 
-   (Int) crw_are_cov_std dim_cov_std hgy_std  rch_std df logLik  AICc delta weight
-3  12.98                      0.8467                   4 -444.0 896.2  0.00  0.244
-7  12.92                      0.7683  0.4370           5 -443.1 896.6  0.32  0.207
-15 12.92                      0.7875  0.5340 -0.25640  6 -442.8 898.1  1.88  0.095
-4  12.98        0.122800      0.7515                   5 -444.0 898.3  2.04  0.088
-11 12.98                      0.8568         -0.06908  5 -444.0 898.3  2.08  0.086
-8  12.91       -0.008436      0.7745  0.4386           6 -443.1 898.7  2.47  0.071
-2  12.98        0.690500                               4 -445.6 899.4  3.16  0.050
-6  12.92        0.583000              0.4122           5 -444.8 900.0  3.80  0.036
-16 12.92        0.025270      0.7690  0.5300 -0.25850  7 -442.8 900.3  4.06  0.032
-12 12.99        0.144200      0.7479         -0.08923  6 -443.9 900.4  4.11  0.031
- [ reached getOption("max.print") -- omitted 6 rows ]
+   (Int)    ba_cov    hgy       rch df logLik  AICc  delta weight
+3 0.4969           0.2353            5  41.25 -72.1   0.00  0.537
+7 0.4971           0.2389 -0.009099  6  41.38 -70.2   1.89  0.209
+4 0.4970 0.0008958 0.2350            6  41.25 -70.0   2.15  0.183
+8 0.4973 0.0025330 0.2383 -0.009685  7  41.39 -68.1   4.04  0.071
+6 0.5257 0.0414400         0.065440  6 -15.92  44.4 116.48  0.000
+5 0.5244                   0.078770  5 -17.71  45.8 117.92  0.000
+2 0.5317 0.0589900                   5 -19.53  49.4 121.56  0.000
+1 0.5314                             4 -23.34  54.9 127.05  0.000
 Models ranked by AICc(x) 
 Random terms (all models): 
-‘1 | plot_id’
+‘1 | man_clust’, ‘1 | plot_id %in% man_clust’
 
-[[5]]
-Global model call: lmer(formula = cum_lm_se ~ rich_std + hegyi_std + diam_cov_std + 
-    crown_area_cov_std + (1 | plot_id), data = subplot_dat, REML = FALSE, 
-    na.action = "na.fail")
----
-Model selection table 
-   (Int) crw_are_cov_std dim_cov_std hgy_std rch_std df logLik AICc delta weight
-6  54500           -5200                9670          5  -1997 4005  0.00  0.219
-5  54860                                7864          4  -1999 4006  0.59  0.162
-8  54450           -8879     4900.00    9706          6  -1997 4006  1.00  0.132
-14 54440           -5545                8632    2683  6  -1997 4007  1.59  0.098
-7  54800                    -1541.00    8248          5  -1999 4008  2.48  0.063
-13 54830                                7129    1712  5  -1999 4008  2.48  0.063
-16 54390           -9077     4731.00    8740    2468  7  -1997 4008  2.70  0.057
-1  56020                                              3  -2001 4008  3.29  0.042
-9  55680                                        4202  4  -2000 4009  3.73  0.034
-10 55540           -4043                        5368  5  -2000 4009  4.19  0.027
- [ reached getOption("max.print") -- omitted 6 rows ]
-Models ranked by AICc(x) 
-Random terms (all models): 
-‘1 | plot_id’
-
-[[6]]
-Global model call: lmer(formula = cover ~ rich_std + hegyi_std + diam_cov_std + 
-    crown_area_cov_std + (1 | plot_id), data = subplot_dat, REML = FALSE, 
-    na.action = "na.fail")
----
-Model selection table 
-    (Int) crw_are_cov_std dim_cov_std hgy_std  rch_std df logLik  AICc  delta weight
-5  0.4911                              0.2480           4  45.24 -82.2   0.00  0.364
-13 0.4914                              0.2536 -0.01342  5  45.53 -80.7   1.54  0.169
-7  0.4913                    0.005914  0.2464           5  45.32 -80.3   1.96  0.137
-6  0.4913       0.0047540              0.2461           5  45.29 -80.2   2.02  0.133
-15 0.4917                    0.007294  0.2521 -0.01443  6  45.66 -78.8   3.44  0.065
-14 0.4918       0.0066530              0.2515 -0.01463  6  45.63 -78.7   3.49  0.064
-8  0.4913       0.0004474    0.005583  0.2463           6  45.32 -78.1   4.11  0.047
-16 0.4918       0.0023650    0.005559  0.2517 -0.01462  7  45.66 -76.6   5.61  0.022
-10 0.5225       0.0545000                      0.06523  5 -14.23  38.8 121.06  0.000
-12 0.5225       0.0563600   -0.002424          0.06525  6 -14.23  41.0 123.21  0.000
- [ reached getOption("max.print") -- omitted 6 rows ]
-Models ranked by AICc(x) 
-Random terms (all models): 
-‘1 | plot_id’
-
+> sink()

@@ -1,360 +1,146 @@
 > lapply(mod_list, summary)
 [[1]]
-Linear mixed
-  model fit by  REML
- [lmerMod]
-Formula: 
-cover_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
-   Data: dat_std
-
-REML criterion at convergence: 
--4.4
-
-Scaled residuals: 
-    Min      1Q 
--1.2606 -0.5761 
- Median      3Q 
--0.0496  0.3397 
-    Max 
- 2.1327 
+Linear mixed-effects model fit by REML
+  Data: subplot_all_mod 
+    AIC   BIC logLik
+  970.8 992.6 -478.4
 
 Random effects:
- Groups  
- site    
- Residual
- Name       
- (Intercept)
-            
- Variance Std.Dev.
- 0.0000   0.000   
- 0.0118   0.109   
-Number of obs: 18, groups:  
-site, 2
+ Formula: ~1 | man_clust
+        (Intercept)
+StdDev:       2.899
 
-Fixed effects:
-                 Estimate
-(Intercept)        0.3974
-tree_shannon_std   0.0739
-ba_std             0.0466
-diam_cov_std       0.0203
-mi_mean_std       -0.0469
-wi_mean_std       -0.0702
-                 Std. Error
-(Intercept)          0.0256
-tree_shannon_std     0.0694
-ba_std               0.0337
-diam_cov_std         0.0322
-mi_mean_std          0.0683
-wi_mean_std          0.0271
-                 t value
-(Intercept)        15.51
-tree_shannon_std    1.07
-ba_std              1.38
-diam_cov_std        0.63
-mi_mean_std        -0.69
-wi_mean_std        -2.59
+ Formula: ~1 | plot_id %in% man_clust
+        (Intercept) Residual
+StdDev:       1.281    3.909
 
-Correlation of Fixed Effects:
-            (Intr)
-tr_shnnn_st  0.000
-ba_std       0.000
-diam_cv_std  0.000
-mi_mean_std  0.000
-wi_mean_std  0.000
-            tr_sh_
-tr_shnnn_st       
-ba_std      -0.399
-diam_cv_std -0.357
-mi_mean_std -0.918
-wi_mean_std  0.153
-            ba_std
-tr_shnnn_st       
-ba_std            
-diam_cv_std -0.271
-mi_mean_std  0.444
-wi_mean_std  0.084
-            dm_cv_
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std  0.293
-wi_mean_std -0.138
-            m_mn_s
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std       
-wi_mean_std -0.113
-convergence code: 0
-boundary (singular) fit: see ?isSingular
+Fixed effects:  layer_div ~ hegyi + rich + ba_cov 
+             Value Std.Error  DF t-value p-value
+(Intercept) 12.666    1.5413 144   8.218  0.0000
+hegyi        2.060    0.4096 144   5.029  0.0000
+rich         0.316    0.3896 144   0.812  0.4179
+ba_cov       0.758    0.3446 144   2.199  0.0295
+ Correlation: 
+       (Intr) hegyi  rich  
+hegyi  -0.033              
+rich    0.015 -0.334       
+ba_cov  0.028 -0.181 -0.226
 
+Standardized Within-Group Residuals:
+     Min       Q1      Med       Q3      Max 
+-1.82262 -0.73060 -0.07103  0.53022  2.79890 
+
+Number of Observations: 169
+Number of Groups: 
+             man_clust plot_id %in% man_clust 
+                     4                     22 
 
 [[2]]
-Linear mixed
-  model fit by  REML
- [lmerMod]
-Formula: 
-chm_mean ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
-   Data: dat_std
-
-REML criterion at convergence: 
-51.9
-
-Scaled residuals: 
-   Min     1Q 
--1.474 -0.729 
-Median     3Q 
- 0.208  0.563 
-   Max 
- 1.624 
+Linear mixed-effects model fit by REML
+  Data: subplot_all_mod 
+   AIC  BIC logLik
+  3641 3662  -1813
 
 Random effects:
- Groups  
- site    
- Residual
- Name       
- (Intercept)
-            
- Variance Std.Dev.
- 0.0706   0.266   
- 1.2713   1.128   
-Number of obs: 18, groups:  
-site, 2
+ Formula: ~1 | man_clust
+        (Intercept)
+StdDev:        3336
 
-Fixed effects:
-                 Estimate
-(Intercept)         5.721
-tree_shannon_std    0.947
-ba_std              1.457
-diam_cov_std        0.212
-mi_mean_std        -0.188
-wi_mean_std        -0.129
-                 Std. Error
-(Intercept)           0.328
-tree_shannon_std      0.721
-ba_std                0.351
-diam_cov_std          0.334
-mi_mean_std           0.720
-wi_mean_std           0.293
-                 t value
-(Intercept)        17.46
-tree_shannon_std    1.31
-ba_std              4.15
-diam_cov_std        0.63
-mi_mean_std        -0.26
-wi_mean_std        -0.44
+ Formula: ~1 | plot_id %in% man_clust
+        (Intercept) Residual
+StdDev:        3413    13066
 
-Correlation of Fixed Effects:
-            (Intr)
-tr_shnnn_st  0.009
-ba_std       0.010
-diam_cv_std  0.001
-mi_mean_std -0.021
-wi_mean_std  0.033
-            tr_sh_
-tr_shnnn_st       
-ba_std      -0.390
-diam_cv_std -0.355
-mi_mean_std -0.915
-wi_mean_std  0.168
-            ba_std
-tr_shnnn_st       
-ba_std            
-diam_cv_std -0.268
-mi_mean_std  0.419
-wi_mean_std  0.106
-            dm_cv_
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std  0.286
-wi_mean_std -0.129
-            m_mn_s
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std       
-wi_mean_std -0.158
+Fixed effects:  auc_canopy ~ hegyi + rich + ba_cov 
+            Value Std.Error  DF t-value p-value
+(Intercept) 24303      2239 144  10.854  0.0000
+hegyi        6633      1346 144   4.926  0.0000
+rich          736      1259 144   0.585  0.5597
+ba_cov       1585      1140 144   1.390  0.1667
+ Correlation: 
+       (Intr) hegyi  rich  
+hegyi  -0.075              
+rich    0.009 -0.324       
+ba_cov  0.047 -0.173 -0.256
+
+Standardized Within-Group Residuals:
+    Min      Q1     Med      Q3     Max 
+-1.9637 -0.7236 -0.1490  0.3892  2.7561 
+
+Number of Observations: 169
+Number of Groups: 
+             man_clust plot_id %in% man_clust 
+                     4                     22 
 
 [[3]]
-Linear mixed
-  model fit by  REML
- [lmerMod]
-Formula: 
-chm_sd ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
-   Data: dat_std
-
-REML criterion at convergence: 
-33.4
-
-Scaled residuals: 
-   Min     1Q 
--1.206 -0.646 
-Median     3Q 
--0.091  0.844 
-   Max 
- 1.243 
+Linear mixed-effects model fit by REML
+  Data: subplot_all_mod 
+   AIC  BIC logLik
+  3984 4006  -1985
 
 Random effects:
- Groups  
- site    
- Residual
- Name       
- (Intercept)
-            
- Variance Std.Dev.
- 0.000    0.000   
- 0.275    0.525   
-Number of obs: 18, groups:  
-site, 2
+ Formula: ~1 | man_clust
+        (Intercept)
+StdDev:       3.226
 
-Fixed effects:
-                 Estimate
-(Intercept)        4.1332
-tree_shannon_std   0.3278
-ba_std             0.5470
-diam_cov_std       0.5327
-mi_mean_std       -0.1355
-wi_mean_std        0.0935
-                 Std. Error
-(Intercept)          0.1237
-tree_shannon_std     0.3347
-ba_std               0.1627
-diam_cov_std         0.1556
-mi_mean_std          0.3295
-wi_mean_std          0.1306
-                 t value
-(Intercept)        33.42
-tree_shannon_std    0.98
-ba_std              3.36
-diam_cov_std        3.42
-mi_mean_std        -0.41
-wi_mean_std         0.72
+ Formula: ~1 | plot_id %in% man_clust
+        (Intercept) Residual
+StdDev:        7926    37586
 
-Correlation of Fixed Effects:
-            (Intr)
-tr_shnnn_st  0.000
-ba_std       0.000
-diam_cv_std  0.000
-mi_mean_std  0.000
-wi_mean_std  0.000
-            tr_sh_
-tr_shnnn_st       
-ba_std      -0.399
-diam_cv_std -0.357
-mi_mean_std -0.918
-wi_mean_std  0.153
-            ba_std
-tr_shnnn_st       
-ba_std            
-diam_cv_std -0.271
-mi_mean_std  0.444
-wi_mean_std  0.084
-            dm_cv_
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std  0.293
-wi_mean_std -0.138
-            m_mn_s
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std       
-wi_mean_std -0.113
-convergence code: 0
-boundary (singular) fit: see ?isSingular
+Fixed effects:  cum_lm_se ~ hegyi + rich + ba_cov 
+            Value Std.Error  DF t-value p-value
+(Intercept) 54752      3411 144  16.053  0.0000
+hegyi        7980      3808 144   2.096  0.0379
+rich         2174      3504 144   0.621  0.5359
+ba_cov      -3318      3241 144  -1.024  0.3077
+ Correlation: 
+       (Intr) hegyi  rich  
+hegyi  -0.135              
+rich   -0.049 -0.311       
+ba_cov  0.058 -0.164 -0.290
 
+Standardized Within-Group Residuals:
+    Min      Q1     Med      Q3     Max 
+-1.4037 -0.6604 -0.1870  0.3711  6.0330 
+
+Number of Observations: 169
+Number of Groups: 
+             man_clust plot_id %in% man_clust 
+                     4                     22 
 
 [[4]]
-Linear mixed
-  model fit by  REML
- [lmerMod]
-Formula: 
-rc ~ tree_shannon_std + ba_std + diam_cov_std + mi_mean_std +  
-    wi_mean_std + (1 | site)
-   Data: dat_std
-
-REML criterion at convergence: 
-164.9
-
-Scaled residuals: 
-    Min      1Q 
--1.4494 -0.4639 
- Median      3Q 
--0.0599  0.3831 
-    Max 
- 2.0165 
+Linear mixed-effects model fit by REML
+  Data: subplot_all_mod 
+     AIC   BIC logLik
+  -44.34 -22.6  29.17
 
 Random effects:
- Groups  
- site    
- Residual
- Name       
- (Intercept)
-            
- Variance Std.Dev.
-  2604     51     
- 15168    123     
-Number of obs: 18, groups:  
-site, 2
+ Formula: ~1 | man_clust
+        (Intercept)
+StdDev:   1.921e-05
 
-Fixed effects:
-                 Estimate
-(Intercept)         888.9
-tree_shannon_std   -190.5
-ba_std              -53.9
-diam_cov_std         39.7
-mi_mean_std         157.3
-wi_mean_std         -42.7
-                 Std. Error
-(Intercept)            46.7
-tree_shannon_std       79.1
-ba_std                 38.5
-diam_cov_std           36.5
-mi_mean_std            80.2
-wi_mean_std            33.7
-                 t value
-(Intercept)        19.02
-tree_shannon_std   -2.41
-ba_std             -1.40
-diam_cov_std        1.09
-mi_mean_std         1.96
-wi_mean_std        -1.27
+ Formula: ~1 | plot_id %in% man_clust
+        (Intercept) Residual
+StdDev:      0.1081   0.1756
 
-Correlation of Fixed Effects:
-            (Intr)
-tr_shnnn_st  0.015
-ba_std       0.018
-diam_cv_std  0.002
-mi_mean_std -0.035
-wi_mean_std  0.055
-            tr_sh_
-tr_shnnn_st       
-ba_std      -0.378
-diam_cv_std -0.353
-mi_mean_std -0.910
-wi_mean_std  0.186
-            ba_std
-tr_shnnn_st       
-ba_std            
-diam_cv_std -0.266
-mi_mean_std  0.389
-wi_mean_std  0.131
-            dm_cv_
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std  0.279
-wi_mean_std -0.119
-            m_mn_s
-tr_shnnn_st       
-ba_std            
-diam_cv_std       
-mi_mean_std       
-wi_mean_std -0.209
+Fixed effects:  cover ~ hegyi + rich + ba_cov 
+              Value Std.Error  DF t-value p-value
+(Intercept)  0.4972   0.02700 144  18.418  0.0000
+hegyi        0.2382   0.01874 144  12.715  0.0000
+rich        -0.0097   0.01839 144  -0.527  0.5993
+ba_cov       0.0025   0.01569 144   0.161  0.8720
+ Correlation: 
+       (Intr) hegyi  rich  
+hegyi  -0.080              
+rich   -0.024 -0.330       
+ba_cov  0.037 -0.202 -0.195
+
+Standardized Within-Group Residuals:
+     Min       Q1      Med       Q3      Max 
+-2.27231 -0.67130 -0.04796  0.64493  3.02749 
+
+Number of Observations: 169
+Number of Groups: 
+             man_clust plot_id %in% man_clust 
+                     4                     22 
 
 > sink()
