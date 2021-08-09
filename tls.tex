@@ -5,6 +5,8 @@
 \graphicspath{ {img/} }
 
 \addbibresource{tls.bib}
+
+\usepackage{makecell}
      
 % Variables
 \input{out/ptn}
@@ -22,7 +24,7 @@
 \linenumbers
 
 \begin{abstract}
-Atmospheric CO\textsubscript{2} enrichment and human-induced climate change are expected to drive woody encroachment and an increase in tree cover across African savannas, with consequences for ecosystem function, particularly related to carbon dynamics. The patch dynamics of savanna-woodland mosaics are complex however, as woody growth is mediated by seasonal fire that is itself driven by woody canopy structure. It is unclear how variation in existing tree species composition and stand structure in this ecosystem affects canopy structure, and how this might determine future vegetation dynamics. Here, I conducted the first study of canopy structure in miombo savannas using terrestrial LiDAR, at two sites in Angola and Tanzania, to explore relationships between tree species diversity, stand structure, and canopy structure. I found that \todo{WHAT}
+Atmospheric CO\textsubscript{2} enrichment and human-induced climate change are expected to drive woody encroachment and an increase in tree cover across African savannas, with consequences for ecosystem function, particularly related to carbon dynamics. The patch dynamics of savanna-woodland mosaics are complex however, as woody growth is mediated by seasonal fire that is itself driven by woody canopy structure. It is unclear how variation in existing tree species composition and stand structure in this ecosystem affects canopy structure, and how this might determine vegetation dynamics. Here, I conducted the first study of canopy structure using terrestrial LiDAR in southern African savannas, at sites in Angola and Tanzania, to explore relationships between tree species diversity, stand structure, and canopy structure. I found that \todo{WHAT}
 \end{abstract}
 
 \section{Introduction}
@@ -43,7 +45,7 @@ As well as the species diversity of trees, the spatial distribution and relative
 Functional differences among floristic types of savanna may also drive variation in canopy structure, irrespective of species diversity. Some savanna trees form denser canopies than others, as a result of variation in leaf size and branch architecture. Previous studies have compared the branch architecture of ex-Acacia and miombo archetypal tree species. While ex-Acacia species tend to inhabit drier, heavily grazed or seasonally flooded areas, miombo species tend to inhabit dystrophic wetter areas structured heavily by fire  \citep{Ribeiro2020}. These studies have shown that ex-Acacia species develop sparser canopies, cagey branch architecture, and wider spreading crowns, while miombo species develop thicker canopies and can grow to large trees \citep{Mugasha2013, Archibald2003, Privette2004}. Under identical stem densities, miombo woodland species may therefore exclude grass more effectively. 
 
 % LiDAR
-Canopy structure is multi-dimensional and has previously been explained using a plethora of simple metrics that originated in forest and community ecology \citep{Kershaw2017}. Assessments of canopy structure have most often modelled tree canopies as a series of ellipses (2D), ellipsoids or cones (3D) based on field measurements with measuring tapes \citep{Jucker2015}. Measurements of this kind are time consuming and yet are an over-simplification of canopy structure. Alternatively, canopy cover is often measured using indirect optical methods which partition sky from canopy material, i.e. with hemispherical photography or the commonly used LAI-2000, providing a 2D representation of the canopy but lacking information on vertical canopy structure \citep{Jonckheere2004}. In recent years, particularly in temperate and boreal forests, LiDAR (Light Detection And Ranging) has emerged as a suitable technology for rapidly and precisely assessing canopy structure in 3D, conserving information on 3D structure of the calibre that is required to understand it's complexities \citep{Muir2018, Calders2020}. In tropical savannas, very few studies have used terrestrial LiDAR for vegetation analyses, and in southern Africa all existing studies have been located the the Skukuza Flux Tower in Kruger National Park, South Africa \citep{Muumbe2021}. Pioneering work describing the ecology of southern African savannas placed large emphasis on canopy structural diversity as a mediator of ecosystem function \citep{Solbrig1996}, but much of that understanding of savanna vegetation structure was derived from traditional mensuration methods. Using terrestrial LiDAR to measure canopy structure in southern African savannas therefore offers a unique chance to validate accepted theory and describe differences in ecosystem structure among savanna vegetation types in finer detail than previously possible.
+Canopy structure is multi-dimensional and has previously been explained using a plethora of simple metrics that originated in forest and community ecology \citep{Kershaw2017}. Assessments of canopy structure have most often modelled tree canopies as a series of ellipses (2D), ellipsoids or cones (3D) based on field measurements with measuring tapes \citep{Jucker2015}, or used surrogate proxies for 3D canopy structure due to its inherent complexity \citep{Seidel2011}. Measurements of this kind are time consuming and yet remain an over-simplification of canopy structure. Alternatively, canopy cover is often measured using indirect optical methods which partition sky from canopy material, i.e. with hemispherical photography or the commonly used LAI-2000, providing a 2D representation of the canopy but lacking information on vertical canopy structure \citep{Jonckheere2004}. In recent years, particularly in temperate and boreal forests, LiDAR (Light Detection And Ranging) has emerged as a suitable technology for rapidly and precisely assessing canopy structure in 3D, conserving information on 3D structure of the calibre that is required to understand it's complexities \citep{Muir2018, Calders2020}. In tropical savannas, very few studies have used terrestrial LiDAR for vegetation analyses, and in southern Africa all existing studies have been located the the Skukuza Flux Tower in Kruger National Park, South Africa \citep{Muumbe2021}. Pioneering work describing the ecology of southern African savannas placed large emphasis on canopy structural diversity as a mediator of ecosystem function \citep{Solbrig1996}, but much of that understanding of savanna vegetation structure was derived from traditional mensuration methods. Using terrestrial LiDAR to measure canopy structure in southern African savannas therefore offers a unique chance to validate accepted theory and describe differences in ecosystem structure among savanna vegetation types in finer detail than previously possible.
 
 % In this study
 In this study I applied terrestrial LiDAR techniques to woodland-savanna mosaics at two sites in southern Africa, with the aim of increasing our understanding of how various metrics of tree canopy structural complexity relate to tree neighbourhood diversity and stand structure. I aim to develop our understanding of how biotic ecosystem properties in savannas might mediate responses to atmospheric CO\textsubscript{2} enrichment and climate change. I hypothesise that neighbourhoods with greater tree diversity and greater structural diversity allow greater canopy complexity, and foliage density. Thus, more diverse savannas might more effectively increase growth under elevated atmospheric CO\textsubscript{2} and are more likely to experience woody thickening through their greater occupation of environmental niche space. I also consider the functional differences among tree species in these communities and assess how combinations of these functional groups affect canopy structure and understorey light environment.
@@ -94,16 +96,16 @@ To test the hypothesis that tree species diversity may influence canopy complexi
 
 \subsection{Vertical canopy complexity}
 
+
+Bivariate plots showed that subplot species diversity, measured by species richness of the tree neighbourhood around each 10 m diameter subplot, appeared to have weak but positive effects on canopy layer diversity and total canopy closure (\autoref{subplot_canopy_bivar}). The Hegyi crowding index and both stand structural diversity metrics had strong positive effects on canopy complexity, for all metrics except for uniformity of foliage distribution and height of peak foliage density. The two sites in our study had similar bivariate relationships, with interaction effects of site in the bivariate linear models being non-significant in all cases \todo{(supp. material)}.
+
 \begin{landscape}
 \begin{figure}
 	\includegraphics[width=\linewidth]{bivar}
-	\caption{Bivariate relationships between canopy structure metrics (y axis) and diversity/stand structure metrics (x axis), at both the subplot level (left) and the plot level (right). Points and linear model lines of best fit are coloured by vegetation type. The black line of best fit is a linear model including all plots, with a 95\% confidence interval. See \todo{supp. material} for a comparison of linear model fits by vegetation type.}
+	\caption{Bivariate relationships between diversity/stand structure metrics (x axis) and canopy structure metrics (y axis), at both the subplot level (left) and the plot level (right). Points and linear model lines of best fit are coloured by vegetation type. Black lines of best fit are linear models including all plots, with a 95\% confidence interval. See \autoref{bivar_lm_summ} for a comparison of linear model fits by vegetation type.}
 	\label{subplot_canopy_bivar}
 \end{figure}
 \end{landscape}
-
-
-Bivariate plots showed that subplot species diversity, measured by species richness of the tree neighbourhood around each 10 m diameter subplot, appeared to have weak but positive effects on canopy layer diversity and total canopy closure (\autoref{subplot_canopy_bivar}). The Hegyi crowding index and both stand structural diversity metrics had strong positive effects on canopy complexity, for all metrics except for uniformity of foliage distribution and height of peak foliage density. The two sites in our study had similar bivariate relationships, with interaction effects of site in the bivariate linear models being non-significant in all cases \todo{(supp. material)}.
 
 Linear mixed effects models showed that species richness of the subplot neighbourhood had variable effects across different measures of canopy structure, but the effect sizes were not significant (slope standard errors not overlapping zero) for any model (\autoref{height_profile_mod_rich_slopes_sites}). One exception being the negative effect of richness on canopy height in Mtarure only. As in the bivariate plots, the Hegyi crowding index had strong positive effects on three of six canopy complexity metrics. Heterogeneity of stem diameter had a positive effect on layer diversity and total foliage density, and a marginally significant positive effect on canopy height. Variation in crown area was only seen to have significant effects in Bicuar plots, where it correlated with a decrease in vertical uniformity of foliage distribution, and total canopy foliage density.
 
@@ -170,14 +172,31 @@ Canopy structure at the plot level was less well predicted by stand structure an
 
 Facilitation might be more important in these woodlands than in temperate woodlands. Large canopy trees may cause micro-climate amelioration for understorey saplings, protecting them from drying conditions caused by the sun and wind. Facilitation has been under-played in BEFR research \citep{Wright2021}.
 
+Scheuermann2018
+Canopy rugosity didn't vary regardless of the LAI and species diversity - it just increased linearly throughout succession, for the first 100 years before becoming stable.
+
+A more heterogeneous vegetation arrangement allows for deeper light vegetation into the canopy and when paired with a higher LAI lead to greater light interception by the subcanopy, and thus the canopy as a whole.
+
+NPP may increase with increased canopy heterogeneity, because subcanopy plants are normally light limited and sensitive to small increases in available light such as those provided by deeper light penetration in a heterogenous canopy.
+
+Fotis2017
+Hardiman et al. 2011, 2013a, found that increased rugosity in the canopy increased NPP in temperature forests. Fahey et al. 2015 in an old-growth forest.
+
+Canopy structure can affect canopy-level photosynthesis (Kira et al. 1969, Chen et al. 2012), light-use efficiency (Walcroft et al. 2005, Duursma and Makela 2007) and NEE (Baldochii and Wilson 2001, Law et al. 2001) through its influence on both total light interception and its variability within the canopy.
+
+While other studies have found links between light environment and canopy structure, in our sites maybe the canopy is too sparse for this to be an issue.
+
+Shirima2015
+* In Miombo woodlands, AGB higher under denser vegetation canopies
+	* Maybe the canopy provides amelioration of harsher environmental conditions in this system
 
 
 \section{Conclusion}
 
-%\include{out/mod_bivar_lm_summ}
-
 \printbibliography
 
 %\section{Supplementary Material} \beginsupplement
+
+\input{out/bivar_lm_summ}
 
 \end{document}

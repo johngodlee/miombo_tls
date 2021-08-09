@@ -58,6 +58,8 @@ out_list <- lapply(file_list, function(x) {
   # Variance of canopy surface - Top rugosity
   chm_sd <- sd(chm_nona$Z)
 
+  chm_cov <- chm_sd / chm_mean * 100
+
   # Canopy surface model roughness
   crs(chm) <- "+proj=utm +zone=33 +south +datum=WGS84 +units=m +no_defs"
 
@@ -65,6 +67,7 @@ out_list <- lapply(file_list, function(x) {
 
   rough_mean <- mean(values(chm_rough), na.rm = TRUE)
   rough_sd <- sd(values(chm_rough), na.rm = TRUE)
+  rough_cov <- rough_sd / rough_mean * 100
 
   # Calculate R_{c} - Canopy rugosity, sensu Hardiman et al. 2011
   rc <- dat %>%
@@ -81,8 +84,8 @@ out_list <- lapply(file_list, function(x) {
     sd(., na.rm = TRUE)
 
   # Structure outputs
-  stat_df <- data.frame(plot_id, plot_id_new, chm_mean, chm_sd, 
-    rough_mean, rough_sd, rc)
+  stat_df <- data.frame(plot_id, plot_id_new, chm_mean, chm_sd, chm_cov,
+    rough_mean, rough_sd, rough_cov, rc)
 
   h_summ$plot_id <- plot_id
   h_summ$plot_id_new <- plot_id_new

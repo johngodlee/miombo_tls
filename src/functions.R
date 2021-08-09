@@ -62,7 +62,7 @@ resp_names <- c(
   "Weibull shape" = "weib_shape",
   "Canopy cover" = "cover_mean",
   "Canopy height" = "chm_mean",
-  "Canopy roughness" = "chm_sd",
+  "Canopy roughness" = "chm_cov",
   "Roughness" = "rough_mean",
   "Roughness SD" = "rough_sd",
   "Rugosity" = "rc")
@@ -643,7 +643,9 @@ pFormat <- function(p, lev = c(0.001, 0.01, 0.05), round = TRUE, digits = 2,
 
   out <- list()
   for (i in seq(length(p))) {
-    if (any(p[i] < lev)) {
+    if (is.na(p[i])) {
+      out[i] <- NA_character_
+    } else if (any(p[i] < lev)) {
       thresh <- max(which(p[i] < lev))
       if (asterisks) {
         out[i] <- paste0(rep("*", times = thresh), collapse = "")
