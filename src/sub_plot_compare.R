@@ -28,7 +28,7 @@ names(plot_stats)[3:7] <- paste0(names(plot_stats)[3:7], "_plot")
 
 # Join tables
 plot_stats_clean <- plot_stats %>%
-  dplyr::select(plot_id = plot_id_new, chm_mean_plot, chm_cov_plot, rc_plot)
+  dplyr::select(plot_id = plot_id_new, chm_mean_plot, chm_cov_plot, rc)
 
 subplot_stats_clean <- full_join(subplot_stats, 
     gap_frac[gap_frac$method == "tls", c("plot_id", "subplot", "cover_subplot")],
@@ -50,10 +50,11 @@ subplot_long <- subplot_agg %>%
     names_to = c("set", ".value"))
 
 plot_agg <- plot_stats_clean %>%
-  left_join(., subplot_agg, by = "plot_id")
+  left_join(., subplot_agg, by = "plot_id") %>%
+  filter(!plot_id %in% c("TKW_7", "TKW_10"))
     
 # Plots
-resp_vec <- c("chm_mean_plot", "chm_cov_plot", "rc_plot")
+resp_vec <- c("chm_mean_plot", "chm_cov_plot", "rc")
 
 pred_vec <- c("layer_div_subplot_mean", "auc_canopy_subplot_mean", 
   "cum_lm_se_subplot_mean", "cover_subplot_mean")

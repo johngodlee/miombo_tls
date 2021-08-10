@@ -74,6 +74,7 @@ subplot_all_mod <- subplot_all %>%
 plot_all_mod <- plot_all %>%
   mutate(across(all_of(plot_pred), 
       ~as.vector(scale(.x)), .names = "{.col}")) %>%
+  filter(man_clust != "4") %>%
   filter(across(all_of(c(plot_resp, plot_pred)), ~!is.na(.x)))
 
 # Height profile subplot mixed models
@@ -224,7 +225,7 @@ mod_pred_site <- do.call(rbind, lapply(mod_list_site, function(x) {
     }))
   }))
 
-mod_pred$site <- "Both"
+mod_pred$site <- "All"
 
 mod_pred_all <- rbind(mod_pred, mod_pred_site)
 

@@ -226,6 +226,41 @@ clust_summ <- plot_summ %>%
 
 stopifnot(all(plot_summ$plot_id == row.names(tree_mat)))
 
+clust_summ_all <- clust_summ %>%
+  mutate(
+    rich = paste0(format(rich_median, digits = 0), "(", format(rich_iqr, digits = 1), ")"),
+    stem_dens = paste0(format(stem_dens_median, digits = 0), "(", format(stem_dens_iqr, digits = 0), ")"),
+    agb = paste0(format(agb_median, digits = 1), "(", format(agb_iqr, digits = 1), ")"),
+    site = ifelse(man_clust %in% c("1","3"), "Bicuar", "Mtarure")) %>%
+  dplyr::select(site, man_clust, n_plots, rich, stem_dens, agb)
+
+names(clust_summ_all) <- c("Site", "Cluster", "N sites", "Richness", "Stem density", "AGB")
+
+# Export table of cluster summaries
+clust_summ_xtable <- xtable(clust_summ_all,
+  label = "clust_summ",
+  align = c("c", "l", "l", "S[table-format=2.0]", "r", 
+    "r", "r"),
+  display = c("s", "d", "d", "d", "s", "s", "s"),
+  digits = c(0, 0, 0, 0, 0, 0, 0),
+  caption = "Description of the vegetation type clusters identified using the Ward algorithm, based on basal area weighted genus abundances. AGB = Above-Ground woody Biomass. Species richness, stem density and AGB are reported as the median among plots, with the interquartile range in parentheses.")
+
+colSanit <- function(x){
+  paste0("{", x, "}") 
+}
+
+fileConn <- file("../out/clust_summ.tex")
+writeLines(print(clust_summ_xtable,
+    include.rownames = FALSE,
+    table.placement = "",
+    caption.placement = "top",
+    booktabs = TRUE,
+    sanitize.colnames.function = colSanit, 
+    sanitize.text.function = function(x) {x}),
+  fileConn)
+close(fileConn)
+
+# Indicator species table
 clust_indval <- indval(tree_mat, clustering = plot_summ$man_clust)
 
 # Summarise indicator analysis
@@ -247,40 +282,29 @@ indval_extrac_tidy <- do.call(rbind, lapply(indval_extrac, function(x) {
   })
 )
 
-clust_summ_all <- full_join(clust_summ, indval_extrac_tidy,
-  by = c("man_clust" = "cluster")) %>%
-  mutate(
-    rich = paste0(format(rich_median, digits = 0), "(", format(rich_iqr, digits = 1), ")"),
-    stem_dens = paste0(format(stem_dens_median, digits = 0), "(", format(stem_dens_iqr, digits = 0), ")"),
-    agb = paste0(format(agb_median, digits = 1), "(", format(agb_iqr, digits = 1), ")")) %>%
-  dplyr::select(man_clust, n_plots, rich, stem_dens, agb, species, indval)
+names(indval_extrac_tidy) <- c("Cluster", "Indicator species", "Indicator value")
 
-names(clust_summ_all) <- c("Cluster", "N sites", "Richness", "Stem density", "AGB", "Indicator species", "Indicator value")
+# Export table of cluster summaries
+indval_xtable <- xtable(indval_extrac_tidy,
+  label = "indval",
+  align = c("c", "c", "r", "S[table-format=1.2]"),
+  display = c("s", "s", "s", "f"),
+  digits = c(0, 0, 0, 2),
+  caption = "Floristic description of the vegetation type clusters. Species are indicator species from the Dufr\\^{e}ne-Legendre indicator species analysis with the three highest indicator values.")
 
-# Export indval table
-clust_summ_xtable <- xtable(clust_summ_all,
-  label = "clust_summ",
-  align = c("c", "l", "S[table-format=2.0]", "r", 
-    "r", "r", "r", "S[table-format=1.2]"),
-  display = c("s", "d", "d", "s", "s", "s", "s", "f"),
-  digits = c(0, 0, 0, 0, 0, 0, 0, 2),
-  caption = "Climatic information and Dufrene-Legendre indicator species analysis for the vegetation type clusters identified by the PAM algorithm, based on basal area weighted species abundances. The three species per cluster with the highest indicator values are shown along with other key statistics for each cluster. MAP (Mean Annual Precipitation) and $\\delta$T (Diurnal temperature range) are reported as the mean and 1 standard deviation in parentheses. Species richness is reported as the median and the interquartile range in parentheses.")
-
-colSanit <- function(x){
-  paste0("{", x, "}") 
-}
-
-fileConn <- file("../out/clust_summ.tex")
-writeLines(print(clust_summ_xtable,
+fileConn <- file("../out/indval.tex")
+writeLines(print(indval_xtable,
     include.rownames = FALSE,
-    table.placement = "h",
+    table.placement = "",
     caption.placement = "top",
     booktabs = TRUE,
+    hline.after = c(-1, 0, c(3,6,9,12)),
     sanitize.colnames.function = colSanit, 
     sanitize.text.function = function(x) {x}),
   fileConn)
 close(fileConn)
 
+# Write stats
 write(
   c(
     commandOutput(format(ba_per_indet, digits = 1), "perIndet")

@@ -57,14 +57,14 @@ In this study I applied terrestrial LiDAR techniques to woodland-savanna mosaics
 Field measurements were conducted at two sites, the first in Bicuar National Park, southwest Angola (S15.1$^\circ$, E14.8$^\circ$), and the second in and around Mtarure Forest Reserve, southeast Tanzania (S9.0$^\circ$, E39.0$^\circ$) (\autoref{map}). At each site, 1 ha (100x100 m) plots were located in areas of savanna-woodland vegetation, across a gradient of stem density and range of savanna floristic archetypes. In Angola, 15 plots were sampled, while in Tanzania, seven were sampled following the curtailment of fieldwork due to COVID-19 travel restrictions. Fieldwork was conducted between February and April at both sites, during the peak growth period of each site in order to capture the greatest foliage volume in the canopy.
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{map}
+	\includegraphics[width=\linewidth]{map}
 	\caption{Location of study sites within southern Africa (left), and of 1 ha plots within each site (right). The black outlines in each site map denote the boundaries of protected areas which encompass the majority of study sites, Bicuar National Park in Angola (top), and Mtarure Forest Reserve in Tanzania (bottom). The background of each site map is a re-classified version of White's vegetation map \citep{White1983}. Note that all maps are on different scales.}
 	\label{map}
 \end{figure}
 
 \subsection{Field measurements}
 
-Within each 1 ha plot we identified each woody stem >5 cm stem diameter to species, measured stem diameter (Diameter at Breast Height - 1.3 m) and recorded stem location within the plot using tape measures. Each 1 ha plot was further subdivided into nine 10 m diameter circular subplots arranged in a regular grid, with a 15 m buffer from the plot edge and 35 m between subplots. For each subplot, we recorded the distance and direction from the subplot centre of each stem >5 cm diameter with canopy material inside the subplot. Within each subplot, a variable number of scans were recorded using a Leica HDS6100 phase-shift Terrestrial Laser Scanner (TLS). The number and position of scans within a subplot was determined by the arrangement of canopy material in the subplot, to minimise shadows within the canopy of the subplot, and to maximise canopy penetration. The number of scans per subplot ranged between one and five across both sites. 
+Within each 1 ha plot we identified each woody stem >5 cm stem diameter to species, measured stem diameter (Diameter at Breast Height - 1.3 m) and recorded stem location within the plot using tape measures. Each 1 ha plot was further subdivided into nine 10 m diameter circular subplots arranged in a regular grid, with a 15 m buffer from the plot edge and 35 m between subplots. For each subplot, we recorded the distance and direction from the subplot centre of each stem >5 cm diameter with canopy material inside the subplot. Within each subplot, a variable number of scans were recorded using a Leica HDS6100 phase-shift Terrestrial Laser Scanner (TLS). The number and position of scans within a subplot was determined by the arrangement of canopy material in the subplot, to minimise shadows within the canopy of the subplot, and to maximise canopy penetration. The number of scans per subplot ranged between one and five across both sites. Extended field methods and data analysis methods are described in Chapter 6.
 
 \subsection{Data analysis}
 
@@ -84,22 +84,24 @@ At the plot level, we estimated the regularity of species spatial distribution u
 
 \subsubsection{Statistical analysis}
 
-To describe variation in species composition among plots, we conducted Non-metric Multi-dimensional Scaling (NMDS) analysis on genus-level basal area weighted abundance in each plot. We excluded stems that could not be identified to genus from this analysis, which accounted for \perIndet{}\% of the total basal area recorded. 
+To describe variation in species composition among plots, we conducted Non-metric Multi-dimensional Scaling (NMDS) analysis on genus-level basal area weighted abundance in each plot. We excluded stems that could not be identified to genus from this analysis, which accounted for \perIndet{}\% of the total basal area recorded. Four distinct vegetation types were identified, two from each site (\autoref{clust_summ}). 
 
-Linear mixed effects models tested the effects of tree species diversity and stand structural diversity on canopy complexity. Mixed models were used to account for the nested sampling design of subplots within plots and plots within vegetation types. Models were conducted at both the subplot and plot level. Subplot models included random effects for plot nested within vegetation type, while plot level models included random effects for vegetation type only. Separate models were fitted for each canopy complexity metric, resulting in four models at the subplot level and four models at the plot level. We compared effect sizes among fixed effects in each model, and also compared AIC values and Akaike weights of models with different combinations of fixed effects to determine which diversity and structural metrics best explained variation in each canopy complexity metric. 
+Linear mixed effects models tested the effects of tree species diversity and stand structural diversity on canopy complexity. Mixed models were used to account for the nested sampling design of subplots within plots and plots within vegetation types. Models were conducted at both the subplot and plot level. Subplot models included random effects for plot nested within vegetation type, while plot level models included random effects for vegetation type only. Separate models were fitted for each canopy complexity metric, resulting in four models at the subplot level and four models at the plot level. We compared effect sizes among fixed effects in each model, and also compared AIC values and Akaike weights of models with different combinations of fixed effects to determine which diversity and structural metrics best explained variation in each canopy complexity metric. The ex-Acacia vegetation type in Tanzania was represented by only two plots and so could not be included in plot-level statistical models due to lack of replication. 
 
-To test the hypothesis that tree species diversity may influence canopy complexity indirectly through its effect on stand structure, we conducted a path analysis using the \texttt{piecewiseSEM} R package \citep{}. The path analysis investigated the direct effect of plot species richness on mean plot canopy closure, as well as the indirect effect of richness on closure via the coefficient of variation of diameter, with random intercept terms for each vegetation type.
+To test whether tree species diversity may influence canopy complexity indirectly through its effect on stand structure, we conducted a path analysis using the \texttt{piecewiseSEM} R package \citep{piecewiseSEM}. The path analysis investigated the direct effect of plot species richness on mean plot canopy closure, as well as the indirect effect of richness on canopy closure via the coefficient of variation of basal area, with random intercept terms for each vegetation type. Again, the ex-Acacia vegetation type could not be included in this model due to lack of replication.
 
 \input{out/clust_summ}
+
+\input{out/indval}
 
 \section{Results}
 
 \subsection{Description of vegetation types}
 
-Four distinct vegetation types were identified, two from each site (\autoref{clust_summ}). Indicator species analysis showed that these vegetation types constitute common southern African savanna floristic archetypes. Cluster 1, found in Bicuar National Park exhibits some of the typical miombo species from the Detarioideae subfamily, such as \textit{Julbernardia paniculata}. This vegetation type is the most common, with 12 plots. Cluster 1 has the highest stem density, but lower AGB than Clusters 2 or 3, which contain larger individuals. Cluster 2, found in Mtarure is dominated by \textit{Pteleopsis myrtifolia} another large canopy forming tree species that is common in mixed woodland found on the east coast of southern Africa. Cluster 3 represents \textit{Baikiaea} woodland, found on Kalahari sands in southern Angola. It is species poor and dominated by \textit{Baikiaea plurijuga} which forms large spreading canopy trees. Other shrubby species that coppice readily such as \textit{Baphia massaiensis} are also common. Cluster 4, found in Mtarure is a type of ex-Acacia woodland, dominated by \textit{Vachellia} and \textit{Senegalia} spp. This vegetation type was not well represented in our study, with only two plots. Cluster 4 had far lower AGB than the other clusters. Differences in canopy structure among the four vegetation types are visible in canopy surface models for typical plots within each type (\autoref{veg_type_tile}). Cluster 1 has many overlapping crowns forming a nearly contiguous canopy surface, though most trees in Cluster 1 have smaller crowns than those in Cluster 2, which also forms a nearly continuous canopy. The largest trees in Cluster 2 grow taller than those in other sites. Cluster 3 shows two distinct size classes of tree, the large \textit{Baikiaea plurijuga} forming clear canopies with an inverted cone shape, and much smaller shrubby individuals in the understorey. Cluster 3 shows many small shrubby individuals with irregular canopy shapes, but a greater tree cover than in Cluster 3. 
+Indicator species analysis showed that the four identified vegetation types constitute common southern African savanna floristic archetypes. Cluster 1, found in Bicuar National Park contains typical miombo species from the Detarioideae subfamily, such as \textit{Julbernardia paniculata}. This vegetation type is the most common in our study, with 12 plots. Cluster 1 has the highest stem density, but lower AGB than Clusters 2 or 3, which contain larger individuals. Cluster 2, found in Mtarure is dominated by \textit{Pteleopsis myrtifolia} another large canopy forming tree species that is common in mixed miombo woodland found on the east coast of southern Africa. Cluster 3 represents \textit{Baikiaea} woodland, found on Kalahari sands in southern Angola. It is species poor and dominated by \textit{Baikiaea plurijuga} which forms large spreading canopy trees. Other shrubby species that coppice readily such as \textit{Baphia massaiensis} are also common. Cluster 4, found in Mtarure is a type of ex-Acacia woodland, dominated by \textit{Vachellia} and \textit{Senegalia} spp. This vegetation type was not well represented in our study, with only two plots, precluding its use in plot-level statistical analyses due to lack of replication. Cluster 4 had far lower AGB than the other clusters. Differences in canopy structure among the four vegetation types are visible in canopy surface models for typical plots within each type (\autoref{veg_type_tile}). Cluster 1 shows many overlapping crowns forming a nearly contiguous canopy surface, though most trees in Cluster 1 have smaller crowns than those in Cluster 2, which also forms a nearly contiguous canopy. The largest trees in Cluster 2 grow taller and have a wider spreading canopy than those in other sites. Cluster 3 shows two distinct size classes of tree, the large \textit{Baikiaea plurijuga} forming clear isolated canopies with an inverted cone shape, and much smaller scattered shrubby individuals in the understorey. Cluster 4 shows many small shrubby individuals with irregular canopy shapes, but a greater total tree cover than Cluster 3. 
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{nmds}
+	\includegraphics[width=\linewidth]{nmds}
 	\caption{The first two axes of a Non-metric Multi-Dimensional Scaling (NMDS) analysis of tree species diversity in each plot. Species scores are labelled as black text, while plot scores are labelled as coloured points. Plots can be split into four principal groups: 1) B9, B13 and B15, dominated by \textit{Baikiaea plurijuga}; 2) the other Bicuar plots; 3) M2, M5, M6, and M7,dominated by \textit{Julbernardia} spp., \textit{Brachystegia} spp. and \textit{Ochna} spp.; 4) M1, M3, and M4, dominated by \textit{Senegalia} spp. and \textit{Vachellia} spp..}
 	\label{nmds}
 \end{figure}
@@ -121,7 +123,7 @@ Vegetation types differed greatly in their subplot and whole-plot canopy structu
 \end{landscape}
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{veg_type_tile}
+	\includegraphics[width=\linewidth]{veg_type_tile}
 	\caption{Representative canopy surface models for each vegetation type identified in the Non-metric Multi-dimensional Scaling (NMDS) analysis. Plot titles show the plot name and the vegetation type.}
 	\label{veg_type_tile}
 \end{figure}
@@ -131,7 +133,7 @@ Vegetation types differed greatly in their subplot and whole-plot canopy structu
 Linear mixed effects models showed that species richness of the subplot neighbourhood had negligible effects on canopy structure (\autoref{height_profile_mod_rich_slopes_sites}). As seen in \autoref{subplot_canopy_bivar}, the Hegyi crowding index had strong positive effects on all measured canopy complexity metrics. Heterogeneity of stem basal area had a positive effect on layer diversity (\todo{MORE}). 
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{height_profile_mod_rich_slopes_sites}
+	\includegraphics[width=\linewidth]{height_profile_mod_rich_slopes_sites}
 	\caption{Standardized fixed effect slopes for each model of a canopy structure metric. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects. Points are coloured according to site.}
 	\label{height_profile_mod_rich_slopes_sites}
 \end{figure}
@@ -145,7 +147,7 @@ Model selection showed that none of the best models for subplot canopy complexit
 While species diversity had varying effects on different plot-level canopy structural metrics, the confidence intervals on these effect sizes were wide (\autoref{canopy_rough_slopes}). Richness appeared to have a positive effect on canopy height and canopy cover, but a negative effect on canopy surface roughness and rugosity. Similarly, plot total basal area had a strong positive effect on canopy height and canopy cover, and negative effects on roughness and rugosity. Structural diversity, measured by the coefficient of variation of basal area had a strong positive effect on canopy roughness. Spatially explicit measures of structural and species diversity, measured by the spatial mingling index and winkelmass, had negligible effects on all canopy structural metrics. One exception was the effect of the winkelmass, i.e. the spatial clustering of stems, on canopy cover, which was negative.
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{canopy_rough_slopes}
+	\includegraphics[width=\linewidth]{canopy_rough_slopes}
 	\caption{Standardized fixed effect slopes for whole-plot canopy rugosity. Slope estimates are $\pm$1 standard error. Slope estimates where the interval (standard error) does not overlap zero are considered to be significant effects.}
 	\label{canopy_rough_slopes}
 \end{figure}
@@ -161,12 +163,10 @@ Plot-level and subplot-level canopy structure metrics were highly correlated in 
 Variance of plot canopy height and plot roughness was larger in Mtarure than Bicuar. The increase in variance was caused by two particularly sparse thorny savanna plots in Mtarure, M3 and M4, which had very low canopy height and roughness.
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{plot_subplot_bivar}
+	\includegraphics[width=\linewidth]{plot_subplot_bivar}
 	\caption{Bivariate plots of canopy structural metrics at the subplot (y axis) and plot level (x axis). Each point represents the mean values of a single plot. Points and linear model fits are coloured according to vegetation type. The black linear model combines all vegetation types. Error bars on points are the standard deviation of mean subplot metrics across the plot.}
 	\label{plot_subplot_bivar}
 \end{figure}
-
-
 
 \section{Discussion}
 
