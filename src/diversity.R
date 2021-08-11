@@ -256,6 +256,22 @@ writeLines(print(clust_summ_xtable,
   fileConn)
 close(fileConn)
 
+# Dominant species table
+clust_domval <- left_join(stems_all, plot_summ[,c("seosaw_id", "man_clust")], 
+  by = c("plot_id_new" = "seosaw_id")) %>%
+  group_by(tree_id) %>%
+  summarise(
+    plot_id = unique(plot_id_new), 
+    man_clust = unique(man_clust),
+    species_name_clean = first(species_name_clean)) %>%
+  filter(!grepl("indet", species_name_clean)) %>%
+  group_by(man_clust, species_name_clean) %>%
+  tally() %>% 
+  group_by(man_clust) %>%
+  slice_max(n, n = 3) %>%
+  as.data.frame() %>%
+  dplyr::select(man_clust, domsp = species_name_clean)
+
 # Indicator species table
 clust_indval <- indval(tree_mat, clustering = plot_summ$man_clust)
 
@@ -278,15 +294,17 @@ indval_extrac_tidy <- do.call(rbind, lapply(indval_extrac, function(x) {
   })
 )
 
-names(indval_extrac_tidy) <- c("Cluster", "Indicator species", "Indicator value")
+indval_dom <- cbind(indval_extrac_tidy, clust_domval) %>%
+  dplyr::select("Cluster" = cluster, "Dominant species" = domsp, 
+    "Indicator species" = species, "Indicator value" = indval)
 
 # Export table of cluster summaries
-indval_xtable <- xtable(indval_extrac_tidy,
+indval_xtable <- xtable(indval_dom,
   label = "indval",
-  align = c("c", "c", "r", "S[table-format=1.2]"),
-  display = c("s", "s", "s", "f"),
-  digits = c(0, 0, 0, 2),
-  caption = "Floristic description of the vegetation type clusters. Species are indicator species from the Dufr\\^{e}ne-Legendre indicator species analysis with the three highest indicator values.")
+  align = c("c", "c", "r", "r", "S[table-format=1.2]"),
+  display = c("s", "s", "s", "s", "f"),
+  digits = c(0, 0, 0, 0, 2),
+  caption = "Floristic description of the vegetation type clusters. Dominant species are the most abundant individuals across all plots per cluster. Indicator species are derived from Dufr\\^{e}ne-Legendre indicator species analysis with the three highest indicator values.")
 
 fileConn <- file("../out/indval.tex")
 writeLines(print(indval_xtable,

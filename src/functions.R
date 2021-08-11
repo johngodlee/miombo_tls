@@ -62,7 +62,7 @@ pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "darkgrey", "#E0E0E
 
 resp_names <- c(  
   "Foliage density" = "auc_canopy",
-  "Foliage uniformity" = "cum_lm_se",
+  "Foliage uniformity" = "cum_lm_resid",
   "Cum. mod. slope" = "cum_lm_slope",
   "Height peak dens." = "dens_peak_height",
   "Canopy closure" = "cover",

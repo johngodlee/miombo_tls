@@ -85,7 +85,7 @@ gap_grass <- grass %>%
 # Gather all canopy openness stats against grass volume
 gap_grass_gather <- gap_grass %>%
   dplyr::select(plot_id, subplot, vol_mean, gap_frac_hemi, gap_frac_tls, 
-    lai_hemi, lai_tls, layer_div, auc_canopy, height_q99, dens_peak_height, point_cov, shannon, cum_lm_se) %>%
+    lai_hemi, lai_tls, layer_div, auc_canopy, height_q99, dens_peak_height, point_cov, shannon, cum_lm_resid) %>%
   gather(key, value, -plot_id, -subplot, -vol_mean)
 
 # Plot of TLS grass volume vs. various canopy measures.
@@ -118,7 +118,7 @@ grass_lai <- grass %>%
   left_join(., subplot_summ, by = c("plot_id", "subplot")) %>%
   mutate(across(
       c("rich", "tree_dens", "gap_frac_tls", "layer_div", "dens_peak_height", 
-        "point_cov", "cum_lm_se"), 
+        "point_cov", "cum_lm_resid"), 
       ~as.vector(scale(.x)), .names = "{.col}_std")) %>%
   mutate(site = ifelse(grepl("ABG", plot_id), "AGO", "TZA")) %>%
   filter(across(c("vol", ends_with("_std")), ~!is.na(.x)))
@@ -140,7 +140,7 @@ plot(path_fit)
 
 # Mixed model of TLS gap fraction vs. grass volume
 vol_max_mod <- lmer(vol ~ rich_std + tree_dens_std + gap_frac_tls_std + 
-  layer_div_std + dens_peak_height_std + point_cov_std + cum_lm_se_std + 
+  layer_div_std + dens_peak_height_std + point_cov_std + cum_lm_resid_std + 
   height_q99 + 
   (1 | site) + (1 | site:plot_id) + (1 | site:plot_id:subplot), 
   data = grass_lai, na.action = "na.fail", REML = FALSE)

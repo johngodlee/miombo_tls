@@ -26,7 +26,7 @@ gap_frac <- read.csv("../dat/gap_frac.csv")
 canopy <- read.csv("../dat/plot_canopy_stats.csv")
 
 # Create clean subplot dataset
-subplot_resp <- c("layer_div", "auc_canopy", "cum_lm_se", "cover")
+subplot_resp <- c("layer_div", "auc_canopy", "cum_lm_resid", "cover")
 subplot_pred <- c("hegyi", "rich", "ba_cov")
 
 subplot_trees_summ_clean <- subplot_trees_summ[,c("plot_id", "subplot", subplot_pred)]
@@ -89,7 +89,7 @@ mod_flist <- paste0(subplot_resp, " ~ ", other_vars)
 mod_list <- list(
   lme(layer_div ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(auc_canopy ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(cum_lm_se ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
+  lme(cum_lm_resid ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(cover ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML")
 )
 
@@ -97,7 +97,7 @@ mod_list <- list(
 null_mod_list <- list(
   lme(layer_div ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(auc_canopy ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(cum_lm_se ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
+  lme(cum_lm_resid ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(cover ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML")
 )
 

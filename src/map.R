@@ -92,7 +92,7 @@ site_maps <- lapply(pa, function(x) {
     plot_pal <- pal[1]
     plot_title <- "Bicuar"
   } else {
-    plot_centre_fix_fil <- plots[plots$site == "TZA",]
+    plot_centre_fix_fil <- st_as_sf(plots[plots$site == "TZA",], coords = c("X", "Y"))
     plot_pal <- pal[2]
     plot_title <- "Mtarure"
   }
@@ -154,7 +154,7 @@ site_maps <- lapply(pa, function(x) {
 
 names(site_maps) <- c("Bicuar", "Mtarure")
 
-pdf(file = "../img/map.pdf", width = 14, height = 10)
+pdf(file = "../img/map.pdf", width = 10, height = 7)
 site_map + (site_maps[[1]] / site_maps[[2]]) + 
   plot_layout(guides = 'collect') & 
   theme(legend.position = "bottom")

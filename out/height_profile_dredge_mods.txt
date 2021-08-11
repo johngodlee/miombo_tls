@@ -36,19 +36,19 @@ Random terms (all models):
 ‘1 | man_clust’, ‘1 | plot_id %in% man_clust’
 
 [[3]]
-Global model call: lme.formula(fixed = cum_lm_se ~ hegyi + rich + ba_cov, data = subplot_all_mod, 
+Global model call: lme.formula(fixed = cum_lm_resid ~ hegyi + rich + ba_cov, data = subplot_all_mod, 
     random = ~1 | man_clust/plot_id, method = "ML", na.action = "na.fail")
 ---
 Model selection table 
-  (Int)  ba_cov  hgy  rch df logLik AICc delta weight
-3 55040         7904       5  -2022 4054  0.00  0.383
-4 54860 -2726.0 8715       6  -2021 4056  1.42  0.188
-7 55010         7283 1553  6  -2022 4056  1.95  0.145
-1 56160                    4  -2024 4057  3.02  0.085
-8 54790 -3201.0 7911 2389  7  -2021 4057  3.16  0.079
-5 55860              4039  5  -2024 4058  3.58  0.064
-2 56150  -649.4            5  -2024 4059  5.10  0.030
-6 55770 -2055.0      4762  6  -2023 4059  5.33  0.027
+  (Int) ba_cov   hgy   rch df logLik AICc delta weight
+3  1695        400.3        5  -1486 2983  0.00  0.422
+7  1692        345.9 145.3  6  -1486 2985  1.22  0.230
+4  1696  12.03 396.9        6  -1486 2986  2.14  0.145
+8  1691 -14.03 348.8 148.6  7  -1486 2987  3.38  0.078
+5  1731              265.1  5  -1488 2987  3.90  0.060
+1  1752                     4  -1490 2989  5.28  0.030
+6  1733  38.15       252.8  6  -1488 2989  5.97  0.021
+2  1754 105.10              5  -1490 2990  6.77  0.014
 Models ranked by AICc(x) 
 Random terms (all models): 
 ‘1 | man_clust’, ‘1 | plot_id %in% man_clust’

@@ -116,6 +116,7 @@ profile_stat_list <- lapply(file_list, function(x) {
     z_round_std <- as.vector(scale(bin_fil$z_round))
     cum_lm <- lm(bin_fil$n_cum ~ z_round_std)
     cum_lm_summ <- summary(cum_lm)
+    cum_lm_resid <- sum(sqrt(cum_lm$residuals^2) / 100000)
     cum_lm_slope <- cum_lm_summ$coefficients[2,1]
     cum_lm_se <- cum_lm_summ$coefficients[2,2]
 
@@ -141,6 +142,7 @@ profile_stat_list <- lapply(file_list, function(x) {
     height_q <- c(NA_real_, NA_real_)
     ripley_l <- NULL
     shannon <- NA_real_
+    cum_lm_resid <- NA_real_
     cum_lm_slope <- NA_real_
     cum_lm_se <- NA_real_
     weib_shape <- NA_real_
@@ -150,7 +152,7 @@ profile_stat_list <- lapply(file_list, function(x) {
   # Create dataframe from stats
   stats <- data.frame(plot_id = plot_id_new, subplot, layer_div, auc_canopy,
     height_q95 = height_q[1], height_q99 = height_q[2], dens_peak_height, 
-    point_cov, shannon, cum_lm_slope, cum_lm_se, weib_shape, weib_scale)
+    point_cov, shannon, cum_lm_resid, cum_lm_slope, cum_lm_se, weib_shape, weib_scale)
 
   # Clean up large objects
   rm(dat)

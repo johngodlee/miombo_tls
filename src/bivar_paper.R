@@ -23,7 +23,7 @@ subplot_trees_summ_clean <- subplot_trees_summ[,c("plot_id", "subplot", "hegyi",
   "rich", "ba_cov")]
 
 profile_stats_clean <- profile_stats[,c("plot_id", "subplot", "layer_div", 
-  "auc_canopy", "cum_lm_se")]
+  "auc_canopy", "cum_lm_resid")]
 
 gap_frac_clean <- gap_frac[gap_frac$method == "tls",
   c("plot_id", "subplot", "cover")]
@@ -54,7 +54,7 @@ subplot_all$man_clust <- plot_all$man_clust[match(subplot_all$plot_id, plot_all$
 
 # Gather subplot datasets
 subplot_pred_names <- c("rich", "hegyi", "ba_cov")
-subplot_resp_names <- c("layer_div", "auc_canopy", "cover")
+subplot_resp_names <- c("layer_div", "auc_canopy", "cover", "cum_lm_resid")
 
 subplot_pred <- subplot_all %>%
   dplyr::select(man_clust, plot_id, subplot, all_of(subplot_pred_names)) %>%
@@ -206,3 +206,86 @@ writeLines(print(bivar_lm_summ_tab,
   sanitize.text.function = function(x) {x}), 
   fileConn)
 close(fileConn)
+
+# Write stats
+
+bacov_layerdiv_df <- bivar_lm_summ[bivar_lm_summ$resp == "layer_div" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5",]
+
+bivar_lm_text <- function(x) {
+  paste0("$\\beta{}$=", 
+    format(x$mod_est, digits = 1),
+    "$\\pm$", 
+    format(x$mod_se, digits = 2),
+    ", F(", 
+    x$mod_dof1, ",", x$mod_dof2, ")=", 
+    format(x$mod_f, digits = 2), ", ",
+    pFormat(x$mod_p), ", R\\textsuperscript{2}=",
+    format(x$mod_rsq, digits = 1))
+}
+
+bacov_layerdiv <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "layer_div" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "subplot",])
+
+bacov_foliage <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "auc_canopy" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "subplot",])
+
+bacov_cover <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "cover" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "subplot",])
+
+rich_layerdiv <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "layer_div" & 
+  bivar_lm_summ$pred == "rich" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "subplot",])
+
+rich_foliage <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "auc_canopy" & 
+  bivar_lm_summ$pred == "rich" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "subplot",])
+
+rich_cover <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "cover" & 
+  bivar_lm_summ$pred == "rich" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "subplot",])
+
+winkel_coverp <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "cover_mean" & 
+  bivar_lm_summ$pred == "wi_mean" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "plot",])
+
+bacov_coverp <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "cover_mean" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "plot",])
+
+bacov_roughp <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "chm_cov" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "plot",])
+
+bacov_rugp <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "rc" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "plot",])
+
+write(
+  c(
+    commandOutput(bacov_layerdiv, "baCovLayerDiv"),
+    commandOutput(bacov_foliage, "baCovFoliage"),
+    commandOutput(bacov_cover, "baCovCover"),
+    commandOutput(rich_layerdiv, "richLayerDiv"),
+    commandOutput(rich_foliage, "richFoliage"),
+    commandOutput(rich_cover, "richCover"),
+    commandOutput(winkel_coverp, "winkelCoverP"),
+    commandOutput(bacov_coverp, "baCovCoverP"),
+    commandOutput(bacov_roughp, "baCovRoughP"),
+    commandOutput(bacov_rugp, "baCovRugosityP")
+    ),
+  file = "../out/bivar_lm_text.tex")
+

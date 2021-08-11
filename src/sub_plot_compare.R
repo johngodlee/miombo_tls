@@ -34,13 +34,13 @@ subplot_stats_clean <- full_join(subplot_stats,
     gap_frac[gap_frac$method == "tls", c("plot_id", "subplot", "cover_subplot")],
      by = c("plot_id", "subplot")) %>%
   dplyr::select(plot_id, subplot, layer_div_subplot, auc_canopy_subplot, 
-    cum_lm_se_subplot, cover_subplot)
+    cum_lm_resid_subplot, cover_subplot)
 
 # Aggregate to plot level
 subplot_agg <- subplot_stats_clean %>% 
   group_by(plot_id) %>%
   summarise(across(c("layer_div_subplot", "auc_canopy_subplot", 
-        "cum_lm_se_subplot", "cover_subplot"), 
+        "cum_lm_resid_subplot", "cover_subplot"), 
       list(mean = ~mean(.x, na.rm = TRUE), sd = ~sd(.x, na.rm = TRUE)),
       .names = "{.col}_{.fn}")) 
 
@@ -57,7 +57,7 @@ plot_agg <- plot_stats_clean %>%
 resp_vec <- c("chm_mean_plot", "chm_cov_plot", "rc")
 
 pred_vec <- c("layer_div_subplot_mean", "auc_canopy_subplot_mean", 
-  "cum_lm_se_subplot_mean", "cover_subplot_mean")
+  "cum_lm_resid_subplot_mean", "cover_subplot_mean")
 
 bivar_comb <- crossing(resp_vec, pred_vec)
 
