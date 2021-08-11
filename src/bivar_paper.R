@@ -220,7 +220,7 @@ bivar_lm_text <- function(x) {
     ", F(", 
     x$mod_dof1, ",", x$mod_dof2, ")=", 
     format(x$mod_f, digits = 2), ", ",
-    pFormat(x$mod_p), ", R\\textsuperscript{2}=",
+    pFormat(x$mod_p, digits = 2), ", R\\textsuperscript{2}=",
     format(x$mod_rsq, digits = 1))
 }
 
@@ -274,6 +274,11 @@ bacov_rugp <- bivar_lm_text(bivar_lm_summ[
   bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
   bivar_lm_summ$sc == "plot",])
 
+bacov_unif <- bivar_lm_text(bivar_lm_summ[
+  bivar_lm_summ$resp == "cum_lm_resid" & 
+  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
+  bivar_lm_summ$sc == "subplot",])
+
 write(
   c(
     commandOutput(bacov_layerdiv, "baCovLayerDiv"),
@@ -285,7 +290,8 @@ write(
     commandOutput(winkel_coverp, "winkelCoverP"),
     commandOutput(bacov_coverp, "baCovCoverP"),
     commandOutput(bacov_roughp, "baCovRoughP"),
-    commandOutput(bacov_rugp, "baCovRugosityP")
+    commandOutput(bacov_rugp, "baCovRugosityP"),
+    commandOutput(bacov_unif, "baCovUnif")
     ),
   file = "../out/bivar_lm_text.tex")
 

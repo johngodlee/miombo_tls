@@ -255,13 +255,23 @@ dev.off()
 subplot_clust1 <- subplot_all_mod[subplot_all_mod$man_clust %in% 1:2,]
 
 mod_spec <- psem(
-  lme(cover ~ ba_cov + rich, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
-  lme(ba_cov ~ rich, random =  ~1|plot_id, data = subplot_clust1, method = "ML"),
+  lme(cover ~ ba_cov + rich + hegyi, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
+  lme(ba_cov ~ rich + hegyi, random =  ~1|plot_id, data = subplot_clust1, method = "ML"),
   data = subplot_clust1)
 
+mod_summ <- summary(mod_spec, .progressBar = FALSE)
+
 sink(file = "../out/height_profile_sem_summ.txt")
-summary(mod_spec, .progressBar = FALSE)
+mod_summ
 sink()
+
+mod_summ_df <- as.data.frame(mod_summ$coefficients)
+
+ccind <- format(mod_summ_df$Estimate[mod_summ_df$Response == "cover" & mod_summ_df$Predictor == "ba_cov"] * 
+  mod_summ_df$Estimate[mod_summ_df$Response == "ba_cov" & mod_summ_df$Predictor == "rich"], digits = 2)
+
+ccdir <- 0.06
+
 
 # Whole plot canopy models
 plot_mod_list <- list(
@@ -379,3 +389,15 @@ dev.off()
 sink("../out/canopy_rough_mod_summ.txt")
 lapply(mod_list, summary)
 sink()
+
+# Write text stats
+write(
+  c(
+    commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "layer_div"] * 100, digits = 0), "bestLayerDivRsqS"),
+    commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "auc_canopy"] * 100, digits = 0), "bestDensRsqS"),
+    commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestUnifRsqS"),
+    commandOutput(ccdir, "ccdir"),
+    commandOutput(ccind, "ccind")
+    ),
+  file = "../out/models_text.tex")
+
