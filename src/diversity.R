@@ -234,7 +234,7 @@ clust_summ_all <- clust_summ %>%
     site = ifelse(man_clust %in% c("1","3"), "Bicuar", "Mtarure")) %>%
   dplyr::select(site, man_clust, n_plots, rich, stem_dens, agb)
 
-names(clust_summ_all) <- c("Site", "Cluster", "N sites", "Richness", "Stem density", "AGB")
+names(clust_summ_all) <- c("Site", "Cluster", "N sites", "Richness", "Stem density (stems ha\\textsuperscript{-1})", "AGB (t ha \\textsuperscript{-1})")
 
 # Export table of cluster summaries
 clust_summ_xtable <- xtable(clust_summ_all,
@@ -243,11 +243,7 @@ clust_summ_xtable <- xtable(clust_summ_all,
     "r", "r"),
   display = c("s", "d", "d", "d", "s", "s", "s"),
   digits = c(0, 0, 0, 0, 0, 0, 0),
-  caption = "Description of the vegetation type clusters identified using the Ward algorithm, based on basal area weighted genus abundances. AGB = Above-Ground woody Biomass. Species richness, stem density and AGB are reported as the median among plots, with the interquartile range in parentheses.")
-
-colSanit <- function(x){
-  paste0("{", x, "}") 
-}
+  caption = "Description of the vegetation type clusters, identified using the Ward algorithm based on basal area weighted genus abundance. AGB = Above-Ground woody Biomass. Species richness, stem density and AGB are reported as the median among plots, with the interquartile range in parentheses.")
 
 fileConn <- file("../out/clust_summ.tex")
 writeLines(print(clust_summ_xtable,
@@ -269,7 +265,7 @@ row.names(clust_indval$indval) <- seq(from = 1, to = length(clust_indval$indval$
 
 indval_extrac <- lapply(1:4, function(x) {
     out <- head(clust_indval$indval[order(clust_indval$indval[[x]], 
-          decreasing = TRUE),c(5, x)])
+          decreasing = TRUE),c(5, x)], 10)
     out[!grepl("indet", out$sp, ignore.case = TRUE),]
   })
 

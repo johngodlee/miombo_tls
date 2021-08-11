@@ -1,6 +1,19 @@
 # Miscellaneous functions
 # John Godlee (johngodlee@gmail.com)
 
+lmPval <- function(x) {
+    if (class(x) != "lm") stop("Not an object of class 'lm' ")
+    f <- summary(x)$fstatistic
+    p <- pf(f[1],f[2],f[3],lower.tail=F)
+    attributes(p) <- NULL
+    return(p)
+}
+
+colSanit <- function(x){
+  paste0("{", x, "}") 
+}
+
+
 #' Create LaTeX newcommand output
 #'
 #' @param x atomic vector to export
@@ -48,24 +61,24 @@ clust_pal <- c("#E58606", "#5D69B1", "#52BCA3", "#99C945")
 pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "darkgrey", "#E0E0E0", "black")
 
 resp_names <- c(  
-  "Total canopy foliage" = "auc_canopy",
-  "Cum. mod. SE" = "cum_lm_se",
+  "Foliage density" = "auc_canopy",
+  "Foliage uniformity" = "cum_lm_se",
   "Cum. mod. slope" = "cum_lm_slope",
   "Height peak dens." = "dens_peak_height",
-  "Canopy cover" = "cover",
+  "Canopy closure" = "cover",
   "Canopy height" = "height_q95",
   "Canopy height" = "height_q99",
-  "Layer div." = "layer_div",
-  "CoV foliage" = "point_cov",
+  "Layer diversity" = "layer_div",
+  "Foliage density CoV" = "point_cov",
   "Shannon" = "shannon",
   "Weibull scale" = "weib_scale",
   "Weibull shape" = "weib_shape",
-  "Canopy cover" = "cover_mean",
+  "Canopy closure" = "cover_mean",
   "Canopy height" = "chm_mean",
   "Canopy roughness" = "chm_cov",
-  "Roughness" = "rough_mean",
+  "Canopy roughness" = "rough_mean",
   "Roughness SD" = "rough_sd",
-  "Rugosity" = "rc")
+  "Canopy rugosity" = "rc")
 
 pred_names <- c(
   "Basal area" = "ba_sum",
@@ -76,20 +89,20 @@ pred_names <- c(
   "Tree Shannon" = "tree_shannon_std",
   "Tree density" = "tree_dens",
   "Tree density" = "tree_dens_std",
-  "Spatial mingling" = "mi_mean",
-  "Spatial mingling" = "mi_mean_std",
+  "Mingling" = "mi_mean",
+  "Mingling" = "mi_mean_std",
   "Winkelmass" = "wi_mean",
   "Winkelmass" = "wi_mean_std",
   "Richness" = "rich",
   "Richness" = "rich_std",
-  "Hegyi crowding" = "hegyi",
-  "Hegyi crowding" = "hegyi_std",
-  "CoV basal area" = "ba_cov",
-  "CoV basal area" = "ba_cov_std",
-  "CoV crown area" = "crown_area_cov",
-  "CoV crown area" = "crown_area_cov_std",
-  "Mean diam." = "diam_mean",
-  "Mean diam." = "diam_mean_std",
+  "Hegyi" = "hegyi",
+  "Hegyi" = "hegyi_std",
+  "Basal area CoV" = "ba_cov",
+  "Basal area CoV" = "ba_cov_std",
+  "Crown area CoV" = "crown_area_cov",
+  "Crown area CoV" = "crown_area_cov_std",
+  "Mean DBH" = "diam_mean",
+  "Mean DBH" = "diam_mean_std",
   "Point density" = "point_dens",
   "Point density" = "point_dens_std")
 

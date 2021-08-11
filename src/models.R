@@ -8,9 +8,9 @@ library(ggplot2)
 library(nlme)
 library(MuMIn)
 library(piecewiseSEM)
-library(xtable)
 library(ggeffects)
 library(sjPlot)
+library(xtable)
 
 source("functions.R")
 
@@ -43,7 +43,7 @@ subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean,
 
 # Create clean plots dataset
 plot_resp <- c("chm_mean", "chm_cov", "rc", "cover_mean")
-plot_pred <- c("rich", "ba_sum", "ba_cov", "mi_mean", "wi_mean")
+plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
 
 plot_summ_clean <- plot_summ[,c("seosaw_id", plot_pred, "man_clust")]
 names(plot_summ_clean)[1] <- "plot_id"
@@ -160,10 +160,11 @@ names(sig_dredge_tab) <- c("Response", "Hegyi", "Richness", "CoV basal area", "$
 
 fileConn <- file("../out/height_profile_dredge_best.tex")
 writeLines(print(sig_dredge_tab, 
-  include.rownames = TRUE, 
+  include.rownames = FALSE, 
   caption.placement = "top",
   table.placement = "",
   booktabs = TRUE,
+  sanitize.colnames.function = colSanit, 
   sanitize.text.function = function(x) {x}), 
   fileConn)
 close(fileConn)
@@ -250,8 +251,8 @@ ggplot() +
   labs(x = "Estimate", y = "")
 dev.off()
 
-# Path analysis for main miombo Bicuar plots
-subplot_clust1 <- subplot_all_mod[subplot_all_mod$man_clust == 1,]
+# Path analysis for main miombo plots
+subplot_clust1 <- subplot_all_mod[subplot_all_mod$man_clust %in% 1:2,]
 
 mod_spec <- psem(
   lme(cover ~ ba_cov + rich, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
@@ -262,27 +263,23 @@ sink(file = "../out/height_profile_sem_summ.txt")
 summary(mod_spec, .progressBar = FALSE)
 sink()
 
-# Whole plot canopy mixed effects models
+# Whole plot canopy models
 plot_mod_list <- list(
-  lme(cover_mean ~ rich + ba_sum + ba_cov + mi_mean + wi_mean, 
-    random = ~1|man_clust, 
-    data = plot_all_mod, na.action = "na.fail", method = "REML"),
-  lme(chm_mean ~ rich + ba_sum + ba_cov + mi_mean + wi_mean, 
-    random = ~1|man_clust, 
-    data = plot_all_mod, na.action = "na.fail", method = "REML"),
-  lme(chm_cov ~ rich + ba_sum + ba_cov + mi_mean + wi_mean, 
-    random = ~1|man_clust, 
-    data = plot_all_mod, na.action = "na.fail", method = "REML"),
-  lme(rc ~ rich + ba_sum + ba_cov + mi_mean + wi_mean, 
-    random = ~1|man_clust, 
-    data = plot_all_mod, na.action = "na.fail", method = "REML")
+  lm(cover_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+    data = plot_all_mod, na.action = "na.fail"),
+  lm(chm_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+    data = plot_all_mod, na.action = "na.fail"),
+  lm(chm_cov ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+    data = plot_all_mod, na.action = "na.fail"),
+  lm(rc ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+    data = plot_all_mod, na.action = "na.fail")
   )
 
 plot_null_list <- list(
-  lme(cover_mean ~ 1, random = ~1|man_clust, data = plot_all_mod),
-  lme(chm_mean ~ 1, random = ~1|man_clust, data = plot_all_mod),
-  lme(chm_cov ~ 1, random = ~1|man_clust, data = plot_all_mod),
-  lme(rc ~ 1, random = ~1|man_clust, data = plot_all_mod)
+  lm(cover_mean ~ 1, data = plot_all_mod),
+  lm(chm_mean ~ 1, data = plot_all_mod),
+  lm(chm_cov ~ 1, data = plot_all_mod),
+  lm(rc ~ 1, data = plot_all_mod)
   )
 
 stopifnot(length(plot_mod_list) == length(plot_null_list))
@@ -290,20 +287,17 @@ stopifnot(length(plot_mod_list) == length(plot_null_list))
 # Dataframe of model fit statistics
 plot_mod_stat_df <- do.call(rbind, lapply(seq_along(plot_mod_list), function(x) {
   data.frame(
-    resp = attributes(getResponse(plot_mod_list[[x]]))$label,
+    resp = as.character(plot_mod_list[[x]]$terms[[2]]),
     daic = AIC(plot_null_list[[x]]) - AIC(plot_mod_list[[x]]),
     dbic = BIC(plot_null_list[[x]]) - BIC(plot_mod_list[[x]]),
-    rsq = r.squaredGLMM(plot_mod_list[[x]]),
-    nullrsq = r.squaredGLMM(plot_null_list[[x]]),
+    pval = lmPval(plot_mod_list[[x]]),
+    rsq = summary(plot_mod_list[[x]])$r.squared,
     logl = logLik(plot_mod_list[[x]]),
     nulllogl = logLik(plot_null_list[[x]])
   )
 }))
 
-plot_dredge_list <- lapply(plot_mod_list, function(x) { 
-  ml_mod <- update(x, method = "ML", na.action = "na.fail")
-  dredge(ml_mod)
-  })
+plot_dredge_list <- lapply(plot_mod_list, dredge)
 
 sink(file = "../out/canopy_dredge_mods.txt")
 plot_dredge_list
@@ -323,7 +317,7 @@ plot_sig_vars_dredge_df <- as.data.frame(do.call(rbind, plot_sig_vars_dredge))
 names(plot_sig_vars_dredge_df) <- c("resp", plot_pred)
 
 plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>% 
- left_join(., plot_mod_stat_df[,c("resp", "daic", "rsq.R2c", "rsq.R2m")], by = "resp") %>%
+ left_join(., plot_mod_stat_df[,c("resp", "daic", "rsq", "pval")], by = "resp") %>%
   mutate(across(all_of(plot_pred), 
       ~case_when(
         .x == TRUE ~ "\\checkmark",
@@ -333,16 +327,19 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
 
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   label = "canopy_sig_vars_dredge",
-  caption = "Explanatory variables included in the best model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the hegyi crowding index and the random effects of site and plot. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
-  align = "crcccccccc",
+  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model.",
+  align = "clcccccccc",
   display = c("s", "s", "s", "s", "s", "s", "s", "f", "f", "f"),
   digits = c( NA,   NA,  NA,  NA,  NA,  NA,  NA,  1,   2,   2))
 
-names(plot_sig_dredge_tab) <- c("Response", "Richness", "Basal area", "CoV basal area", "Mingling", "Winkelmass", "$\\Delta$AIC", "R\\textsuperscript{2}\\textsubscript{c}", "R\\textsuperscript{2}\\textsubscript{m}")
+names(plot_sig_dredge_tab) <- c("Response", "Richness", "Tree density", "CoV basal area", "Mingling", "Winkelmass", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
 
 fileConn <- file("../out/canopy_rough_dredge_best.tex")
-writeLines(print(plot_sig_dredge_tab, include.rownames = FALSE, 
-  table.placement = "H",
+writeLines(print(plot_sig_dredge_tab, 
+  include.rownames = FALSE, 
+  caption.placement = "top",
+  booktabs = TRUE,
+  sanitize.colnames.function = colSanit, 
   sanitize.text.function = function(x) {x}), 
   fileConn)
 close(fileConn)
@@ -354,7 +351,7 @@ plot_mod_pred <- do.call(rbind, lapply(plot_mod_list, function(x) {
       p.value <= 0.01 ~ "**",
       p.value <= 0.001 ~ "***",
       TRUE ~ NA_character_), 
-    resp = attributes(getResponse(x))$label) %>%
+    resp = as.character(x$terms[[2]])) %>%
   mutate(
     resp = names(resp_names)[match(resp, resp_names)],
     term = names(pred_names)[match(term, pred_names)])

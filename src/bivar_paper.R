@@ -29,7 +29,7 @@ gap_frac_clean <- gap_frac[gap_frac$method == "tls",
   c("plot_id", "subplot", "cover")]
 
 plot_summ_clean <- plot_summ[,c("seosaw_id", "rich", "ba_cov", "mi_mean", 
-  "wi_mean", "man_clust")]
+  "wi_mean", "man_clust", "tree_dens")]
 names(plot_summ_clean)[1] <- "plot_id"
 
 canopy_clean <- canopy[,c("plot_id_new", "chm_mean", "chm_cov", "rc")]
@@ -73,7 +73,7 @@ subplot_bivar$key_pred_pretty <- names(pred_names)[
   match(subplot_bivar$key_pred, pred_names)]
 
 # Gather plot datasets
-plot_pred_names <- c("rich", "ba_cov", "mi_mean", "wi_mean")
+plot_pred_names <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
 plot_resp_names <- c("chm_mean", "chm_cov", "rc", "cover_mean")
 
 plot_pred <- plot_all %>%
@@ -200,9 +200,9 @@ writeLines(print(bivar_lm_summ_tab,
   tabular.environment = "longtable",
   include.rownames = FALSE, 
   caption.placement = "top",
-  table.placement = "",
   booktabs = TRUE,
   hline.after = c(-1, 0, seq(5,nrow(bivar_lm_summ_clean)-5, 5)),
+  sanitize.colnames.function = colSanit, 
   sanitize.text.function = function(x) {x}), 
   fileConn)
 close(fileConn)

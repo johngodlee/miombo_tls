@@ -38,7 +38,7 @@ chm_nona_clean <- chm_nona %>%
 
 
 # Create plot of vegetation types
-pdf(file = "../img/veg_type_tile.pdf", width = 12, height = 12)
+pdf(file = "../img/veg_type_tile.pdf", width = 7, height = 7)
 ggplot() + 
   geom_tile(data = chm_nona_clean, aes(x = x, y = y, fill = Z, colour = Z), 
     size = 0.5) + 

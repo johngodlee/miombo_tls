@@ -64,8 +64,8 @@ bivar_comb <- crossing(resp_vec, pred_vec)
 bivar_list <- apply(bivar_comb, 1, function(x) {
   out <- plot_agg[,c(x, gsub("_mean", "_sd", x[2]), "plot_id")]
   names(out) <- c("x", "y", "y_sd", "plot_id")
-  out$xvar <- paste("Plot", names(resp_names)[match(gsub("_plot", "", x[1]), resp_names)])
-  out$yvar <- paste("Subplot", names(resp_names)[match(gsub("_subplot_mean", "", x[2]), resp_names)])
+  out$xvar <- paste("Plot", tolower(names(resp_names)[match(gsub("_plot", "", x[1]), resp_names)]))
+  out$yvar <- paste("Subplot", tolower(names(resp_names)[match(gsub("_subplot_mean", "", x[2]), resp_names)]))
   out$man_clust <- as.character(plot_summ$man_clust[match(out$plot_id, plot_summ$seosaw_id)])
   return(out)
     })
