@@ -110,7 +110,9 @@ subplot_bivar_plot <- ggplot() +
   theme(
     legend.position = "bottom",
     strip.background = element_rect(fill = NA)) +
-  labs(x = "", y = "")
+  labs(x = "", y = "") + 
+  guides(colour = "none") + 
+  guides(fill = guide_legend(override.aes = list(size=5)))
 
 plot_bivar_plot <- ggplot() + 
   geom_point(data = plot_bivar, 
@@ -129,7 +131,9 @@ plot_bivar_plot <- ggplot() +
   theme(
     legend.position = "bottom",
     strip.background = element_rect(fill = NA)) +
-  labs(x = "", y = "")
+  labs(x = "", y = "") +
+  guides(colour = "none") + 
+  guides(fill = guide_legend(override.aes = list(size=5)))
 
 # Write plots to single file
 pdf(file = "../img/bivar.pdf", width = 15, height = 8)

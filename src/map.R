@@ -46,7 +46,9 @@ site_map <- ggplot() +
   ylim(-34, 5) +
   theme_classic() + 
   labs(x = "", y = "") + 
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  guides(colour = "none") + 
+  guides(fill = guide_legend(override.aes = list(size=5)))
 
 # Contintental site map
 pdf(file = "../img/site_map.pdf", width = 4, height = 5.5)

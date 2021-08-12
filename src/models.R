@@ -230,7 +230,7 @@ mod_pred$site <- "All"
 
 mod_pred_all <- rbind(mod_pred, mod_pred_site)
 
-pdf(file = "../img/height_profile_mod_rich_slopes_sites.pdf", height = 5, width = 12)
+pdf(file = "../img/height_profile_mod_rich_slopes_sites.pdf", height = 4.5, width = 9)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = mod_pred_all, 
@@ -242,6 +242,7 @@ ggplot() +
   geom_text(data = mod_pred_all,
     aes(x = estimate, y = term, colour = site, label = psig),
     position = position_dodge(width = 0.5), size = 8) + 
+  guides(colour = "none") + 
   scale_colour_manual(values = c(clust_pal, "black"), guide = "none") + 
   scale_fill_manual(name = "Site", values = c(clust_pal, "grey")) + 
   facet_wrap(~resp, scales = "free_x", nrow = 1) + 
@@ -367,7 +368,7 @@ plot_mod_pred <- do.call(rbind, lapply(plot_mod_list, function(x) {
     term = names(pred_names)[match(term, pred_names)])
   }))
 
-pdf(file = "../img/canopy_rough_slopes.pdf", height = 5, width = 12)
+pdf(file = "../img/canopy_rough_slopes.pdf", height = 4, width = 9)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = plot_mod_pred, 
@@ -385,7 +386,7 @@ ggplot() +
   labs(x = "Estimate", y = "")
 dev.off()
 
-# Output model stats
+# Output model sta
 sink("../out/canopy_rough_mod_summ.txt")
 lapply(mod_list, summary)
 sink()

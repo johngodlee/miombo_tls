@@ -1,3 +1,4 @@
+> lapply(mod_list, summary)
 [[1]]
 Linear mixed-effects model fit by REML
   Data: subplot_all_mod 
@@ -142,3 +143,4 @@ Number of Groups:
              man_clust plot_id %in% man_clust 
                      4                     22 
 
+> sink()

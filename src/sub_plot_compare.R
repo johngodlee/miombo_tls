@@ -81,7 +81,9 @@ plot_list <- lapply(seq_along(bivar_list), function(x) {
     labs(x = "", y = "") + 
     theme_bw() + 
     theme(
-      axis.text = element_blank())
+      axis.text = element_blank()) + 
+    guides(colour = "none") + 
+    guides(fill = guide_legend(override.aes = list(size=5)))
 
   if (x %in% c(1,2,3,4)) {
     p <- p + 
