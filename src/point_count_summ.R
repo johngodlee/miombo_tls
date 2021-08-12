@@ -40,4 +40,4 @@ write(
     texCmd(pretty_mean[2], "voxelpt"),
     texCmd(pretty_mean[3], "subpt")
   ),
-  file = "../out/ptn.tex")
+  file = "../out/point_count_summ_var.tex")

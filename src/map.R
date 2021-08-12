@@ -18,7 +18,7 @@ source("functions.R")
 bicuar <- st_read("../dat/site_shp/bicuar/WDPA_Mar2018_protected_area_350-shapefile-polygons.shp")
 mtarure <- st_read("../dat/site_shp/mtarure/mtarure.shp")
 africa <- st_read("../dat/site_shp/africa/africa.shp")
-white <- st_read("/Volumes/john/whiteveg/whiteveg_poly_joined.shp")
+white <- st_read("../dat/whiteveg/whiteveg_poly_joined.shp")
 plots <- read.csv("../dat/plot_centre.csv")
 
 # Join shapes

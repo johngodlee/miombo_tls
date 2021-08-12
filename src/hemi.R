@@ -7,7 +7,8 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(png)
-source("Hemiphot.R")
+library(parallel)
+source("hemiphot.R")
 source("functions.R")
 
 # Image list
@@ -110,8 +111,8 @@ gap_frac <- function(x) {
   return(out_df)
 }
 
-cam_gap_frac_list <- lapply(cam_hemi_files_sub, gap_frac) 
-tls_gap_frac_list <- lapply(tls_hemi_files_sub, gap_frac) 
+cam_gap_frac_list <- mclapply(cam_hemi_files_sub, gap_frac, mc.cores = 4) 
+tls_gap_frac_list <- mclapply(tls_hemi_files_sub, gap_frac, mc.cores = 4) 
 
 # Create tidy dataframe
 gap_frac_df <- do.call(rbind, c(cam_gap_frac_list, tls_gap_frac_list))

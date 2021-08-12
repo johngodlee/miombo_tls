@@ -399,5 +399,5 @@ write(
     commandOutput(ccdir, "ccdir"),
     commandOutput(ccind, "ccind")
     ),
-  file = "../out/models_text.tex")
+  file = "../out/models_var.tex")
 

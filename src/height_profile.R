@@ -7,6 +7,7 @@ library(dplyr)
 library(zoo)
 library(vegan)
 library(fitdistrplus)
+library(parallel)
 
 source("functions.R")
 
@@ -25,7 +26,7 @@ cylinder_radius <- 1000  # 10 m
 layer_vol <- pi * cylinder_radius^2 * voxel_dim
 
 # For each subplot:
-profile_stat_list <- lapply(file_list, function(x) {
+profile_stat_list <- mclapply(file_list, function(x) {
 
   # Get names of subplots from filenames
   subplot_id <- gsub("_.*.rds", "", basename(x))
@@ -159,7 +160,7 @@ profile_stat_list <- lapply(file_list, function(x) {
 
   # Return 
   return(list(bin_fil, stats, ripley_l))
-})
+}, mc.cores = 4)
 
 # Join dataframes
 all_bins <- do.call(rbind, lapply(profile_stat_list, "[[", 1))

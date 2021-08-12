@@ -234,13 +234,12 @@ clust_summ_all <- clust_summ %>%
     site = ifelse(man_clust %in% c("1","3"), "Bicuar", "Mtarure")) %>%
   dplyr::select(site, man_clust, n_plots, rich, stem_dens, agb)
 
-names(clust_summ_all) <- c("Site", "Cluster", "N sites", "Richness", "Stem density (stems ha\\textsuperscript{-1})", "AGB (t ha \\textsuperscript{-1})")
+names(clust_summ_all) <- c("Site", "Cluster", "N sites", "Richness", "Stem density", "AGB")
 
 # Export table of cluster summaries
 clust_summ_xtable <- xtable(clust_summ_all,
   label = "clust_summ",
-  align = c("c", "l", "l", "S[table-format=2.0]", "r", 
-    "r", "r"),
+  align = c("c", "l", "c", "S[table-format=2.0]", "r", "r", "r"),
   display = c("s", "d", "d", "d", "s", "s", "s"),
   digits = c(0, 0, 0, 0, 0, 0, 0),
   caption = "Description of the vegetation type clusters, identified using the Ward algorithm based on basal area weighted genus abundance. AGB = Above-Ground woody Biomass. Species richness, stem density and AGB are reported as the median among plots, with the interquartile range in parentheses.")
@@ -323,7 +322,7 @@ write(
   c(
     commandOutput(format(ba_per_indet, digits = 1), "perIndet")
     ),
-  file = "../out/per_indet.tex")
+  file = "../out/plot_diversity_var.tex")
 
 # Write files
 write.csv(plot_summ, "../dat/plot_summ.csv", row.names = FALSE)

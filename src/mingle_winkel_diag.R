@@ -176,21 +176,21 @@ coord_repls <- seq(0,50,0.1)
 
 for (i in seq_len(200)) {
   wi_list[[i + 1]] <- wi_list[[i]]
-  wi_list[[i + 1]] <- lapply(wi_list[[i + 1]], function(x) {
+  wi_list[[i + 1]] <- mclapply(wi_list[[i + 1]], function(x) {
     x[sample(nrow(x), 1),c(1,2)] <- sample(coord_repls, 2)
     x$adj <- i
     x
-  })
+  }, mc.cores = 4)
 }
 
 wi_df <- do.call(rbind, mclapply(seq_along(wi_list), function(x) {
   message(x, "/", length(wi_list))
-  do.call(rbind, lapply(wi_list[[x]], function(y) {
+  do.call(rbind, mclapply(wi_list[[x]], function(y) {
     data.frame(
       adj = y$adj[1],
       wi = mean(winkelmass(y$x, y$y, k = 4))
       )
-    }))
+    }, mc.cores = 4))
   }, mc.cores = 4))
 
 wi_df_clean <- wi_df %>%
@@ -283,4 +283,4 @@ write(
     texCmd(wi_k_n, "wikn"),  # Number of replicates for Wi var. with k 
     texCmd(wi_k_i, "wiki")  # Number of individuals for Wi var. with k 
     ),
-  file = "../out/mingl_wink.tex")
+  file = "../out/mingle_winkel_diag_var.tex")

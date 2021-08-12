@@ -669,7 +669,7 @@ pFormat <- function(p, lev = c(0.001, 0.01, 0.05), asterisks = FALSE,
       }
     } else {
       if (asterisks) {
-        out[i] <- "-"
+        out[i] <- ""
       } else {
         if (!is.null(digits)) {
           out[i] <- paste0(ifelse(ps, "p=", ""), as.character(round(p[i], digits)))

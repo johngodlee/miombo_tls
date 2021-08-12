@@ -179,18 +179,40 @@ bivar_lm_summ_clean <- bivar_lm_summ %>%
     resp = names(resp_names)[match(resp, resp_names)],
     pred = names(pred_names)[match(pred, pred_names)],
     man_clust = ifelse(man_clust %in% 1:4, as.character(man_clust), "All"),
-    slope = pmFormat(mod_est, mod_se, dx = 1), 
+    slope = paste0(format(mod_est, digits = 2), "$\\pm$", format(mod_se, digits = 2)), 
     mod_rsq = sprintf("%.2f", mod_rsq), 
     mod_f = paste0(sprintf("%.1f", mod_f), "(", mod_dof1, ",", mod_dof2, ")"),
     pred_t = ifelse(!is.nan(mod_p), 
       paste0(sprintf("%.2f", pred_t), pFormat(mod_p, asterisks = TRUE)),
-      "NA")) %>% 
+      "NA")) %>%  
+  mutate(
+    slope = ifelse(man_clust == "4" & sc == "plot", NA_character_, slope),
+    mod_rsq = ifelse(man_clust == "4" & sc == "plot", NA_character_, mod_rsq),
+    mod_f = ifelse(man_clust == "4" & sc == "plot", NA_character_, mod_f),
+    pred_t = ifelse(man_clust == "4" & sc == "plot", NA_character_, pred_t)
+    ) %>%
   dplyr::select(resp, pred, man_clust, slope, mod_f, mod_rsq, pred_t)
+
+bivar_lm_summ_clean$resp[seq_len(nrow(bivar_lm_summ_clean))[
+    -seq(1, nrow(bivar_lm_summ_clean), 
+      by = length(unique(bivar_lm_summ_clean$man_clust)))]] <- ""
+
+bivar_lm_summ_clean$pred[seq_len(nrow(bivar_lm_summ_clean))[
+    -seq(1, nrow(bivar_lm_summ_clean), 
+      by = length(unique(bivar_lm_summ_clean$man_clust)))]] <- ""
+
+bivar_lm_summ_clean$resp[seq(1, nrow(bivar_lm_summ_clean), 
+      by = length(unique(bivar_lm_summ_clean$man_clust)))] <- gsub("(.*)", "{\\\\multirow{5}{*}{\\1}}", bivar_lm_summ_clean$resp[seq(1, nrow(bivar_lm_summ_clean), 
+      by = length(unique(bivar_lm_summ_clean$man_clust)))])
+
+bivar_lm_summ_clean$pred[seq(1, nrow(bivar_lm_summ_clean), 
+      by = length(unique(bivar_lm_summ_clean$man_clust)))] <- gsub("(.*)", "{\\\\multirow{5}{*}{\\1}}", bivar_lm_summ_clean$pred[seq(1, nrow(bivar_lm_summ_clean), 
+      by = length(unique(bivar_lm_summ_clean$man_clust)))])
 
 bivar_lm_summ_tab <- xtable(bivar_lm_summ_clean,
   label = "bivar_lm_summ",
   caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error. R\\textsuperscript{2} refers to the whole model. T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
-  align = c("l", "l", "l", "c", "S[table-format=5.1(4.2)]", "r", "S[table-format=1.2]", "r"),
+  align = c("l", "l", "l", "c", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s"))
 
 names(bivar_lm_summ_tab) <- c("Response", "Predictor", "Cluster", "Slope", "F", "R\\textsuperscript{2}", "T")
@@ -201,16 +223,13 @@ writeLines(print(bivar_lm_summ_tab,
   include.rownames = FALSE, 
   caption.placement = "top",
   booktabs = TRUE,
-  hline.after = c(-1, 0, seq(5,nrow(bivar_lm_summ_clean)-5, 5)),
+  hline.after = c(-1, 0, seq(5,nrow(bivar_lm_summ_clean), 5)),
   sanitize.colnames.function = colSanit, 
   sanitize.text.function = function(x) {x}), 
   fileConn)
 close(fileConn)
 
 # Write stats
-
-bacov_layerdiv_df <- bivar_lm_summ[bivar_lm_summ$resp == "layer_div" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5",]
 
 bivar_lm_text <- function(x) {
   paste0("$\\beta{}$=", 
@@ -293,5 +312,5 @@ write(
     commandOutput(bacov_rugp, "baCovRugosityP"),
     commandOutput(bacov_unif, "baCovUnif")
     ),
-  file = "../out/bivar_lm_text.tex")
+  file = "../out/bivar_paper_var.tex")
 

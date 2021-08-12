@@ -1,20 +1,19 @@
-> summary(cover_mod)
 Linear mixed-effects model fit by REML
-  Data: gap_frac_spread 
+  Data: cover_spread 
      AIC  BIC logLik
   -196.6 -177  104.3
 
 Random effects:
  Formula: ~1 | plot_id
         (Intercept) Residual
-StdDev:     0.03463   0.1335
+StdDev:     0.03462   0.1335
 
 Fixed effects:  tls_cover ~ hemi_cover * site 
                          Value Std.Error  DF t-value p-value
-(Intercept)             0.1292   0.02350 173   5.499  0.0000
-hemi_cover              1.1867   0.05895 173  20.130  0.0000
-siteMtarure            -0.0817   0.04116  20  -1.985  0.0610
-hemi_cover:siteMtarure  0.1337   0.09890 173   1.352  0.1781
+(Intercept)             0.1292   0.02350 173   5.500  0.0000
+hemi_cover              1.1867   0.05895 173  20.131  0.0000
+siteMtarure            -0.0817   0.04116  20  -1.986  0.0609
+hemi_cover:siteMtarure  0.1337   0.09889 173   1.352  0.1780
  Correlation: 
                        (Intr) hm_cvr stMtrr
 hemi_cover             -0.785              
@@ -23,8 +22,7 @@ hemi_cover:siteMtarure  0.468 -0.596 -0.777
 
 Standardized Within-Group Residuals:
     Min      Q1     Med      Q3     Max 
--1.8651 -0.6218 -0.2635  0.5209  3.7429 
+-1.8650 -0.6218 -0.2635  0.5209  3.7428 
 
 Number of Observations: 197
 Number of Groups: 22 
-> sink()
