@@ -1,4 +1,3 @@
-> dredge_list
 [[1]]
 Global model call: lme.formula(fixed = layer_div ~ hegyi + rich + ba_cov, data = subplot_all_mod, 
     random = ~1 | man_clust/plot_id, method = "ML", na.action = "na.fail")
@@ -71,4 +70,3 @@ Models ranked by AICc(x)
 Random terms (all models): 
 ‘1 | man_clust’, ‘1 | plot_id %in% man_clust’
 
-> sink()

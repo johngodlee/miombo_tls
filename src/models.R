@@ -244,7 +244,7 @@ ggplot() +
     position = position_dodge(width = 0.5), size = 8) + 
   guides(colour = "none") + 
   scale_colour_manual(values = c(clust_pal, "black"), guide = "none") + 
-  scale_fill_manual(name = "Site", values = c(clust_pal, "grey")) + 
+  scale_fill_manual(name = "Cluster", values = c(clust_pal, "grey")) + 
   facet_wrap(~resp, scales = "free_x", nrow = 1) + 
   theme_bw() + 
   guides(fill = guide_legend(override.aes = list(size = 5))) +
@@ -334,14 +334,15 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
         .x == TRUE ~ "\\checkmark",
         .x == FALSE ~ "",
         TRUE ~ .x))) %>%
-  mutate(resp = names(resp_names)[match(resp, resp_names)]) 
+  mutate(resp = names(resp_names)[match(resp, resp_names)]) %>%
+  mutate(pval = pFormat(pval, digits = 2, ps = FALSE))
 
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   label = "canopy_sig_vars_dredge",
   caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model.",
-  align = "clcccccccc",
-  display = c("s", "s", "s", "s", "s", "s", "s", "f", "f", "f"),
-  digits = c( NA,   NA,  NA,  NA,  NA,  NA,  NA,  1,   2,   2))
+  align = c("c", "l", "c", "c", "c", "c", "c", "c", "c", "S[table-format=<1.2]"),
+  display = c("s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
+  digits = c( NA,   NA,  NA,  NA,  NA,  NA,  NA,  1,   2,   NA))
 
 names(plot_sig_dredge_tab) <- c("Response", "Richness", "Tree density", "CoV basal area", "Mingling", "Winkelmass", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
 
@@ -364,23 +365,51 @@ plot_mod_pred <- do.call(rbind, lapply(plot_mod_list, function(x) {
       TRUE ~ NA_character_), 
     resp = as.character(x$terms[[2]])) %>%
   mutate(
-    resp = names(resp_names)[match(resp, resp_names)],
-    term = names(pred_names)[match(term, pred_names)])
+    resp_out = names(resp_names)[match(resp, resp_names)],
+    term_out = names(pred_names)[match(term, pred_names)])
   }))
+
+plot_mod_text <- function(x) {
+  paste0("$\\beta{}$=", 
+    format(x$estimate, digits = 1),
+    "$\\pm$", 
+    format(x$std.error, digits = 2),
+    ", ",
+    pFormat(x$p.value, digits = 2))
+}
+
+rich_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+  plot_mod_pred$resp == "chm_mean",])
+
+rich_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+  plot_mod_pred$resp == "cover_mean",])
+
+rich_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+  plot_mod_pred$resp == "chm_cov",])
+
+tree_dens_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_dens" & 
+  plot_mod_pred$resp == "rc",])
+
+cov_ba_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "ba_cov" & 
+  plot_mod_pred$resp == "chm_cov",])
+
+winkel_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "wi_mean" & 
+  plot_mod_pred$resp == "cover_mean",])
+
 
 pdf(file = "../img/canopy_rough_slopes.pdf", height = 4, width = 9)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = plot_mod_pred, 
-    aes(xmin = conf.low, xmax = conf.high, y = term),
+    aes(xmin = conf.low, xmax = conf.high, y = term_out),
     colour = "black", height = 0) + 
   geom_point(data = plot_mod_pred,
-    aes(x = estimate, y = term),
+    aes(x = estimate, y = term_out),
     size = 2, shape = 21, colour = "black", fill = pal[5]) + 
   geom_text(data = plot_mod_pred,
-    aes(x = estimate, y = term, label = psig),
+    aes(x = estimate, y = term_out, label = psig),
     size = 8) + 
-  facet_wrap(~resp, scales = "free_x", nrow = 1) + 
+  facet_wrap(~resp_out, scales = "free_x", nrow = 1) + 
   theme_bw() + 
   theme(legend.position = "none") + 
   labs(x = "Estimate", y = "")
@@ -397,6 +426,12 @@ write(
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "layer_div"] * 100, digits = 0), "bestLayerDivRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "auc_canopy"] * 100, digits = 0), "bestDensRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestUnifRsqS"),
+    commandOutput(rich_height_p, "richHeightP"),
+    commandOutput(rich_cover_p, "richCoverP"),
+    commandOutput(rich_rough_p, "richRoughP"),
+    commandOutput(tree_dens_rug_p, "treeDensRugP"),
+    commandOutput(cov_ba_rough_p, "covBARoughP"),
+    commandOutput(winkel_cover_p, "wiCoverP"),
     commandOutput(ccdir, "ccdir"),
     commandOutput(ccind, "ccind")
     ),

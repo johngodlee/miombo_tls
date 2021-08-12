@@ -1,4 +1,3 @@
-> mod_summ
 
 Structural Equation Model of mod_spec 
 
@@ -36,4 +35,3 @@ Individual R-squared:
   Response method Marginal Conditional
      cover   none     0.50        0.64
     ba_cov   none     0.17        0.17
-> sink()

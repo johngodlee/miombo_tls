@@ -67,7 +67,7 @@ ggplot() +
   geom_line(data = ripley_pred_df, 
     aes(x = x, y = y, colour = site, group = group)) +
   facet_wrap(~site) + 
-  scale_colour_manual(name = "Site", values = pal[1:2]) + 
+  scale_colour_manual(name = "Cluster", values = pal[1:2]) + 
   labs(x = "Normalized Distance", y = "Total Proportion") + 
   theme_bw() + 
   theme(legend.position = "none")

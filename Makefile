@@ -171,7 +171,7 @@ $(OUTDIR)/indval_fmt.tex $(OUTDIR)/clust_summ_fmt.tex $(OUTDIR)/height_profile_d
 	./table_fmt.sh $< $@
 
 # Compile latex variables
-$(OUTDIR)/vars.tex : \
+$(OUTDIR)/var.tex : \
 	$(OUTDIR)/bivar_paper_var.tex \
 	$(OUTDIR)/hemi_anal_var.tex \
 	$(OUTDIR)/models_var.tex \
@@ -183,12 +183,12 @@ $(OUTDIR)/vars.tex : \
 # Compile main tex and show errors 
 $(TEXFILE).pdf : \
 	$(TEXFILE).tex \
-	$(OUTDIR)/vars.tex \
-	$(OUTDIR)/clust_summ.tex \
+	$(OUTDIR)/var.tex \
+	$(OUTDIR)/clust_summ_fmt.tex \
 	$(OUTDIR)/indval.tex \
-	$(OUTDIR)/height_profile_dredge_best.tex \
-	$(OUTDIR)/canopy_rough_dredge_best.tex \
-	$(OUTDIR)/bivar_lm_summ.tex \
+	$(OUTDIR)/height_profile_dredge_best_fmt.tex \
+	$(OUTDIR)/canopy_rough_dredge_best_fmt.tex \
+	$(OUTDIR)/bivar_lm_summ_fmt.tex \
 	$(IMGDIR)/map.pdf \
 	$(IMGDIR)/nmds.pdf \
 	$(IMGDIR)/bivar.pdf \
