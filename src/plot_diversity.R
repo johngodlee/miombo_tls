@@ -12,6 +12,7 @@ library(BIOMASS)
 library(ggrepel)
 library(labdsv)
 library(xtable)
+library(spatstat)
 
 source("functions.R")
 
@@ -115,16 +116,53 @@ mi_summ <- mi %>%
   group_by(plot_id) %>%
   summarise(mi_mean = mean(mi))
 
-# Calculate Winkelmass
+# Ripley's L
+ripley_df <- do.call(rbind, lapply(seq_along(trees_split), function(x) {
+  x_fil <- trees_split[[x]][is.finite(trees_split[[x]]$x_grid) & is.finite(trees_split[[x]]$y_grid),]
+  x_p <- ppp(x_fil$x_grid, x_fil$y_grid, 
+    xrange = range(x_fil$x_grid), yrange = range(x_fil$y_grid))
+  l_env <- envelope(x_p, Lest, correction = "Ripley", verbose = FALSE)
+  l_env_df <- as.data.frame(l_env) %>%
+    mutate(across(all_of(c("obs", "theo", "lo", "hi")), 
+        ~.x - r, 
+        .names = "{col}_r"))
+  l_env_df$plot_id <- names(trees_split[x])
+  return(l_env_df)
+}))
+
+ripley_df$man_clust <- nmds_plots$man_clust[match(ripley_df$plot_id, nmds_plots$plot_id)]
+
+ggplot(ripley_df) + 
+  geom_line(aes(x = r, y = obs_r, group = plot_id, colour = man_clust)) + 
+  geom_line(aes(x = r, y = theo_r, group = plot_id), linetype = 2, colour = "red") + 
+  theme_bw() + 
+  facet_wrap(~man_clust) + 
+  labs(x = "r", y = "L")
+
+# Calculate Winkelmass and spatial clustering
+dist_nn <- function(x, y, k = 4) {
+  dat_sf <- sf::st_as_sf(data.frame(x,y), coords = c("x", "y"))
+
+  dists <- suppressMessages(nngeo::st_nn(dat_sf, dat_sf, k = k+1, 
+      progress = FALSE, returnDist = TRUE))
+
+  unlist(lapply(dists[[2]], function(i) {
+    mean(i[2:k+1])
+    }))
+}
+
 wi <- do.call(rbind, lapply(trees_split, function(i) {
   i <- i[ !is.na(i$x_grid) & !is.na(i$y_grid) & !is.na(i$species_name_clean),]
   i$wi <- winkelmass(i$x_grid, i$y_grid, k = 4)
+  i$dist <- dist_nn(i$x_grid, i$y_grid)
   return(i)
 }))
 
 wi_summ <- wi %>%
   group_by(plot_id) %>%
-  summarise(wi_mean = mean(wi))
+  summarise(
+    dist_mean = mean(dist),
+    wi_mean = mean(wi))
 
 # Hegyi index
 hegyi_df <- do.call(rbind, lapply(trees_split, function(i) {

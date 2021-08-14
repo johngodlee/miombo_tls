@@ -73,7 +73,7 @@ gap_frac <- function(x) {
 
   img_cx <- dim(img)[2] / 2  # x coordinate of center
   img_cy <- dim(img)[1] / 2  # y coordinate of center
-  img_cr <- fov.px(80, 8, 5.95)  # Circle radius of interest
+  img_cr <- fov.px(60, 8, 5.95)  # Circle radius of interest
 
   # Atmospheric transmissivity - Default 0.6, varies 0.4-0.6 in tropics
   loc_tau <- 0.6  

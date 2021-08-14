@@ -54,6 +54,7 @@ nearest_close <- nearest %>%
   group_by(site) %>%
   slice_min(dist, n = 5) %>%
   mutate(
+    site = ifelse(site == "AGO", "Bicuar", "Mtarure"),
     receiver = gsub("_", " ", receiver),
     dist_km = units::drop_units(dist) / 1000) %>%
   dplyr::select(-dist, -antenna) 
@@ -69,7 +70,7 @@ nearest_xtable <- xtable(nearest_close,
   display = c("s", "s", "s", "f"),
   digits = c(NA, NA, NA, 0))
 
-names(nearest_xtable) <- c("Site", "Receiver name", "Distance (km)")
+names(nearest_xtable) <- c("Site", "Receiver", "Distance (km)")
 
 fileConn <- file("../out/auspos_close.tex")
 writeLines(print(nearest_xtable, 

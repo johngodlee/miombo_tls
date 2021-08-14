@@ -15,9 +15,11 @@ sed '9s/{Stem density}/\\thead{Stem density\\\\(Stems ha\\textsuperscript{-1})}/
 
 sed '9s/{CoV basal area}/{\\thead{Basal area\\\\CoV}}/' out/canopy_rough_dredge_best.tex |\
 	sed	'9s/{Tree density}/{\\thead{Tree\\\\density}}/' |\
+	sed	'9s/{Winkelmass}/{\\thead{Uniform\\\\angle index}}/' |\
 	sed '7i\\\setlength{\\tabcolsep}{4pt}' > out/canopy_rough_dredge_best_fmt.tex
 
 sed '9s/{CoV basal area}/{\\thead{Basal area\\\\CoV}}/' out/height_profile_dredge_best.tex > out/height_profile_dredge_best_fmt.tex
 
 
-sed '3i\\\setlength{\\tabcolsep}{4pt}' out/bivar_lm_summ.tex > out/bivar_lm_summ_fmt.tex
+sed '3i\\\setlength{\\tabcolsep}{4pt}' out/bivar_lm_summ.tex |\
+	sed 's/{Winkelmass}/{Uniform angle index}/g' > out/bivar_lm_summ_fmt.tex

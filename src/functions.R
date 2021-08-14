@@ -325,13 +325,11 @@ spatialMingling <- function(x, y, sp, k = 4, adj = FALSE) {
 #' 
 #' @export
 #' 
-winkelmass <- function(x, y, k = 4) {
+winkelmass <- function(x, y, k = 4, a0 = 72) {
   dat_sf <- sf::st_as_sf(data.frame(x,y), coords = c("x", "y"))
 
   dists <- suppressMessages(nngeo::st_nn(dat_sf, dat_sf, k = k+1, 
       progress = FALSE))
-
-  a0 <- 360 / k
 
   wi <- unlist(lapply(dists, function(i) {
     focal_sfg <- sf::st_geometry(dat_sf[i[1],])[[1]]

@@ -8,6 +8,7 @@ library(dplyr)
 library(tidyr)
 library(parallel)
 library(patchwork)
+library(sf)
 
 source("functions.R")
 
@@ -165,7 +166,7 @@ dat <- expand.grid(xy_vec, xy_vec)
 names(dat) <- c("x", "y")
 
 wi_reps <- 20
-wi_list <- replicate(20, dat, simplify = FALSE)
+wi_list <- replicate(wi_reps, dat, simplify = FALSE)
 wi_list <- lapply(wi_list, function(x) {
   x$adj <- 0
   x
@@ -216,7 +217,7 @@ wi_df_fil <- do.call(rbind,
 wi_map_plot <- ggplot() + 
   geom_point(data = wi_df_fil, 
     aes(x = x, y = y),
-    fill = "darkgrey", shape = 21) + 
+    fill = "darkgrey", shape = 21, size = 0.2) + 
   facet_wrap(~adj, nrow = 1) + 
   theme_bw() + 
   theme(
@@ -266,12 +267,136 @@ wi_k_plot <- ggplot() +
   theme_bw() + 
   labs(x = "k", y = expression(bar(W[i])))
 
+wi_k_summ_plot <- wi_k_df_clean %>%
+  group_by(k) %>%
+  summarise(
+    wi_mean = mean(wi, na.rm = TRUE),
+    wi_sd = sd(wi, na.rm = TRUE)) %>%
+  ggplot(., aes(x = k, y = wi_mean)) + 
+  geom_errorbar(aes(ymin = wi_mean - wi_sd, ymax = wi_mean + wi_sd)) + 
+  geom_point(fill = "grey", colour = "black", shape = 21, size = 2) + 
+  theme_bw() +
+  labs(x = "k", y = expression(bar(W[i])))
+
 pdf(file = "../img/wi_k.pdf", width = 8, height = 5)
 wi_k_plot
 dev.off()
 
+pdf(file = "../img/wi_k_summ.pdf", width = 6, height = 4)
+wi_k_summ_plot
+dev.off()
+
 saveRDS(wi_df_clean, "../dat/wi_var.rds")
 saveRDS(wi_k_df_clean, "../dat/wi_k.rds")
+
+# Voronoi tessellation
+voronoi_sf <- mclapply(seq_along(wi_list), function(i) {
+  lapply(seq_along(wi_list[[i]]), function(x) {
+    message(i, "/", length(wi_list), ", ", x, "/", length(wi_list[[i]]))
+    
+    # Create sf object of stem locations
+    x_sf <- st_as_sf(wi_list[[i]][[x]], coords = c("x", "y")) 
+    x_sf_bbox <- st_as_sfc(st_bbox(x_sf))
+
+    # Voronoi tessellation polygons
+    x_voronoi <- st_voronoi(st_union(x_sf), x_sf_bbox) %>%
+      st_cast() %>%
+      st_make_valid() %>%
+      st_intersection(., x_sf_bbox) %>%
+      st_sf() %>%
+      mutate(poly_id = row_number())
+
+    return(list(x_sf, x_voronoi))
+    })
+  }, mc.cores = 4)
+
+saveRDS(voronoi_sf, "../dat/voronoi_vertex.rds")
+
+# Find maximum vertex distance of each voronoi cell
+max_vertex_df <- do.call(rbind, mclapply(seq_along(voronoi_sf), function(x) {
+  do.call(rbind, lapply(seq_along(voronoi_sf[[x]]), function(y) {
+    message(x, "/", length(voronoi_sf), ", ", y, "/", length(voronoi_sf[[x]]))
+    inter <- st_join(voronoi_sf[[x]][[y]][[1]], voronoi_sf[[x]][[y]][[2]], 
+      st_intersects)
+
+    max_vertex_dist <- unlist(lapply(seq_len(nrow(inter)), function(z) {
+      voronoi_sf[[x]][[y]][[2]] %>% 
+        filter(poly_id == unlist(st_drop_geometry(inter[z, "poly_id"]))) %>% 
+        st_cast("POINT") %>%
+        st_distance(., inter[z,]) %>%
+        max()
+    }))
+    data.frame(
+      max_vertex_dist, 
+      adj = x,
+      rep = y
+      )
+  }))
+}, mc.cores = 4))
+
+saveRDS(max_vertex_df, "../dat/voronoi_vertex_dist.rds")
+
+max_vertex_summ <- max_vertex_df %>%
+  group_by(adj, rep) %>%
+  summarise(mean_max_vertex_dist = mean(as.numeric(max_vertex_dist), na.rm = TRUE))
+
+max_vertex_plot <- ggplot() + 
+  geom_line(data = max_vertex_summ, 
+    aes(x = adj, y = mean_max_vertex_dist, group = rep)) + 
+  geom_vline(xintercept = wi_samples, colour = "red", linetype = 2) +
+  theme_bw() +
+  labs(x = "N substitutions", y = expression(bar(h[i])))
+  
+voronoi_map_plot <- function(x) {
+  p <- ggplot() + 
+    geom_sf(data = max_vertex_list[[x]][[1]][[2]], fill = NA, colour = "black") + 
+    geom_point(data = max_vertex_list[[x]][[1]][[1]], 
+      aes(x = x, y = y),
+      fill = "darkgrey", shape = 21) + 
+    facet_wrap(~adj, nrow = 1) + 
+    theme_bw() + 
+    theme(
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      legend.position = "none") + 
+    labs(x = "X", y = "Y") 
+
+  return(p)
+}
+
+voronoi_gather <- do.call(rbind, lapply(wi_samples, function(x) {
+  out <- max_vertex_list[[x+1]][[1]][[2]]
+  out$adj <- paste0("N = ", x)
+  out$adj <- factor(out$adj, levels = paste0("N = ", wi_samples))
+  return(out)
+      }))
+
+stems_gather <- do.call(rbind, lapply(wi_samples, function(x) {
+    out <- max_vertex_list[[x+1]][[1]][[1]]
+    out$adj <- paste0("N = ", out$adj)
+    out$adj <- factor(out$adj, levels = paste0("N = ", wi_samples))
+    return(out)
+      }))
+
+voronoi_maps <- ggplot() + 
+  geom_sf(data = voronoi_gather, fill = NA, colour = "black", size = 0.2) + 
+  geom_point(data = stems_gather, 
+    aes(x = x, y = y),
+    fill = "darkgrey", shape = 21, size = 0.5) + 
+  facet_wrap(~adj, nrow = 1) + 
+  theme_bw() + 
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "none") + 
+  labs(x = "X", y = "Y") 
+
+pdf(file = "../img/voronoi_diagram.pdf", width = 8, height = 5)
+max_vertex_plot + voronoi_maps + 
+  plot_layout(ncol = 1, heights = c(2,1))
+dev.off()
 
 # Write some stats to file
 write(

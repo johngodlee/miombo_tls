@@ -201,7 +201,7 @@ To calculate subplot foliage density profiles, the 5 cm\textsuperscript{3} voxel
 
 In R, foliage density was calculated in 5 cm layers as the proportion of filled 5 cm\textsuperscript{3} voxels. A loess model with a span of 0.1 was fitted to the foliage density values in each layer to estimate the foliage density profile (\autoref{height_profile_illus}). The foliage density profile was further filtered to only tree canopy material, by discarding all points below the first local minimum in the foliage density profile above 1.3 m, using a rolling window of 50 cm.
 
-Multiple statistics were extracted from the foliage density profile for use in statistical analyses. Total canopy foliage density was calculated as the area under the curve of the canopy foliage density profile, using trapezoid estimation. The Effective Number of Layers (ENL) in the foliage density profile was used to estimate canopy structural complexity, using the true-numbers equivalent of the Shannon diversity index on the foliage density of 50 cm layers (sensu \citealt{Ehbrecht2016}):
+Multiple statistics were extracted from the foliage density profile for use in statistical analyses. Total canopy foliage density was calculated as the area under the curve of the canopy foliage density profile, using trapezoid estimation. The Effective Number of Layers (ENL) in the foliage density profile was used to estimate canopy structural complexity, using the true-numbers equivalent Shannon entropy of foliage density among 50 cm layers (sensu \citealt{Ehbrecht2016}):
 
 \begin{equation}
 	\text{ENL} = \text{exp}\Big{(} - \sum_{i=1}^{N} p_{i} \text{ln} p_{i} \Big{)}
@@ -211,7 +211,7 @@ Where $N$ is the number of 50 cm bins in the height profile, and $p_{i}$ is the 
 
 To describe the uniformity of the foliage density distribution through the canopy, a linear model of foliage density with height was fitted. Under a completely even distribution of foliage material through the canopy, the residuals of the linear model tend to zero, while clumping causes deviations from this uniform distribution and increases the sum of residuals.
 
-While maximum canopy height has been used in other studies to describe canopy structural complexity \citep{Scheuermann2018}. At the small spatial scale of the subplots used in this study however, there proved to be too much stochastic variation in canopy height among subplots due to the distribution of individual trees to make this statistic informative as a measure of canopy complexity. Canopy height was calculated later at the plot level, however. Similarly, previous studies have used the number of local maxima in the foliage density profile to estimate canopy structural complexity \citep{Wilkes2016}. However, this metric covaries with ENL and total foliage density, while ENL is uncorrelated with foliage density \citep{Ehbrecht2016}. 
+Maximum canopy height has been used in other studies to describe canopy structural complexity \citep{Scheuermann2018}. At the small spatial scale of the subplots used in this study however, there proved to be too much stochastic variation in canopy height among subplots due to the distribution of individual trees to make this statistic informative as a measure of canopy complexity. Canopy height was calculated later at the plot level, however. Similarly, previous studies have used the number of local maxima in the foliage density profile to estimate canopy structural complexity \citep{Wilkes2016}. However, this metric covaries with ENL and total foliage density, while ENL is uncorrelated with foliage density \citep{Ehbrecht2016}. 
 
 \begin{figure}
 \centering
@@ -224,7 +224,7 @@ While maximum canopy height has been used in other studies to describe canopy st
 
 Subplot canopy closure, i.e. the proportion of the sky hemisphere occluded by plant material, a.k.a. gap fraction or site factor \citep{Jennings1999}, was measured by simulating a hemispherical image at the centre of the subplot using the point cloud data from all scans per subplot. The point cloud was first cropped to a 20 m diameter cylinder around the subplot centre using PDAL. Points below 1.3 m and within a 50 cm sphere around the subplot centre at 1.3 m height were discarded, to prevent the simulated hemispherical image being occluded by understorey vegetation. POV-Ray was used to simulate the hemispherical image using ray-tracing \citep{Povray2004}. Filled voxels were represented in POV-Ray as non-reflective black cubes filling the 5 cm\textsuperscript{3} voxel volume, with a white uniform sky box and no light source. POV-Ray produced an image with identical qualities to that of the real hemispherical photograph, using a fisheye lens with an equisolid projection and a view angle of 180\textdegree, located at the subplot centre at 1.3 m above the ground, with the top of the camera facing magnetic north and the camera facing directly to zenith, producing a circular image of 4016x4016 pixels.
 
-Hemiphot \citep{HemiPhot} was used to estimate closure from both the hemispherical photographs and the TLS POV-Ray simulation. Hemiphot calculates canopy closure in 90 evenly sized concentric rings. To obtain the total closure of a circular image:
+Hemiphot \citep{HemiPhot} was used to estimate closure from both the hemispherical photographs and the TLS POV-Ray simulation. Images were cropped to a circle of 60\textdegree{} zenith angle. It can be supposed that below 60\textdegree{}, under most woodland canopies, variation in tree canopy density does little to affect sunlight penetration, due to the greater depth of canopy at these angles \citep{Jupp2008}. Hemiphot calculates canopy closure in 90 evenly sized concentric rings. To obtain the total closure of a circular image:
 
 \begin{equation}
 	C_{\alpha{}} = 1 - G_{\text{tot}} = \sum_{\alpha{} = 0.5}^{\alpha{} = 89.5}(G_{\alpha{}} A_{\alpha{}} / A_{\text{tot}})
@@ -253,7 +253,7 @@ Canopy closure estimates from the TLS were validated using estimates from hemisp
 		\caption{}
 		\label{hemi_tls}
 	\end{subfigure}
-	\caption{Comparison of hemispherical images for a subplot in Bicuar National Park, Angola. (a) A hemispherical photograph, and (b) a multi-scan point cloud modelled as cubic voxels with POV-Ray. The hemispherical photograph (left) shows some blooming, especially in the tree on the bottom right of the image, where light is seen `bleeding' through the darker canopy material, causing an under-estimation in canopy closure.}
+	\caption{Comparison of hemispherical images for a subplot in Bicuar National Park, Angola. (a) A hemispherical photograph, and (b) a multi-scan point cloud modelled as cubic voxels with POV-Ray. The hemispherical photograph (left) shows some blooming, especially in the tree on the bottom right of the image, where light is seen `bleeding' through the darker canopy material, causing an under-estimation in canopy closure. Note also that while there are minor variations in image height between TLS and hemispherical photos, this does not affect canopy closure estimates, as images were first cropped to 60\textdegree{}.}
 	\label{hemi_tls_ex}
 \end{figure}
 
@@ -317,13 +317,13 @@ Where $k$ is the number of nearest neighbours considered for each reference tree
 		\caption{}
 		\label{mingling_nmingl}
 	\end{subfigure}
-	\caption{The behaviour of $M_{i}$ with increasing number of species (a), and increasing spatial mixing of species (b). The left panel was generated by randomly assigning different numbers of species, in equal proportions, to an evenly spaced grid of individuals. \mispreps{} replicates were conducted for each number of species. The right panel was generated by randomly swapping pairs of individuals in a plot with \minsp{} species arranged in mono-specific square blocks in an evenly spaced grid. Each line shows a single replicate, where individuals were swapped in an additive fashion, with \minreps{} total.} 
+	\caption{The behaviour of the spatial mingling index ($M_{i}$) with increasing number of species (a), and increasing spatial mixing of species (b). The left panel was generated by randomly assigning different numbers of species, in equal proportions, to an evenly spaced grid of individuals. \mispreps{} replicates were conducted for each number of species. The right panel was generated by randomly swapping pairs of individuals in a plot with \minsp{} species arranged in mono-specific square blocks in an evenly spaced grid. Each line shows a single replicate, where individuals were swapped in an additive fashion, with \minreps{} total.} 
 	\label{mingling_both}
 \end{figure}
 
-\subsection{Spatial clustering of stems}
+\subsection{Spatial distribution of stems}
 
-The winkelmass ($W$) was calculated to estimate the degree of spatial uniformity in stem spatial distribution. Here, $W$ was calculated at the plot level as the mean of $W_{i}$) according to \citet{Gadow2002}: 
+The uniform angle index (winkelmass, $W$) was calculated to estimate the degree of spatial regularity in stem spatial distribution. Here, $W$ was calculated at the plot level as the mean of $W_{i}$) according to \citet{Gadow2002}: 
 
 \begin{align}
 \begin{split}
@@ -336,28 +336,30 @@ The winkelmass ($W$) was calculated to estimate the degree of spatial uniformity
 \end{split}
 \end{align}
 
-Where $k$ is the number of neighbours considered, here using the conventional value of $k = 4$, $\alpha_{j}$ is the angle between consecutive neighbours and $\alpha_{0}$ is the critical angle, where $\alpha_{0} = 360 / k$. \autoref{winkelmass} demonstrates how the value of $W_{i}$ varies according to spatial distribution of neighbours. The value of the winkelmass increases with increasing spatial clumping (decreasing spatial regularity) of individuals (\autoref{wi_diagram}), and in a plot with random tree distribution will increase as more neighbours are considered (\autoref{wi_k}).
+Where $k$ is the number of neighbours considered, $\alpha_{j}$ is the angle between consecutive neighbours and $\alpha_{0}$ is the critical angle, where $\alpha_{0} = 72$\textdegree{} \citep{Hui2002}. \autoref{winkelmass} demonstrates how the value of $W_{i}$ varies according to spatial distribution of neighbours. The value of the uniform angle index increases with increasing spatial clumping (decreasing spatial regularity) of individuals (\autoref{wi_diagram}), and in a plot with random tree distribution will increase as more neighbours are considered (\autoref{wi_k}). 
 
 \begin{figure}
 \centering
 	\includegraphics[width=\linewidth]{winkelmass}
-	\caption{Possible values of $W_{i}$ at a sample point $i$, denoted by a cross. Neighbours are represented as circles numbered sequentially from 1 to 4, where $k = 4$. The angles of arrows in each example are given below, along with the winkelmass for that example.}
+	\caption{Possible values of $W_{i}$ at a sample point $i$, denoted by a cross. Neighbours are represented as circles numbered sequentially from 1 to 4, where $k = 4$. The angles of arrows in each example are given below, along with the uniform angle index for that example.}
 	\label{winkelmass}
 \end{figure}
 
 \begin{figure}
 \centering
 	\includegraphics[width=\linewidth]{wi_diagram}
-	\caption{Variation in winkelmass with increasing spatial irregularity of individuals. The top panel shows variation of winkelmass in \wireps{} plots as individuals are sequentially moved to a random location within the plot. Red dotted lines correspond to the panels below which show the spatial distribution of individuals after a given number of random individual movements.}
+	\caption{Variation in uniorm angle index with increasing spatial irregularity of individuals. The top panel shows variation of uniform angle index in \wireps{} plots as individuals are sequentially moved to a random location within the plot. Red dotted lines correspond to the panels below which show the spatial distribution of individuals after a given number of random individual movements.}
 	\label{wi_diagram}
 \end{figure}
 
 \begin{figure}
 \centering
 	\includegraphics[width=\linewidth]{wi_k}
-	\caption{Variation in winkelmass with increasing number of neighbours $k$ considered in the calculation. \wikn{} replicate plots were used, each with \wiki{} individuals randomly distributed in space.}
+	\caption{Variation in uniform angle index with increasing number of neighbours $k$ considered in the calculation. \wikn{} replicate plots were used, each with \wiki{} individuals randomly distributed in space.}
 	\label{wi_k}
 \end{figure}
+
+In addition to spatial regularity, spatial clustering of stems is also an important aspect of stem spatial distribution. The coefficient of variation of nearest neighbour distances was used to estimate spatial clustering, \todo{MORE}
 
 \subsection{Subplot canopy crowding}
 
