@@ -43,7 +43,7 @@ subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean,
 
 # Create clean plots dataset
 plot_resp <- c("chm_mean", "chm_cov", "rc", "cover_mean")
-plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
+plot_pred <- c("shannon", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
 
 plot_summ_clean <- plot_summ[,c("seosaw_id", plot_pred, "man_clust")]
 names(plot_summ_clean)[1] <- "plot_id"
@@ -276,13 +276,13 @@ ccdir <- 0.06
 
 # Whole plot canopy models
 plot_mod_list <- list(
-  lm(cover_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(cover_mean ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
     data = plot_all_mod, na.action = "na.fail"),
-  lm(chm_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(chm_mean ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
     data = plot_all_mod, na.action = "na.fail"),
-  lm(chm_cov ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(chm_cov ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
     data = plot_all_mod, na.action = "na.fail"),
-  lm(rc ~ rich + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(rc ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
     data = plot_all_mod, na.action = "na.fail")
   )
 
@@ -344,7 +344,7 @@ plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   display = c("s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
   digits = c( NA,   NA,  NA,  NA,  NA,  NA,  NA,  1,   2,   NA))
 
-names(plot_sig_dredge_tab) <- c("Response", "Richness", "Tree density", "CoV basal area", "Mingling", "Winkelmass", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
+names(plot_sig_dredge_tab) <- c("Response", "Shannon", "Tree density", "CoV basal area", "Mingling", "Winkelmass", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
 
 fileConn <- file("../out/canopy_rough_dredge_best.tex")
 writeLines(print(plot_sig_dredge_tab, 
@@ -378,13 +378,13 @@ plot_mod_text <- function(x) {
     pFormat(x$p.value, digits = 2))
 }
 
-rich_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+shannon_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "shannon" & 
   plot_mod_pred$resp == "chm_mean",])
 
-rich_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+shannon_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "shannon" & 
   plot_mod_pred$resp == "cover_mean",])
 
-rich_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+shannon_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "shannon" & 
   plot_mod_pred$resp == "chm_cov",])
 
 tree_dens_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_dens" & 
@@ -426,9 +426,9 @@ write(
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "layer_div"] * 100, digits = 0), "bestLayerDivRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "auc_canopy"] * 100, digits = 0), "bestDensRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestUnifRsqS"),
-    commandOutput(rich_height_p, "richHeightP"),
-    commandOutput(rich_cover_p, "richCoverP"),
-    commandOutput(rich_rough_p, "richRoughP"),
+    commandOutput(shannon_height_p, "shannonHeightP"),
+    commandOutput(shannon_cover_p, "shannonCoverP"),
+    commandOutput(shannon_rough_p, "shannonRoughP"),
     commandOutput(tree_dens_rug_p, "treeDensRugP"),
     commandOutput(cov_ba_rough_p, "covBARoughP"),
     commandOutput(winkel_cover_p, "wiCoverP"),
