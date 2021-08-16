@@ -359,7 +359,21 @@ Where $k$ is the number of neighbours considered, $\alpha_{j}$ is the angle betw
 	\label{wi_k}
 \end{figure}
 
-In addition to spatial regularity, spatial clustering of stems is also an important aspect of stem spatial distribution. The coefficient of variation of nearest neighbour distances was used to estimate spatial clustering, \todo{MORE}
+In addition to spatial regularity, the spatial uniformity of stems is another important aspect of tree spatial distribution. While the uniform angle index effectively measures similarity to a grid-like distribution of individuals, it does not account for variation in the relative distance of stems from their neighbours over the plot area. Spatial uniformity is defined here by two criteria: equality of spacing among individuals within the plot, and even coverage of individuals across the plot \citep{Ong2012}. Departures from spatial uniformity indicate clustering of individuals. Voronoi tessellation is a method of partitioning an n-dimensional space into regions according to the closest individual (\autoref{voronoi_example}). Voronoi tessellation was conducted on stem location within each plot. The coefficient of variation of the area of Voronoi cells was then used as a measure of spatial clustering which is sensitive to both the criteria defining spatial uniformity, and is independent of tree density (\autoref{voronoi_diag}). As clustering increases, individuals within clusters will exhibit progressively smaller Voronoi cells, while individuals at the edges of clusters will exhibit progressively larger Voronoi cells, thus increasing the coefficient of variation of cell area.
+
+\begin{figure}
+\centering
+	\includegraphics[width=0.6\linewidth]{voronoi_example}
+	\caption{An example of a square plot with \wiki randomly located individuals, with polygons constructed by Voronoi tessellation.}
+	\label{voronoi_example}
+\end{figure}
+
+\begin{figure}
+\centering
+	\includegraphics[width=\linewidth]{voronoi_diag}
+	\caption{The coefficient of variation of Voronoi cell area with increasing spatial irregularity of individuals. The top panel shows variation in coefficient of variation of Voronoi cell area in \wireps{} plots as individuals are sequentially moved to a random location within the plot. Red dotted lines correspond to the panels below which show the spatial distribution of individuals after a given number of random individual movements. Voronoi cells in the bottom panels are shaded according to their area.}
+	\label{voronoi_diag}
+\end{figure}
 
 \subsection{Subplot canopy crowding}
 

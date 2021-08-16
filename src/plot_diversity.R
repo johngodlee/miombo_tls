@@ -3,6 +3,7 @@
 # 2021-04-14
 
 # Packages
+library(scico)
 library(dplyr)
 library(tidyr)
 library(vegan)
@@ -12,6 +13,7 @@ library(BIOMASS)
 library(ggrepel)
 library(labdsv)
 library(xtable)
+library(sf)
 library(spatstat)
 
 source("functions.R")
@@ -20,6 +22,7 @@ source("functions.R")
 stems_all <- read.csv("../dat/stems_all.csv")
 plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 plot_loc <- read.csv("../dat/plot_centre.csv")
+plot_corners <- read.csv("../dat/plot_corners.csv")
 
 # Basal area abundance matrix by genus
 stems_all$genus <- gsub("\\s.*", "", stems_all$species_name_clean)
@@ -141,7 +144,7 @@ ggplot(ripley_df) +
 
 # Calculate Winkelmass and spatial clustering
 dist_nn <- function(x, y, k = 4) {
-  dat_sf <- sf::st_as_sf(data.frame(x,y), coords = c("x", "y"))
+  dat_sf <- st_as_sf(data.frame(x,y), coords = c("x", "y"))
 
   dists <- suppressMessages(nngeo::st_nn(dat_sf, dat_sf, k = k+1, 
       progress = FALSE, returnDist = TRUE))
@@ -164,9 +167,52 @@ wi_summ <- wi %>%
     dist_mean = mean(dist),
     wi_mean = mean(wi))
 
+# Voronoi
+voronoi <- lapply(trees_split, function(i) { 
+  plot_id <- unique(i$plot_id)
+  i <- i[ !is.na(i$x_grid) & !is.na(i$y_grid) & !is.na(i$species_name_clean),]
+  i_sf <- st_as_sf(i, coords = c("x_grid", "y_grid")) 
+  i_sf_bbox <- st_as_sfc(st_bbox(i_sf))
+
+  # Voronoi tessellation polygons
+  i_voronoi <- st_voronoi(st_union(i_sf), i_sf_bbox) %>%
+    st_cast() %>%
+    st_make_valid() %>%
+    st_intersection(., i_sf_bbox) %>%
+    st_sf() %>%
+    mutate(poly_id = row_number())
+
+  # area of voronoi cell
+  cell_area <- sqrt(st_area(i_voronoi))
+
+  i_voronoi$cell_area <- cell_area 
+  i_voronoi$plot_id <- plot_id
+  return(i_voronoi)
+})
+
+voronoi_all <- do.call(rbind, voronoi)
+
+voronoi_summ <- voronoi_all %>%
+  group_by(plot_id) %>%
+  summarise(
+    cell_area_mean = mean(cell_area),
+    cell_area_sd = sd(cell_area)) %>%
+  mutate(cell_area_cov = cell_area_sd / cell_area_mean * 100) %>%
+  st_drop_geometry()
+
+pdf(file = "../img/voronoi_cell_area.pdf", width = 12, height = 12)
+ggplot() + 
+  geom_sf(data = voronoi_all, aes(fill = cell_area), colour = NA) +
+  geom_point(data = do.call(rbind, trees_split), aes(x = x_grid, y = y_grid), 
+    shape = 21, colour = "black", fill = "grey", stroke = 0.1, size = 0.5) +
+  scale_fill_scico(palette = "bamako") + 
+  facet_wrap(~plot_id) + 
+  theme_bw()
+dev.off()
+
 # Hegyi index
 hegyi_df <- do.call(rbind, lapply(trees_split, function(i) {
-  i <- i[ !is.na(i$x_grid) & !is.na(i$y_grid) & !is.na(i$species_name_clean),]
+i <- i[ !is.na(i$x_grid) & !is.na(i$y_grid) & !is.na(i$species_name_clean),]
   neighb <- nearNeighb(i$x_grid, i$y_grid, i$tree_id, radius = 10, zones = 12)
 
   out <- do.call(rbind, lapply(neighb, function(j) {
@@ -248,7 +294,8 @@ plot_summ <- stems_all_loc %>%
   left_join(., mi_summ, "plot_id") %>%
   left_join(., hegyi_summ, "plot_id") %>%
   left_join(., nmds_plots, "plot_id") %>%
-  left_join(., wi_summ, "plot_id") 
+  left_join(., wi_summ, "plot_id")  %>%
+  left_join(., voronoi_summ, "plot_id") 
 
 # Create table to describe clusters
 clust_summ <- plot_summ %>% 

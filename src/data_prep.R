@@ -286,32 +286,31 @@ stems_all <- bind_rows(tza_seosaw_stems_clean, ago_seosaw_stems_clean) %>%
   filter(alive == "A" | alive == "a" | is.na(alive)) %>%
   inner_join(., plot_id_lookup, c("plot_id_new" = "seosaw_id")) 
 
+# Generate plot polygons
+corners_fil$site <- if_else(grepl("ABG", corners_fil$plot_id), "AGO", "TZA")
+
+corners_split <- split(corners_fil, corners_fil$site)
+corners_split <- lapply(corners_split, function(x) { split(x, x$plot_id) })
+
+plot_polys <- do.call(rbind, lapply(corners_split, function(x) { 
+  do.call(rbind, lapply(x, function(y) {
+    st_as_sf(y, coords = c("lon", "lat")) %>%
+    st_set_crs(UTMProj4(ifelse(unique(y$site) == "AGO", "33S", "37S"))) %>%
+    st_transform(., 4326) %>%
+    summarise() %>%
+    st_convex_hull() %>%
+    st_make_valid() %>%
+    mutate(
+      plot_id = unique(y$plot_id),
+      site = unique(y$site))
+  }))
+}))
+
 # Get plot centres
-plot_centre <- corners_fil %>% 
+plot_centres <- plot_polys %>%
   group_by(plot_id) %>%
-  summarise(
-    lon = mean(lon, na.rm = TRUE),
-    lat = mean(lat, na.rm = TRUE)) %>%
-  mutate(site = if_else(grepl("ABG", plot_id), "AGO", "TZA"))
-
-stopifnot(nrow(plot_centre) == 22)
-
-plot_centre_split <- split(plot_centre, plot_centre$site)
-
-plot_centre_fix <- list()
-plot_centre_fix$AGO <- plot_centre_split$AGO %>%
-  st_as_sf(., coords = c("lon", "lat")) %>%
-  st_set_crs(UTMProj4("33S")) %>%
-  st_transform(., 4326) %>%
-  cbind(., as.data.frame(st_coordinates(.)))
-
-plot_centre_fix$TZA <- plot_centre_split$TZA %>%
-  st_as_sf(., coords = c("lon", "lat")) %>%
-  st_set_crs(UTMProj4("37S")) %>%
-  st_transform(., 4326) %>%
-  cbind(., as.data.frame(st_coordinates(.)))
-
-plot_centre_wgs <- do.call(rbind, plot_centre_fix) %>% 
+  st_centroid() %>%
+  cbind(., st_coordinates(.)) %>%
   st_drop_geometry()
 
 # Final checks
@@ -319,6 +318,8 @@ stopifnot(all(plot_id_lookup$plot_id %in% stems_all$plot_id))
 stopifnot(all(plot_id_lookup$seosaw_id %in% subplot_trees$plot_id))
 stopifnot(all(plot_id_lookup$seosaw_id %in% dpm_merge$plot_id))
 stopifnot(all(plot_id_lookup$seosaw_id %in% hemi_photos_merge$plot_id))
+stopifnot(all(plot_id_lookup$seosaw_id %in% plot_centres$plot_id))
+stopifnot(all(plot_id_lookup$seosaw_id %in% plot_polys$plot_id))
 
 # Write files
 write.csv(stems_all, "../dat/stems_all.csv", row.names = FALSE)
@@ -331,4 +332,6 @@ write.csv(hemi_photos_merge, "../dat/hemi_photos.csv", row.names = FALSE)
 
 write.csv(corners_fil, "../dat/plot_corners.csv", row.names = FALSE)
 
-write.csv(plot_centre_wgs, "../dat/plot_centre.csv", row.names = FALSE)
+write.csv(plot_centres, "../dat/plot_centre.csv", row.names = FALSE)
+
+saveRDS(plot_polys, "../dat/plot_polys.rds")
