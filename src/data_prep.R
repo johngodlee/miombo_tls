@@ -6,6 +6,8 @@
 library(dplyr)
 library(sf)
 
+source("functions.R")
+
 # Import data
 
 ## Plot ID lookup 

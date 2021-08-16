@@ -62,10 +62,13 @@ profile_stat_list <- mclapply(file_list, function(x) {
 
     # Filter to above ground, then filter to above first local minima above 1.3 m
     troughs <- bin_tally$z_round[findPeaks(-bin_tally$n, m = 10)]
-    minima <- troughs[troughs > 1.3][1]
 
     bin_fil <- bin_tally %>%
-      filter(z_round > minima)
+      filter(z_round > 2)
+
+    pdf(file = paste0("~/Desktop/test/", plot_id, subplot, ".pdf"), height = 5, width = 5)
+    plot(bin_fil$z_round, bin_fil$n, type = "l")
+    dev.off()
 
     # loess smooth fit
     lo <- loess(bin_fil$n~bin_fil$z_round, span = 0.1)
@@ -75,7 +78,9 @@ profile_stat_list <- mclapply(file_list, function(x) {
 
     # Re-calculate peaks and troughs
     peaks50 <- bin_fil$z_round[findPeaks(bin_fil$n_loess, m = 25)]
+    n_maxima <- length(peaks50)
     troughs50 <- bin_fil$z_round[findPeaks(-bin_fil$n_loess, m = 25)]
+    n_minima <- length(troughs50)
       
     # Calculate effective number of layers
     layer_div <- enl(dat$z_round, z_width)
@@ -148,12 +153,14 @@ profile_stat_list <- mclapply(file_list, function(x) {
     cum_lm_se <- NA_real_
     weib_shape <- NA_real_
     weib_scale <- NA_real_
+    n_maxima <- NA_real_
+    n_minima <- NA_real_
   }
 
   # Create dataframe from stats
   stats <- data.frame(plot_id = plot_id_new, subplot, layer_div, auc_canopy,
     height_q95 = height_q[1], height_q99 = height_q[2], dens_peak_height, 
-    point_cov, shannon, cum_lm_resid, cum_lm_slope, cum_lm_se, weib_shape, weib_scale)
+    point_cov, shannon, cum_lm_resid, cum_lm_slope, cum_lm_se, weib_shape, weib_scale, n_maxima, n_minima)
 
   # Clean up large objects
   rm(dat)

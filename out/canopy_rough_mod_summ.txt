@@ -38,32 +38,32 @@ Number of Groups:
 Linear mixed-effects model fit by REML
   Data: subplot_all_mod 
    AIC  BIC logLik
-  3641 3662  -1813
+  3737 3759  -1862
 
 Random effects:
  Formula: ~1 | man_clust
         (Intercept)
-StdDev:        3336
+StdDev:       3.061
 
  Formula: ~1 | plot_id %in% man_clust
         (Intercept) Residual
-StdDev:        3413    13066
+StdDev:        8392    16968
 
 Fixed effects:  auc_canopy ~ hegyi + rich + ba_cov 
             Value Std.Error  DF t-value p-value
-(Intercept) 24303      2239 144  10.854  0.0000
-hegyi        6633      1346 144   4.926  0.0000
-rich          736      1259 144   0.585  0.5597
-ba_cov       1585      1140 144   1.390  0.1667
+(Intercept) 31086      2244 144  13.856  0.0000
+hegyi        6231      1792 144   3.478  0.0007
+rich         -324      1734 144  -0.187  0.8522
+ba_cov       2073      1505 144   1.377  0.1705
  Correlation: 
        (Intr) hegyi  rich  
-hegyi  -0.075              
-rich    0.009 -0.324       
-ba_cov  0.047 -0.173 -0.256
+hegyi  -0.093              
+rich   -0.029 -0.326       
+ba_cov  0.042 -0.194 -0.216
 
 Standardized Within-Group Residuals:
     Min      Q1     Med      Q3     Max 
--1.9637 -0.7236 -0.1490  0.3892  2.7561 
+-1.5380 -0.7005 -0.2305  0.4084  4.1940 
 
 Number of Observations: 169
 Number of Groups: 
@@ -73,69 +73,33 @@ Number of Groups:
 [[3]]
 Linear mixed-effects model fit by REML
   Data: subplot_all_mod 
-   AIC  BIC logLik
-  2939 2961  -1462
+       AIC   BIC logLik
+  -0.07537 21.67  7.038
 
 Random effects:
  Formula: ~1 | man_clust
         (Intercept)
-StdDev:      0.2282
+StdDev:   1.563e-05
 
  Formula: ~1 | plot_id %in% man_clust
         (Intercept) Residual
-StdDev:         456     1562
-
-Fixed effects:  cum_lm_resid ~ hegyi + rich + ba_cov 
-             Value Std.Error  DF t-value p-value
-(Intercept) 1690.1     157.2 144  10.749  0.0000
-hegyi        349.7     160.4 144   2.180  0.0309
-rich         141.5     150.1 144   0.943  0.3474
-ba_cov       -19.0     136.0 144  -0.139  0.8894
- Correlation: 
-       (Intr) hegyi  rich  
-hegyi  -0.122              
-rich   -0.042 -0.315       
-ba_cov  0.053 -0.174 -0.266
-
-Standardized Within-Group Residuals:
-    Min      Q1     Med      Q3     Max 
--1.3828 -0.6367 -0.2942  0.3688  5.6812 
-
-Number of Observations: 169
-Number of Groups: 
-             man_clust plot_id %in% man_clust 
-                     4                     22 
-
-[[4]]
-Linear mixed-effects model fit by REML
-  Data: subplot_all_mod 
-     AIC   BIC logLik
-  -44.34 -22.6  29.17
-
-Random effects:
- Formula: ~1 | man_clust
-        (Intercept)
-StdDev:   1.956e-05
-
- Formula: ~1 | plot_id %in% man_clust
-        (Intercept) Residual
-StdDev:      0.1081   0.1756
+StdDev:      0.1167   0.2019
 
 Fixed effects:  cover ~ hegyi + rich + ba_cov 
               Value Std.Error  DF t-value p-value
-(Intercept)  0.4972   0.02700 144  18.418  0.0000
-hegyi        0.2382   0.01874 144  12.715  0.0000
-rich        -0.0097   0.01839 144  -0.527  0.5993
-ba_cov       0.0025   0.01569 144   0.161  0.8720
+(Intercept)  0.4779   0.02966 144  16.114  0.0000
+hegyi        0.2582   0.02149 144  12.018  0.0000
+rich        -0.0215   0.02100 144  -1.024  0.3075
+ba_cov       0.0092   0.01801 144   0.511  0.6104
  Correlation: 
        (Intr) hegyi  rich  
-hegyi  -0.080              
-rich   -0.024 -0.330       
-ba_cov  0.037 -0.202 -0.195
+hegyi  -0.084              
+rich   -0.025 -0.329       
+ba_cov  0.039 -0.200 -0.201
 
 Standardized Within-Group Residuals:
      Min       Q1      Med       Q3      Max 
--2.27232 -0.67130 -0.04797  0.64495  3.02749 
+-2.20050 -0.66450 -0.05971  0.69673  3.09419 
 
 Number of Observations: 169
 Number of Groups: 

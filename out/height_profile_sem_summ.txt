@@ -21,9 +21,9 @@ Global goodness-of-fit:
 Coefficients:
 
   Response Predictor Estimate Std.Error  DF Crit.Value P.Value Std.Estimate    
-     cover    ba_cov  -0.0070    0.0165 119    -0.4224  0.6735      -0.0250    
-     cover      rich  -0.0105    0.0188 119    -0.5600  0.5765      -0.0387    
-     cover     hegyi   0.2424    0.0200 119    12.1333  0.0000       0.7218 ***
+     cover    ba_cov  -0.0022    0.0190 119    -0.1164  0.9075      -0.0072    
+     cover      rich  -0.0209    0.0217 119    -0.9654  0.3363      -0.0693    
+     cover     hegyi   0.2635    0.0231 119    11.4174  0.0000       0.7077 ***
     ba_cov      rich   0.3346    0.0841 120     3.9775  0.0001       0.3416 ***
     ba_cov     hegyi   0.1565    0.1036 120     1.5111  0.1334       0.1298    
 
@@ -33,5 +33,5 @@ Coefficients:
 Individual R-squared:
 
   Response method Marginal Conditional
-     cover   none     0.50        0.64
+     cover   none     0.47        0.61
     ba_cov   none     0.17        0.17

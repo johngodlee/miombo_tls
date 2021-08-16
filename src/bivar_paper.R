@@ -7,6 +7,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(patchwork)
+library(broom)
 library(xtable)
 
 source("functions.R")
@@ -23,12 +24,12 @@ subplot_trees_summ_clean <- subplot_trees_summ[,c("plot_id", "subplot", "hegyi",
   "rich", "ba_cov")]
 
 profile_stats_clean <- profile_stats[,c("plot_id", "subplot", "layer_div", 
-  "auc_canopy", "cum_lm_resid")]
+  "auc_canopy", "n_maxima")]
 
 gap_frac_clean <- gap_frac[gap_frac$method == "tls",
   c("plot_id", "subplot", "cover")]
 
-plot_summ_clean <- plot_summ[,c("seosaw_id", "shannon", "ba_cov", "mi_mean", 
+plot_summ_clean <- plot_summ[,c("seosaw_id", "rich", "ba_cov", "mi_mean", 
   "wi_mean", "man_clust", "tree_dens")]
 names(plot_summ_clean)[1] <- "plot_id"
 
@@ -54,7 +55,7 @@ subplot_all$man_clust <- plot_all$man_clust[match(subplot_all$plot_id, plot_all$
 
 # Gather subplot datasets
 subplot_pred_names <- c("rich", "hegyi", "ba_cov")
-subplot_resp_names <- c("layer_div", "auc_canopy", "cover", "cum_lm_resid")
+subplot_resp_names <- c("layer_div", "auc_canopy", "cover")
 
 subplot_pred <- subplot_all %>%
   dplyr::select(man_clust, plot_id, subplot, all_of(subplot_pred_names)) %>%
@@ -73,7 +74,7 @@ subplot_bivar$key_pred_pretty <- names(pred_names)[
   match(subplot_bivar$key_pred, pred_names)]
 
 # Gather plot datasets
-plot_pred_names <- c("Shannon", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
+plot_pred_names <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
 plot_resp_names <- c("chm_mean", "chm_cov", "rc", "cover_mean")
 
 plot_pred <- plot_all %>%
@@ -297,10 +298,10 @@ bacov_rugp <- bivar_lm_text(bivar_lm_summ[
   bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
   bivar_lm_summ$sc == "plot",])
 
-bacov_unif <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "cum_lm_resid" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "subplot",])
+cor_format <- function(x) {
+  paste0("$r$(", x$parameter, ") = ", format(x$estimate, digits = 2), ", ", 
+    pFormat(x$p.value, digits = 2))
+}
 
 write(
   c(
@@ -313,8 +314,7 @@ write(
     commandOutput(winkel_coverp, "winkelCoverP"),
     commandOutput(bacov_coverp, "baCovCoverP"),
     commandOutput(bacov_roughp, "baCovRoughP"),
-    commandOutput(bacov_rugp, "baCovRugosityP"),
-    commandOutput(bacov_unif, "baCovUnif")
+    commandOutput(bacov_rugp, "baCovRugosityP")
     ),
   file = "../out/bivar_paper_var.tex")
 

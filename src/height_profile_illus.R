@@ -47,12 +47,9 @@ bin_tally <- dat %>%
     vol_frac = vol / layer_vol) %>%
   as.data.frame()
 
-# Filter to above ground, find first local minima above 1.3 m
-troughs <- bin_tally$z_round[findPeaks(-bin_tally$n, m = 10)]
-minima <- troughs[troughs > 1.3][1]
-
+# Filter to above ground, above 1.3 m
 bin_fil <- bin_tally %>%
-  filter(z_round > minima)
+  filter(z_round > 2)
 
 # Smooth
 lo <- loess(bin_fil$n~bin_fil$z_round, span = 0.1)
@@ -113,8 +110,8 @@ cum_lm_se <- cum_lm_summ$coefficients[2,2]
 raw_plot <- ggplot() + 
   geom_line(data = bin_tally, aes(x = z_round, y = vol / 1000000)) + 
   geom_line(data = bin_fil, aes(x = z_round, y = vol / 1000000), colour = "blue") + 
-  geom_vline(xintercept = troughs, colour = "red") +
-  geom_vline(xintercept = minima, colour = "green") +
+#  geom_vline(xintercept = troughs, colour = "red") +
+#  geom_vline(xintercept = minima, colour = "green") +
   theme_bw() + 
   labs(x = "Height (m)", y = expression("Filled"~"volume"~(m^3)))
 
@@ -130,7 +127,7 @@ canopy_plot <- ggplot() +
     fill = "darkgrey") + 
   geom_line(data = bin_fil, aes(x = z_round, y = vol / 1000000), colour = "black") + 
   geom_line(data = bin_fil, aes(x = z_round, y = vol_loess / 1000000), colour = "green") + 
-  geom_vline(xintercept = troughs50[1], colour = "blue") +
+#  geom_vline(xintercept = troughs50[1], colour = "blue") +
 #  geom_vline(xintercept = peaks50, colour = "red") +
 #  geom_vline(xintercept = dens_peak_height, 
 #    size = 1.5, colour = "orange", linetype = 2) + 

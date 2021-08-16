@@ -26,15 +26,15 @@ gap_frac <- read.csv("../dat/gap_frac.csv")
 canopy <- read.csv("../dat/plot_canopy_stats.csv")
 
 # Create clean subplot dataset
-subplot_resp <- c("layer_div", "auc_canopy", "cum_lm_resid", "cover")
+subplot_resp <- c("layer_div", "auc_canopy", "cover")
 subplot_pred <- c("hegyi", "rich", "ba_cov")
 
 subplot_trees_summ_clean <- subplot_trees_summ[,c("plot_id", "subplot", subplot_pred)]
 
-profile_stats_clean <- profile_stats[,c("plot_id", "subplot", subplot_resp[1:3])]
+profile_stats_clean <- profile_stats[,c("plot_id", "subplot", subplot_resp[1:2])]
 
 gap_frac_clean <- gap_frac[gap_frac$method == "tls",
-  c("plot_id", "subplot", subplot_resp[4])]
+  c("plot_id", "subplot", subplot_resp[3])]
 
 subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean, 
   by = c("plot_id", "subplot")) %>%
@@ -43,7 +43,7 @@ subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean,
 
 # Create clean plots dataset
 plot_resp <- c("chm_mean", "chm_cov", "rc", "cover_mean")
-plot_pred <- c("shannon", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
+plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean", "cell_area_cov")
 
 plot_summ_clean <- plot_summ[,c("seosaw_id", plot_pred, "man_clust")]
 names(plot_summ_clean)[1] <- "plot_id"
@@ -89,7 +89,6 @@ mod_flist <- paste0(subplot_resp, " ~ ", other_vars)
 mod_list <- list(
   lme(layer_div ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(auc_canopy ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(cum_lm_resid ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(cover ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML")
 )
 
@@ -97,7 +96,6 @@ mod_list <- list(
 null_mod_list <- list(
   lme(layer_div ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(auc_canopy ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(cum_lm_resid ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
   lme(cover ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML")
 )
 
@@ -276,13 +274,13 @@ ccdir <- 0.06
 
 # Whole plot canopy models
 plot_mod_list <- list(
-  lm(cover_mean ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(cover_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
     data = plot_all_mod, na.action = "na.fail"),
-  lm(chm_mean ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(chm_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
     data = plot_all_mod, na.action = "na.fail"),
-  lm(chm_cov ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(chm_cov ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
     data = plot_all_mod, na.action = "na.fail"),
-  lm(rc ~ shannon + tree_dens + ba_cov + mi_mean + wi_mean, 
+  lm(rc ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
     data = plot_all_mod, na.action = "na.fail")
   )
 
@@ -340,11 +338,11 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   label = "canopy_sig_vars_dredge",
   caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model.",
-  align = c("c", "l", "c", "c", "c", "c", "c", "c", "c", "S[table-format=<1.2]"),
-  display = c("s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
-  digits = c( NA,   NA,  NA,  NA,  NA,  NA,  NA,  1,   2,   NA))
+  align = c("c", "l", "c", "c", "c", "c", "c", "c", "c", "c", "S[table-format=<1.2]"),
+  display = c("s", "s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
+  digits = c( NA,   NA,  NA,  NA, NA, NA,  NA,  NA,  1,   2,   NA))
 
-names(plot_sig_dredge_tab) <- c("Response", "Shannon", "Tree density", "CoV basal area", "Mingling", "Winkelmass", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
+names(plot_sig_dredge_tab) <- c("Response", "Richness", "Tree density", "CoV basal area", "Mingling", "Winkelmass", "CoV Voronoi", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
 
 fileConn <- file("../out/canopy_rough_dredge_best.tex")
 writeLines(print(plot_sig_dredge_tab, 
@@ -378,13 +376,13 @@ plot_mod_text <- function(x) {
     pFormat(x$p.value, digits = 2))
 }
 
-shannon_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "shannon" & 
+rich_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
   plot_mod_pred$resp == "chm_mean",])
 
-shannon_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "shannon" & 
+rich_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
   plot_mod_pred$resp == "cover_mean",])
 
-shannon_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "shannon" & 
+rich_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
   plot_mod_pred$resp == "chm_cov",])
 
 tree_dens_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_dens" & 
@@ -425,10 +423,9 @@ write(
   c(
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "layer_div"] * 100, digits = 0), "bestLayerDivRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "auc_canopy"] * 100, digits = 0), "bestDensRsqS"),
-    commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestUnifRsqS"),
-    commandOutput(shannon_height_p, "shannonHeightP"),
-    commandOutput(shannon_cover_p, "shannonCoverP"),
-    commandOutput(shannon_rough_p, "shannonRoughP"),
+    commandOutput(rich_height_p, "richHeightP"),
+    commandOutput(rich_cover_p, "richCoverP"),
+    commandOutput(rich_rough_p, "richRoughP"),
     commandOutput(tree_dens_rug_p, "treeDensRugP"),
     commandOutput(cov_ba_rough_p, "covBARoughP"),
     commandOutput(winkel_cover_p, "wiCoverP"),

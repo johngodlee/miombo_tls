@@ -1,4 +1,3 @@
-> summary(cover_mod)
 Linear mixed-effects model fit by REML
   Data: cover_spread 
      AIC    BIC logLik
@@ -27,4 +26,3 @@ Standardized Within-Group Residuals:
 
 Number of Observations: 197
 Number of Groups: 22 
-> sink()

@@ -91,6 +91,8 @@ pred_names <- c(
   "Tree density" = "tree_dens_std",
   "Mingling" = "mi_mean",
   "Mingling" = "mi_mean_std",
+  "Voronoi CoV" = "cell_area_cov",
+  "Voronoi CoV" = "cell_area_cov_std",
   "Winkelmass" = "wi_mean",
   "Winkelmass" = "wi_mean_std",
   "Richness" = "rich",
