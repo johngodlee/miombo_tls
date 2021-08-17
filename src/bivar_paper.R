@@ -33,7 +33,7 @@ plot_summ_clean <- plot_summ[,c("seosaw_id", "rich", "ba_cov", "mi_mean",
   "wi_mean", "man_clust", "tree_dens")]
 names(plot_summ_clean)[1] <- "plot_id"
 
-canopy_clean <- canopy[,c("plot_id_new", "chm_mean", "chm_cov", "rc")]
+canopy_clean <- canopy[,c("plot_id_new", "chm_mean", "chm_cov", "rc", "fol_dens")]
 names(canopy_clean)[1] <- "plot_id"
 
 # Join datasets
@@ -75,7 +75,7 @@ subplot_bivar$key_pred_pretty <- names(pred_names)[
 
 # Gather plot datasets
 plot_pred_names <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
-plot_resp_names <- c("chm_mean", "chm_cov", "rc", "cover_mean")
+plot_resp_names <- c("chm_mean", "chm_cov", "rc", "cover_mean", "fol_dens")
 
 plot_pred <- plot_all %>%
   dplyr::select(man_clust, plot_id, all_of(plot_pred_names)) %>%

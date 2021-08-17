@@ -66,15 +66,27 @@ Within each 1 ha plot, each woody stem $\ge{}$5 cm stem diameter was identified 
 
 \subsubsection{TLS processing}
 
-Point clouds from scans in each subplot were registered and unified using Leica Cyclone (version 9.1), using five reflective cross targets visible to all scans as anchor points. Point clouds were voxelised to cubic voxels of different sizes depending on the application of the data. Subplot height profile estimation and gap fraction was conducted using 5 cm\textsuperscript{3} voxels, while whole plot canopy rugosity was estimated using 50 cm\textsuperscript{3} voxels. Voxels were classified as `filled' if they intersected one or more points. Variation in voxel size reflects the spatial scale of each analysis, and is bounded by the beam divergence of the scanner over longer distances \citep{Cifuentes2014}. Choosing voxels that are too small can result in pock-marked representations of surfaces that are especially problematic when calculating larger scale canopy complexity metrics such as canopy top roughness, while voxels that are too large can result in an over-estimation of plant volume when estimating canopy foliage density at the subplot scale \citep{Seidel2012, Cifuentes2014}. The noise reduction algorithm from \citet{Rusu2008} was used to discard points based on mean nearest neighbour distances, with a mean number of neighbours of eight, and a standard deviation threshold of 1.96. This effectively removed `ghost points' produced by partial beam interceptions and also removed many erroneous returns caused by airborne dust particles, which was common at these study sites. Raw points clouds for each subplot had a mean of \textasciitilde{}\rawpt{} points, \textasciitilde{}\voxelpt{} points after voxelisation to 5 cm\textsuperscript{3}, and \textasciitilde{}\subpt{} points after noise reduction. Ground points were classified using the Progressive Morphological Filter (PMF) from \citet{Zhang2003}. Point cloud height was reclassified based on this revised ground layer by measuring the vertical distance between the nearest ground point and each point. Points below 1.3 m height above ground were discarded for calculations of foliage density, canopy cover, and foliage complexity, as points below this threshold where often occupied by long grass.
+Point clouds from scans in each subplot were registered and unified using Leica Cyclone (version 9.1), using five reflective cross targets visible to all scans as anchor points. Point clouds were voxelised to cubic voxels of different sizes depending on the application of the data. Subplot height profile estimation and gap fraction was conducted using 5 cm\textsuperscript{3} voxels, while whole plot canopy rugosity was estimated using 50 cm\textsuperscript{3} voxels. Voxels were classified as `filled' if they intersected one or more points. Variation in voxel size reflects the spatial scale of each analysis, and is bounded by the beam divergence of the scanner over longer distances \citep{Cifuentes2014}. Choosing voxels that are too small can result in pock-marked representations of surfaces that are especially problematic when calculating larger scale canopy complexity metrics such as canopy top roughness, while voxels that are too large can result in an over-estimation of plant volume when estimating canopy foliage density at the subplot scale \citep{Seidel2012, Cifuentes2014}. 
 
-Ray-tracing was used to estimate canopy closure in each subplot, i.e. the proportion of the sky hemisphere occluded by plant material at the subplot centre from multiple TLS scans. Hemispherical images were created using the POV-Ray ray-tracing software \citep{Povray2004}. Filled voxels were represented as black cubes filling the voxel volume, with a white sky box and no light source. A `camera' with a 180\textdegree{} fisheye lens was placed at the subplot centre within POV-Ray, at a height of 1.8 m pointing directly upwards. The images produced by POV-Ray were analysed using Hemiphot \citep{HemiPhot} to estimate canopy closure. Canopy closure estimates from the TLS were validated with hemispherical photographs taken at the same location and processed using the same method in Hemiphot, and compared using Pearson's correlation (\hemiCor{}). The Effective Number of Layers (ENL) measures vertical variation in subplot foliage density, and was calculated as the exponential Shannon index (i.e. the Hill number of order $q=1$) of foliage density among 50 cm layers within each subplot (sensu \citealt{Ehbrecht2016}):
+The noise reduction algorithm from \citet{Rusu2008} was used to discard points based on mean nearest neighbour distances, with a mean number of neighbours of eight, and a standard deviation threshold of 1.96. This effectively removed `ghost points' produced by partial beam interceptions and also removed many erroneous returns caused by airborne dust particles, which was common at these study sites. Raw points clouds for each subplot had a mean of \textasciitilde{}\rawpt{} points, \textasciitilde{}\voxelpt{} points after voxelisation to 5 cm\textsuperscript{3}, and \textasciitilde{}\subpt{} points after noise reduction. 
+
+Ground points were classified using the Progressive Morphological Filter (PMF) from \citet{Zhang2003}. Point cloud height was reclassified based on this revised ground layer by measuring the vertical distance between the nearest ground point and each point. Points below 1.3 m height above ground were discarded for calculations of foliage density, canopy cover, and canopy complexity, as points below this threshold where often occupied by long grass.
+
+\subsubsection{Canopy complexity metrics}
+
+Ray-tracing was used to estimate canopy closure in each subplot, i.e. the proportion of the sky hemisphere occluded by plant material at the subplot centre from multiple TLS scans. Hemispherical images were created using the POV-Ray ray-tracing software \citep{Povray2004}. Filled voxels were represented as black cubes filling the voxel volume, with a white sky box and no light source. A `camera' with a 180\textdegree{} fisheye lens was placed at the subplot centre within POV-Ray, at a height of 1.8 m pointing directly upwards. The images produced by POV-Ray were analysed using Hemiphot \citep{HemiPhot} to estimate canopy closure. Canopy closure estimates from the TLS were validated with hemispherical photographs taken at the same location and processed using the same method in Hemiphot, and compared using Pearson's correlation (\hemiCor{}). A plot level estimate of canopy closure was calculated as the mean of subplot canopy closure measurements.
+
+Effective Number of Layers (ENL) was calculated according to \citet{Ehbrecht2016} to measure vertical variation in subplot foliage density. ENL is calculated as the exponential Shannon index (i.e. the Hill number of order $q=1$) of foliage density among 50 cm vertical layers within each subplot:
 
 \begin{equation}
-	\text{ENL} = 1D = \exp\Big(-\sum_{i=1}^{N_{top}} p_{i} \times \ln p_{i} \Big)
+	\text{ENL} = \exp\Big(-\sum_{i=1}^{N_{top}} p_{i} \times \ln p_{i} \Big)
 \end{equation}
 
-Where $p_{i}$ is the proportion of filled voxels in the 50 cm layer $i$. Total foliage density was calculated as the area under the curve of the foliage height profile. Plot level canopy surface models were extracted using the 99th percentile of canopy height in 10 cm\textsuperscript{2} columns, followed by pit-filling according to \citet{Khosravipour2014} at 50 cm\textsuperscript{2} resolution. Whole plot canopy complexity was measured by two metrics. Canopy top roughness was measured as the standard deviation of canopy height across the plot. Canopy rugosity was measured according to \citet{Hardiman2011}, as the standard deviation of vertical and horizontal foliage density within 0.5 m\textsuperscript{3} cubic bins. Additionally, plot level canopy closure was calculated as the mean of canopy closure values from each subplot.
+Where $p_{i}$ is the proportion of filled voxels in the 50 cm layer $i$, and $N$ is the total number of layers. 
+
+Total foliage density was calculated within each subplot as the area under the curve of the foliage height profile. 
+
+Plot level canopy surface models were extracted using the 99th percentile of canopy height in 10 cm\textsuperscript{2} columns. A pit-filling algorithm provided by \citet{Khosravipour2014} was applied at 50 cm\textsuperscript{2} resolution to reduce the effects of incomplete canopy penetration in dense canopies. Whole plot canopy complexity was measured by two metrics. Canopy top roughness was measured as the coefficient of variation of canopy height across the plot. Canopy rugosity was measured according to \citet{Hardiman2011}, as the coefficient of variation of vertical and horizontal foliage density within 0.5 m\textsuperscript{3} cubic bins. 
 
 \subsubsection{Stand structure}
 
@@ -136,7 +148,7 @@ Linear mixed effects models showed that species richness of the subplot neighbou
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{height_profile_mod_rich_slopes_sites}
-	\caption{Standardized fixed effect slopes for each model of a canopy complexity metric. Slope estimates where the interval ($\pm$1 standard error) does not overlap zero are considered to be significant effects, marked with asterisks. Points are coloured according to vegetation type.}
+	\caption{Standardised fixed effect slopes for each model of a canopy complexity metric. Slope estimates where the interval ($\pm$1 standard error) does not overlap zero are considered to be significant effects, marked with asterisks. Points are coloured according to vegetation type.}
 	\label{height_profile_mod_rich_slopes_sites}
 \end{figure}
 
@@ -152,7 +164,7 @@ Despite the weak effect sizes of species richness on canopy complexity at the pl
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{canopy_rough_slopes}
-	\caption{Standardized effect sizes for whole-plot canopy rugosity. Slope estimates where the interval ($\pm$1 standard error) does not overlap zero are considered to be significant effects, marked with asterisks.}
+	\caption{Standardised effect sizes for whole-plot canopy rugosity. Slope estimates where the interval ($\pm$1 standard error) does not overlap zero are considered to be significant effects, marked with asterisks.}
 	\label{canopy_rough_slopes}
 \end{figure}
 
@@ -177,7 +189,7 @@ Plot and subplot canopy complexity metrics were highly correlated in many cases,
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{plot_subplot_bivar}
-	\caption{Bivariate plots comparing canopy structural metrics at the plot (x axis) and subplot scale (y axis). Each point represents the mean values of a single plot. Points and linear model fits are coloured according to vegetation type. The black linear model combines all vegetation types. Error bars on points are the standard deviation of mean subplot metrics across the plot.}
+	\caption{Bivariate plots comparing canopy structural metrics at the plot (x axis) and subplot scale (y axis). Each point represents the mean values of a single plot. Points and linear model fits are coloured according to vegetation type. The black linear model combines all vegetation types. Error bars on points are the standard deviation of mean subplot metrics across the plot. Note that because plot level canopy closure is calculated as the mean of subplot canopy closure, a comparison of subplot and plot canopy closure is not made in this figure.}
 	\label{plot_subplot_bivar}
 \end{figure}
 

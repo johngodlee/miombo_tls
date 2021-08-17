@@ -42,13 +42,13 @@ subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean,
   mutate(plot_subplot = paste(plot_id, subplot, sep = "_"))
 
 # Create clean plots dataset
-plot_resp <- c("chm_mean", "chm_cov", "rc", "cover_mean")
+plot_resp <- c("chm_mean", "chm_cov", "rc", "fol_dens", "cover_mean")
 plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean", "cell_area_cov")
 
 plot_summ_clean <- plot_summ[,c("seosaw_id", plot_pred, "man_clust")]
 names(plot_summ_clean)[1] <- "plot_id"
 
-canopy_clean <- canopy[,c("plot_id_new", plot_resp[1:3])]
+canopy_clean <- canopy[,c("plot_id_new", plot_resp[1:4])]
 names(canopy_clean)[1] <- "plot_id"
 
 gap_frac_plot <- gap_frac_clean %>% 
@@ -274,6 +274,8 @@ ccdir <- 0.06
 
 # Whole plot canopy models
 plot_mod_list <- list(
+  lm(fol_dens ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
+    data = plot_all_mod, na.action = "na.fail"),
   lm(cover_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
     data = plot_all_mod, na.action = "na.fail"),
   lm(chm_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
@@ -285,6 +287,7 @@ plot_mod_list <- list(
   )
 
 plot_null_list <- list(
+  lm(fol_dens ~ 1, data = plot_all_mod),
   lm(cover_mean ~ 1, data = plot_all_mod),
   lm(chm_mean ~ 1, data = plot_all_mod),
   lm(chm_cov ~ 1, data = plot_all_mod),

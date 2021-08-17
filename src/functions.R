@@ -78,7 +78,8 @@ resp_names <- c(
   "Canopy roughness" = "chm_cov",
   "Canopy roughness" = "rough_mean",
   "Roughness SD" = "rough_sd",
-  "Canopy rugosity" = "rc")
+  "Canopy rugosity" = "rc",
+  "Foliage density" = "fol_dens")
 
 pred_names <- c(
   "Basal area" = "ba_sum",

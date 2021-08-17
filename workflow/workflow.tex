@@ -278,13 +278,13 @@ canopy surface model smoothing. The point cloud was then cropped to the plot bou
 	\label{P1_both}
 \end{figure}
 
-Mean canopy height across the plot and the coefficient of variation of canopy height were extracted from the canopy surface model for use in statistical analyses. The coefficient of variation of canopy height describes canopy structural diversity measured by the heterogeneity of the canopy surface. Other studies in closed canopy temperate and boreal forests have used metrics similar to the Topographic Roughness Index to measure canopy surface heterogeneity, by comparing canopy height to that of neighbouring pixels in the canopy height model \citep{Weligepolage2012,HerreroHuerta2020}. In this study however, the sparse nature of the tree canopies meant that these metrics were overly influenced by canopy density and the edges of individual tree canopies. Canopy rugosity ($R_{c}$) was also calculated to describe structural complexity across the entire canopy profile, rather than just the canopy surface, sensu \citet{Hardiman2011}. $R_{c}$ first calculates the standard deviation of foliage density in 50 cm\textsuperscript{2} columns across the plot ($\sigma{}G_{z}$), then calculates the standard deviation of those standard deviations: 
+Mean canopy height across the plot and the coefficient of variation of canopy height were extracted from the canopy surface model for use in statistical analyses. The coefficient of variation of canopy height describes canopy structural diversity measured by the heterogeneity of the canopy surface \citep{Parker2004}. Other studies in closed canopy temperate and boreal forests have used metrics similar to the Topographic Roughness Index to measure canopy surface heterogeneity, by comparing canopy height to that of neighbouring pixels in the canopy height model \citep{Weligepolage2012, HerreroHuerta2020}. In this study however, the sparse nature of the tree canopies meant that these metrics were overly influenced by canopy density and the edges of individual tree canopies. Canopy rugosity ($R_{c}$) was also calculated to describe structural complexity across the entire canopy profile, rather than just the canopy surface, sensu \citet{Hardiman2011}. $R_{c}$ first calculates the standard deviation of foliage density in 50 cm\textsuperscript{2} columns across the plot ($\sigma{}G_{z}$), then calculates the standard deviation of those standard deviations: 
 
 \begin{equation}
 	R_{c} = \sigma{}(\sigma{}G_{z})_{x}
 \end{equation}
 
-Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation. Finally, plot-level canopy closure was calculated as the mean of subplot TLS canopy closure estimates. 
+Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation. Finally, plot level canopy closure was calculated as the mean of subplot TLS canopy closure estimates, and plot level foliage density was calculated as the sum of filled 50 cm\textsuperscript{3} voxels above 1.3 m and below the 99th percentile of height.
 
 \section{Stand structure metrics}
 
@@ -323,6 +323,8 @@ Where $k$ is the number of nearest neighbours considered for each reference tree
 
 \subsection{Spatial distribution of stems}
 
+\subsubsection{Uniform angle index}
+
 The uniform angle index (winkelmass, $W$) was calculated to estimate the degree of spatial regularity in stem spatial distribution. Here, $W$ was calculated at the plot level as the mean of $W_{i}$) according to \citet{Gadow2002}: 
 
 \begin{align}
@@ -358,6 +360,8 @@ Where $k$ is the number of neighbours considered, $\alpha_{j}$ is the angle betw
 	\caption{Variation in uniform angle index with increasing number of neighbours $k$ considered in the calculation. \wikn{} replicate plots were used, each with \wiki{} individuals randomly distributed in space.}
 	\label{wi_k}
 \end{figure}
+
+\subsubsection{Voronoi tessellation}
 
 In addition to spatial regularity, the spatial uniformity of stems is another important aspect of tree spatial distribution. While the uniform angle index effectively measures similarity to a grid-like distribution of individuals, it does not account for variation in the relative distance of stems from their neighbours over the plot area. Spatial uniformity is defined here by two criteria: equality of spacing among individuals within the plot, and even coverage of individuals across the plot \citep{Ong2012}. Departures from spatial uniformity indicate clustering of individuals. Voronoi tessellation is a method of partitioning an n-dimensional space into regions according to the closest individual (\autoref{voronoi_example}). Voronoi tessellation was conducted on stem location within each plot. The coefficient of variation of the area of Voronoi cells was then used as a measure of spatial clustering which is sensitive to both the criteria defining spatial uniformity, and is independent of tree density (\autoref{voronoi_diag}). As clustering increases, individuals within clusters will exhibit progressively smaller Voronoi cells, while individuals at the edges of clusters will exhibit progressively larger Voronoi cells, thus increasing the coefficient of variation of cell area.
 

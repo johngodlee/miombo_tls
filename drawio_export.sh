@@ -5,3 +5,5 @@ drawio() {
 }
 
 drawio drawio/path_diag.drawio img/path_diag.pdf
+drawio drawio/plot.drawio img/plot.pdf
+drawio drawio/winkelmass.drawio img/winkelmass.pdf
