@@ -64,7 +64,7 @@ out_df <- do.call(rbind, lapply(file_list, function(x) {
 }))
 
 # Add real plot names
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 out_df$plot_id <- plot_id_lookup$seosaw_id[match(out_df$plot_name, plot_id_lookup$plot_id)]
 

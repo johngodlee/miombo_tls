@@ -16,7 +16,6 @@ library(piecewiseSEM)
 source("functions.R")
 
 # Import data
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
 grass <- read.csv("../dat/grass.csv")
 gap_frac <- read.csv("../dat/gap_frac.csv")
 subplot_trees <- read.csv("../dat/subplot_trees.csv")

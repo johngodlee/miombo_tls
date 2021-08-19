@@ -9,89 +9,47 @@ library(tidyr)
 library(patchwork)
 library(broom)
 library(xtable)
+library(agricolae)
 
 source("functions.R")
 
 # Import data
-subplot_trees_summ <- read.csv("../dat/subplot_summ.csv")
-profile_stats <- read.csv("../dat/height_profile_summ.csv")
-gap_frac <- read.csv("../dat/gap_frac.csv")
-plot_summ <- read.csv("../dat/plot_summ.csv")
-canopy <- read.csv("../dat/plot_canopy_stats.csv")
+plot_all_std <- readRDS("../dat/plot_all_std.rds")
+subplot_all_std <- readRDS("../dat/subplot_all_std.rds")
 
-# Make clean datasets
-subplot_trees_summ_clean <- subplot_trees_summ[,c("plot_id", "subplot", "hegyi", 
-  "rich", "ba_cov")]
-
-profile_stats_clean <- profile_stats[,c("plot_id", "subplot", "layer_div", 
-  "auc_canopy", "n_maxima")]
-
-gap_frac_clean <- gap_frac[gap_frac$method == "tls",
-  c("plot_id", "subplot", "cover")]
-
-plot_summ_clean <- plot_summ[,c("seosaw_id", "rich", "ba_cov", "mi_mean", 
-  "wi_mean", "man_clust", "tree_dens")]
-names(plot_summ_clean)[1] <- "plot_id"
-
-canopy_clean <- canopy[,c("plot_id_new", "chm_mean", "chm_cov", "rc", "fol_dens")]
-names(canopy_clean)[1] <- "plot_id"
-
-# Join datasets
-gap_frac_plot <- gap_frac_clean %>% 
-  group_by(plot_id) %>%
-  summarise(
-    cover_mean = mean(cover, na.rm = TRUE),
-    cover_sd = sd(cover, na.rm = TRUE))
-
-plot_all <- full_join(plot_summ_clean, canopy_clean, by = "plot_id") %>%
-  full_join(., gap_frac_plot, by = "plot_id")
-
-plot_all$man_clust <- as.character(plot_all$man_clust)
-
-subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean, by = c("plot_id", "subplot")) %>%
-  full_join(., gap_frac_clean, by = c("plot_id", "subplot"))
-
-subplot_all$man_clust <- plot_all$man_clust[match(subplot_all$plot_id, plot_all$plot_id)]
-
-# Gather subplot datasets
-subplot_pred_names <- c("rich", "hegyi", "ba_cov")
-subplot_resp_names <- c("layer_div", "auc_canopy", "cover")
-
-subplot_pred <- subplot_all %>%
-  dplyr::select(man_clust, plot_id, subplot, all_of(subplot_pred_names)) %>%
+# Create bivariate subplot data 
+subplot_pred_df <- subplot_all_std %>%
+  dplyr::select(man_clust, plot_id, subplot, all_of(subplot_pred)) %>%
   gather(key_pred, val_pred, -man_clust, -plot_id, -subplot)
 
-subplot_resp <- subplot_all %>%
-  dplyr::select(man_clust, plot_id, subplot, all_of(subplot_resp_names)) %>%
+subplot_resp_df <- subplot_all_std %>%
+  dplyr::select(man_clust, plot_id, subplot, all_of(subplot_resp)) %>%
   gather(key_resp, val_resp, -man_clust, -plot_id, -subplot)
 
-subplot_bivar <- left_join(subplot_resp, subplot_pred, 
+subplot_bivar <- left_join(subplot_resp_df, subplot_pred_df, 
   by = c("man_clust", "plot_id", "subplot"))
 
-subplot_bivar$key_resp_pretty <- names(resp_names)[
-  match(subplot_bivar$key_resp, resp_names)]
-subplot_bivar$key_pred_pretty <- names(pred_names)[
-  match(subplot_bivar$key_pred, pred_names)]
+subplot_bivar$key_resp_pretty <- resp_names[
+  match(subplot_bivar$key_resp, names(resp_names))]
+subplot_bivar$key_pred_pretty <- pred_names[
+  match(subplot_bivar$key_pred, names(pred_names))]
 
-# Gather plot datasets
-plot_pred_names <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean")
-plot_resp_names <- c("chm_mean", "chm_cov", "rc", "cover_mean", "fol_dens")
-
-plot_pred <- plot_all %>%
-  dplyr::select(man_clust, plot_id, all_of(plot_pred_names)) %>%
+# Create bivariate plot data
+plot_pred_df <- plot_all_std %>%
+  dplyr::select(man_clust, plot_id, all_of(plot_pred)) %>%
   gather(key_pred, val_pred, -man_clust, -plot_id)
 
-plot_resp <- plot_all %>%
-  dplyr::select(man_clust, plot_id, all_of(plot_resp_names)) %>%
+plot_resp_df <- plot_all_std %>%
+  dplyr::select(man_clust, plot_id, all_of(plot_resp)) %>%
   gather(key_resp, val_resp, -man_clust, -plot_id)
 
-plot_bivar <- left_join(plot_resp, plot_pred, 
+plot_bivar <- left_join(plot_resp_df, plot_pred_df, 
   by = c("man_clust", "plot_id"))
 
-plot_bivar$key_resp_pretty <- names(resp_names)[
-  match(plot_bivar$key_resp, resp_names)]
-plot_bivar$key_pred_pretty <- names(pred_names)[
-  match(plot_bivar$key_pred, pred_names)]
+plot_bivar$key_resp_pretty <- resp_names[
+  match(plot_bivar$key_resp, names(resp_names))]
+plot_bivar$key_pred_pretty <- pred_names[
+  match(plot_bivar$key_pred, names(pred_names))]
 
 # Make plots
 subplot_bivar_plot <- ggplot() + 
@@ -136,14 +94,195 @@ plot_bivar_plot <- ggplot() +
   guides(colour = "none") + 
   guides(fill = guide_legend(override.aes = list(size=5)))
 
-# Write plots to single file
+# Write plots to files
 pdf(file = "../img/bivar.pdf", width = 15, height = 8)
 wrap_plots(subplot_bivar_plot, plot_bivar_plot, ncol = 2) + 
   plot_layout(guides = 'collect') & 
   theme(legend.position = "bottom") 
 dev.off()
 
-# Bivariate linear model summaries
+pdf(file = "../img/bivar_subplot.pdf", width = 10, height = 5)
+subplot_bivar_plot 
+dev.off()
+
+pdf(file = "../img/bivar_plot.pdf", width = 10, height = 5)
+plot_bivar_plot 
+dev.off()
+
+# Compare plot and subplot canopy statistics
+subplot_comp <- subplot_all_std[,c("plot_id", "subplot", subplot_resp)]
+plot_comp <- plot_all_std[,c("plot_id", "man_clust", plot_resp)]
+
+subplot_agg <- subplot_comp %>% 
+  group_by(plot_id) %>%
+  summarise(across(all_of(subplot_resp), 
+      list(mean = ~mean(.x, na.rm = TRUE), sd = ~sd(.x, na.rm = TRUE)),
+      .names = "{.col}_{.fn}")) 
+
+plot_agg <- plot_comp %>%
+  dplyr::select(-cover_mean) %>%
+  left_join(., subplot_agg, by = "plot_id") %>%
+  filter(man_clust != 4) 
+
+bivar_comb <- crossing(plot_resp, subplot_resp) %>% 
+  filter(plot_resp != "cover_mean")
+
+bivar_list <- apply(bivar_comb, 1, function(x) {
+  out <- plot_agg[,c(x[1], paste0(x[2], c("_mean", "_sd")), "plot_id")]
+  names(out) <- c("x", "y", "y_sd", "plot_id")
+  out$xvar <- paste("Plot", tolower(resp_names[match(x[1], names(resp_names))]))
+  out$yvar <- paste("Subplot", tolower(resp_names[match(x[2], names(resp_names))]))
+  out$man_clust <- as.character(plot_agg$man_clust[match(out$plot_id, plot_agg$plot_id)])
+  return(out)
+    })
+
+plot_list <- lapply(seq_along(bivar_list), function(x) {
+  p <- ggplot(bivar_list[[x]], aes(x = x, y = y)) + 
+    geom_errorbar(aes(ymin = y - (0.5*y_sd), ymax = y + (0.5*y_sd))) + 
+    geom_point(colour = "black", aes(fill = man_clust), shape = 21) + 
+    geom_smooth(method = "lm", colour = "black", se = TRUE) + 
+    geom_smooth(method = "lm", aes(colour = man_clust), se = FALSE) + 
+    scale_fill_manual(name = "Veg. type", values = clust_pal) + 
+    scale_colour_manual(name = "Veg. type", values = clust_pal) +
+    labs(x = "", y = "") + 
+    theme_bw() + 
+    theme(
+      axis.text = element_blank()) + 
+    guides(colour = "none") + 
+    guides(fill = guide_legend(override.aes = list(size=5)))
+
+  if (x %in% c(1,2,3,4)) {
+    p <- p + 
+      ylab(unique(bivar_list[[x]]$yvar)) + 
+      theme(
+        axis.text.y = element_text())
+  } 
+  if (x %in% c(4,8,12)) {
+    p <- p + 
+      xlab(unique(bivar_list[[x]]$xvar)) + 
+      theme(
+        axis.text.x = element_text())
+  }
+
+  p
+  })
+
+pdf(file = "../img/plot_subplot_bivar.pdf", width = 10, height = 12)
+wrap_plots(plot_list, byrow = FALSE) + 
+  plot_layout(ncol = 3, guides = "collect") &
+  theme(legend.position = "bottom")
+dev.off()
+
+# Compare metrics within plot and subplot
+canopy_resp_list <- list("subplot" = subplot_resp, "plot" = plot_resp)
+canopy_comp <- lapply(seq_along(canopy_resp_list), function(x) {
+  apply(t(combn(canopy_resp_list[[x]], 2)), 1, function(y) {
+    if (names(canopy_resp_list)[x] == "subplot") {
+      out <- subplot_all_std[,c("plot_id", "subplot", "man_clust", y)]
+      names(out) <- c("plot_id", "subplot", "man_clust", "x", "y")
+    } else {
+      out <- plot_all_std[,c("plot_id", "man_clust", y)]
+      names(out) <- c("plot_id", "man_clust", "x", "y")
+    }
+    out$x_var <- y[1]
+    out$y_var <- y[2]
+
+    p <- ggplot(out, aes(x = x, y = y)) + 
+      geom_point(aes(fill = man_clust), shape = 21, colour = "black") + 
+      geom_smooth(method = "lm", colour = "black", se = TRUE) + 
+      geom_smooth(method = "lm", aes(colour = man_clust), se = FALSE) + 
+      scale_fill_manual(name = "Veg. type", values = clust_pal) + 
+      scale_colour_manual(name = "Veg. type", values = clust_pal) +
+      labs(x = resp_names[match(y[1], names(resp_names))], 
+        y = resp_names[match(y[2], names(resp_names))]) + 
+      theme_bw() 
+
+    return(p)
+  })
+})
+
+pdf(file = "../img/canopy_metric_comp_subplot.pdf", width = 12, height = 5)
+wrap_plots(canopy_comp[[1]], byrow = FALSE) + 
+  plot_layout(ncol = 3, guides = "collect") &
+  theme(legend.position = "bottom")
+dev.off()
+
+pdf(file = "../img/canopy_metric_comp_plot.pdf", width = 12, height = 12)
+wrap_plots(canopy_comp[[2]], byrow = FALSE) + 
+  plot_layout(ncol = 3, guides = "collect") &
+  theme(legend.position = "bottom")
+dev.off()
+
+# ANOVAS + Tukeys + boxplots of variation in canopy structure across vegetation types, to go alongside veg_type_tile
+
+# Make dataframe of response variables
+resp_all <- subplot_resp_df %>%
+  dplyr::select(-subplot) %>%
+  bind_rows(plot_resp_df) %>% 
+  filter(key_resp != "cover") %>%
+  mutate(key_resp_pretty = resp_names[match(key_resp, names(resp_names))]) %>%
+  mutate(key_resp_pretty = case_when(
+      key_resp %in% subplot_resp ~ paste0("Subplot ", tolower(key_resp_pretty)),
+      key_resp %in% plot_resp ~ paste0("Plot ", tolower(key_resp_pretty)),
+      TRUE ~ key_resp_pretty))
+
+
+# Split by response variable
+resp_all_split <- split(resp_all, resp_all$key_resp)
+
+# ANOVAs
+resp_aov_list <- lapply(resp_all_split, function(x) {
+  aov(val_resp ~ man_clust, data = x)
+})
+
+# Run Tukey's tests
+resp_tukey <- lapply(seq_along(resp_aov_list), function(x) {
+  out <- as.data.frame(TukeyHSD(resp_aov_list[[x]])[1])
+  names(out) <- c("diff", "lwr", "upr", "p.adj")
+  out$comp <- rownames(out)
+  out$comp_a <- gsub("-.*", "", out$comp)
+  out$comp_b <- gsub(".*-", "", out$comp)
+  out$key_resp <- names(resp_aov_list)[x]
+  out$ast <- pFormat(out$p.adj, asterisks = TRUE)
+
+  tukey_groups <- HSD.test(resp_aov_list[[x]], "man_clust")$groups
+  tukey_groups$key_resp <- unique(out$key_resp)
+  tukey_groups$man_clust <- row.names(tukey_groups)
+
+  return(list(out, tukey_groups))
+})
+
+resp_tukey_raw <- do.call(rbind, lapply(resp_tukey, "[[", 1))
+resp_tukey_groups <- do.call(rbind, lapply(resp_tukey, "[[", 2))
+
+resp_lab_max <- resp_all %>% 
+  filter(!is.na(val_resp)) %>%
+  group_by(man_clust, key_resp) %>%
+  summarise(val_max = max(val_resp)) %>%
+  ungroup() %>%
+  group_by(key_resp) %>%
+  mutate(val_max = max(val_max)) %>%
+  left_join(., resp_tukey_groups, by = c("man_clust", "key_resp")) %>%
+  mutate(key_resp_pretty = resp_names[match(key_resp, names(resp_names))]) %>%
+  mutate(key_resp_pretty = case_when(
+      key_resp %in% subplot_resp ~ paste0("Subplot ", tolower(key_resp_pretty)),
+      key_resp %in% plot_resp ~ paste0("Plot ", tolower(key_resp_pretty)),
+      TRUE ~ key_resp_pretty))
+
+pdf(file = "../img/canopy_metric_box.pdf", width = 9, height = 5)
+ggplot() + 
+  geom_boxplot(data = resp_all, 
+    aes(x = man_clust, y = val_resp, fill = man_clust)) + 
+  scale_fill_manual(name = "Veg. type", values = clust_pal) + 
+  geom_label(data = resp_lab_max, 
+    aes(x = man_clust, y = val_max, label = groups)) + 
+  facet_wrap(~key_resp_pretty, scales = "free_y", nrow = 2) + 
+  theme_bw() + 
+  labs(x = "", y = "") + 
+  theme(legend.position = "none")
+dev.off()
+
+# Create bivariate lists for linear models
 subplot_bivar_list <- split(subplot_bivar, 
   list(subplot_bivar$key_pred, subplot_bivar$key_resp))
 
@@ -152,22 +291,27 @@ plot_bivar_list <- split(plot_bivar,
 
 bivar_list <- c(subplot_bivar_list, plot_bivar_list)
 
+# Fit bivariate linear model summaries
 bivar_lm_list <- lapply(seq_along(bivar_list), function(x) {
   mod_each <- lapply(1:4, function(y) {
-    lm(val_resp ~ val_pred, 
-      data = bivar_list[[x]][bivar_list[[x]]$man_clust == y,])
-        })
+    dat_fil <- bivar_list[[x]][bivar_list[[x]]$man_clust == y,]
+    if (nrow(dat_fil) > 1) {
+      lm(val_resp ~ val_pred, 
+        data = dat_fil)
+    } 
+  })
   mod_each[[5]] <- lm(val_resp ~ val_pred, data = bivar_list[[x]])
   return(list(mod_each, unique(bivar_list[[x]]$key_pred), 
       unique(bivar_list[[x]]$key_resp)))
   })
 
+# Summarise linear models
 bivar_lm_summ <- do.call(rbind, lapply(bivar_lm_list, function(x) {
   do.call(rbind, lapply(seq_along(x[[1]]), function(y) {
     mod_summ <- summary(x[[1]][[y]])
     data.frame(pred = x[[2]], resp = x[[3]],
       man_clust = y,
-      sc = ifelse(x[[3]] %in% plot_resp_names, "plot", "subplot"),
+      sc = ifelse(x[[3]] %in% plot_resp, "plot", "subplot"),
       mod_est = mod_summ$coefficients[2], 
       mod_se = mod_summ$coefficients[4], 
       mod_f = mod_summ$fstatistic[1], 
@@ -179,10 +323,11 @@ bivar_lm_summ <- do.call(rbind, lapply(bivar_lm_list, function(x) {
   }))
 }))
 
+# Clean linear model summaries and write to table
 bivar_lm_summ_clean <- bivar_lm_summ %>% 
   mutate(
-    resp = names(resp_names)[match(resp, resp_names)],
-    pred = names(pred_names)[match(pred, pred_names)],
+    resp = resp_names[match(resp, names(resp_names))],
+    pred = pred_names[match(pred, names(pred_names))],
     man_clust = ifelse(man_clust %in% 1:4, as.character(man_clust), "All"),
     slope = paste0(format(mod_est, digits = 2), "$\\pm$", format(mod_se, digits = 2)), 
     mod_rsq = sprintf("%.2f", mod_rsq), 
@@ -234,9 +379,13 @@ writeLines(print(bivar_lm_summ_tab,
   fileConn)
 close(fileConn)
 
-# Write stats
+# Extract stats from bivariate linear models
+bivar_lm_text <- function(x, resp, pred, man_clust, sc) {
+  x <- x[
+    x$resp == resp & 
+    x$pred == pred & x$man_clust == man_clust & 
+    x$sc == sc,]
 
-bivar_lm_text <- function(x) {
   paste0("$\\beta{}$=", 
     format(x$mod_est, digits = 1),
     "$\\pm$", 
@@ -248,60 +397,16 @@ bivar_lm_text <- function(x) {
     format(x$mod_rsq, digits = 1))
 }
 
-bacov_layerdiv <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "layer_div" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "subplot",])
-
-bacov_foliage <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "auc_canopy" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "subplot",])
-
-bacov_cover <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "cover" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "subplot",])
-
-rich_layerdiv <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "layer_div" & 
-  bivar_lm_summ$pred == "rich" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "subplot",])
-
-rich_foliage <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "auc_canopy" & 
-  bivar_lm_summ$pred == "rich" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "subplot",])
-
-rich_cover <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "cover" & 
-  bivar_lm_summ$pred == "rich" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "subplot",])
-
-winkel_coverp <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "cover_mean" & 
-  bivar_lm_summ$pred == "wi_mean" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "plot",])
-
-bacov_coverp <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "cover_mean" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "plot",])
-
-bacov_roughp <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "chm_cov" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "plot",])
-
-bacov_rugp <- bivar_lm_text(bivar_lm_summ[
-  bivar_lm_summ$resp == "rc" & 
-  bivar_lm_summ$pred == "ba_cov" & bivar_lm_summ$man_clust == "5" & 
-  bivar_lm_summ$sc == "plot",])
-
-cor_format <- function(x) {
-  paste0("$r$(", x$parameter, ") = ", format(x$estimate, digits = 2), ", ", 
-    pFormat(x$p.value, digits = 2))
-}
+bacov_layerdiv <- bivar_lm_text(bivar_lm_summ, "layer_div", "ba_cov", "5", "subplot")
+bacov_foliage <- bivar_lm_text(bivar_lm_summ, "auc_canopy", "ba_cov", "5", "subplot")
+bacov_cover <- bivar_lm_text(bivar_lm_summ, "cover", "ba_cov", "5", "subplot")
+rich_layerdiv <- bivar_lm_text(bivar_lm_summ, "layer_div", "rich", "5", "subplot")
+rich_foliage <- bivar_lm_text(bivar_lm_summ, "auc_canopy", "rich", "5", "subplot")
+rich_cover <- bivar_lm_text(bivar_lm_summ, "cover", "rich", "5", "subplot")
+winkel_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "wi_mean", "5", "plot")
+bacov_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "ba_cov", "5", "plot")
+bacov_roughp <- bivar_lm_text(bivar_lm_summ, "chm_cov", "ba_cov", "5", "plot")
+bacov_rugp <- bivar_lm_text(bivar_lm_summ, "rc", "ba_cov", "5", "plot")
 
 write(
   c(

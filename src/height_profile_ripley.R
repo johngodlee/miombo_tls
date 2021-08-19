@@ -11,7 +11,7 @@ source("functions.R")
 # Import data
 ripley_list <- readRDS("../dat/height_profile_ripley.rds")
 plot_summ <- read.csv("../dat/plot_summ.csv")
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 # Ripley's L visualisation
 
@@ -53,7 +53,7 @@ pdf(file = "../img/height_profile_ripley_plot_facet.pdf", height = 12, width = 1
 ggplot() + 
   geom_line(data = envelope_df, aes(x = x, y = y, group = group), alpha = 0.5) + 
   geom_line(data = ripley_pred_df, 
-    aes(x = x, y = y, group = group), colour = pal[1]) +
+    aes(x = x, y = y, group = group), colour = site_pal[1]) +
   facet_wrap(~plot_id) + 
   labs(x = "Normalized Distance", y = "Total Proportion") + 
   theme_bw() + 
@@ -67,7 +67,7 @@ ggplot() +
   geom_line(data = ripley_pred_df, 
     aes(x = x, y = y, colour = site, group = group)) +
   facet_wrap(~site) + 
-  scale_colour_manual(name = "Cluster", values = pal[1:2]) + 
+  scale_colour_manual(name = "Cluster", values = site_pal) + 
   labs(x = "Normalized Distance", y = "Total Proportion") + 
   theme_bw() + 
   theme(legend.position = "none")

@@ -11,7 +11,7 @@ source("functions.R")
 # Import data
 
 ## Plot ID lookup 
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 ## TZA local species lookup
 tza_local_species_lookup <- read.csv("../dat/raw/tza_local_species_lookup.csv")

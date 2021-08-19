@@ -204,7 +204,7 @@ In R, foliage density was calculated in 5 cm layers as the proportion of filled 
 Multiple statistics were extracted from the foliage density profile for use in statistical analyses. Total canopy foliage density was calculated as the area under the curve of the canopy foliage density profile, using trapezoid estimation. The Effective Number of Layers (ENL) in the foliage density profile was used to estimate canopy structural complexity, using the true-numbers equivalent Shannon entropy of foliage density among 50 cm layers (sensu \citealt{Ehbrecht2016}):
 
 \begin{equation}
-	\text{ENL} = \text{exp}\Big{(} - \sum_{i=1}^{N} p_{i} \text{ln} p_{i} \Big{)}
+	\text{ENL} = \exp\Big(-\sum_{i=1}^{N} p_{i} \times \ln p_{i} \Big)
 \end{equation}
 
 Where $N$ is the number of 50 cm bins in the height profile, and $p_{i}$ is the proportion of filled voxels in layer $i$ (foliage density). While \citet{Ehbrecht2016} used 1 m layers, their study was conducted in temperate deciduous forest where the maximum height of the sampled forest stands was 40 m, whereas the maximum canopy height in this study was only 22 m. Both \citet{Ehbrecht2016} and \citet{Montes2004} assert that layer thickness is largely arbitrary, but should be determined with respect to the variability within the canopy, thus in the sparse and highly variable savanna tree canopies measured in this study, narrower layers were chosen. 
@@ -257,7 +257,7 @@ Canopy closure estimates from the TLS were validated using estimates from hemisp
 	\label{hemi_tls_ex}
 \end{figure}
 
-\subsection{Whole plot canopy metrics}
+\subsection{Whole plot canopy complexity}
 
 The canopy height of each 1 ha plot was estimated using unified point clouds from all subplots. The unified point cloud was voxelised to 10 cm\textsuperscript{3}, and the 99th percentile of height from each 10 cm\textsuperscript{2} column was taken as the canopy height. Maximum height was not used as this occasionally constituted a severe outlier which skewed further 
 canopy surface model smoothing. The point cloud was then cropped to the plot boundaries, located using PPK GNSS similar to the TLS targets. A pit-filling algorithm described in \citet{Khosravipour2014} was used to smooth the canopy surface model, at a resolution of 50 cm, by removing gaps within trees caused by incomplete penetration of the LiDAR beam (\autoref{P1_both}). 
@@ -284,7 +284,7 @@ Mean canopy height across the plot and the coefficient of variation of canopy he
 	R_{c} = \sigma{}(\sigma{}G_{z})_{x}
 \end{equation}
 
-Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation. Finally, plot level canopy closure was calculated as the mean of subplot TLS canopy closure estimates, and plot level foliage density was calculated as the sum of filled 50 cm\textsuperscript{3} voxels above 1.3 m and below the 99th percentile of height.
+Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation. Plot level canopy closure was calculated as the mean of subplot TLS canopy closure estimates. Plot level foliage density was calculated as the sum of filled 50 cm\textsuperscript{3} voxels above 1.3 m and below the 99th percentile of height.
 
 \section{Stand structure metrics}
 

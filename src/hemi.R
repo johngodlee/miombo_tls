@@ -22,7 +22,7 @@ tls_hemi_basename <- gsub(".png", "", basename(tls_hemi_files))
 subplot_lookup <- read.csv("../dat/hemi_photos.csv")
 
 # Plot ID name lookup table
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 subplot_lookup_clean <- left_join(subplot_lookup, plot_id_lookup, 
   by = c("plot_id" = "seosaw_id")) %>%

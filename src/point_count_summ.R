@@ -5,6 +5,8 @@
 library(dplyr)
 library(ggplot2)
 
+source("functions.R")
+
 # Import data
 dat <- read.csv("../dat/point_cloud_n.csv")
 
@@ -36,8 +38,8 @@ pretty_mean <- formatC(summ$n_mean, format = "e", digits = 1)
 
 write(
   c(
-    texCmd(pretty_mean[1], "rawpt"),
-    texCmd(pretty_mean[2], "voxelpt"),
-    texCmd(pretty_mean[3], "subpt")
+    commandOutput(pretty_mean[1], "rawpt"),
+    commandOutput(pretty_mean[2], "voxelpt"),
+    commandOutput(pretty_mean[3], "subpt")
   ),
   file = "../out/point_count_summ_var.tex")

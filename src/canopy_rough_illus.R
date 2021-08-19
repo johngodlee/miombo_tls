@@ -14,6 +14,7 @@ source("functions.R")
 # Import data
 h_summ <- readRDS("../dat/gam_points.rds")
 chm_nona <- readRDS("../dat/chm_points.rds")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 # Filter to one plot from each vegetation type and clean
 plot_per_clust <- c("ABG_1", "TKW_13", "ABG_13", "TKW_7")
@@ -23,7 +24,7 @@ chm_nona_clean <- chm_nona %>%
       plot_id_new == "TKW_13" & Z > 20 ~ NA_real_,
       plot_id_new == "TKW_7" & Z > 11 ~ NA_real_,
       TRUE ~ Z), 
-    paper_plot_id = paper_plot_id_lookup[match(plot_id_new, names(paper_plot_id_lookup))]) %>%
+    paper_plot_id = plot_id_lookup$paper_id[match(plot_id_new, plot_id_lookup$seosaw_id)]) %>%
   filter(plot_id_new %in% plot_per_clust) %>%
   group_by(paper_plot_id) %>%
   mutate(
@@ -33,7 +34,7 @@ chm_nona_clean <- chm_nona %>%
       paper_plot_id == "B1" ~ "Cluster 1: B1",
       paper_plot_id == "B13" ~ "Cluster 3: B13",
       paper_plot_id == "M1" ~ "Cluster 4: M1",
-      paper_plot_id == "M5" ~ "Cluster 2: M1",
+      paper_plot_id == "M5" ~ "Cluster 2: M5",
       TRUE ~ NA_character_))
 
 

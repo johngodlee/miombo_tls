@@ -1,6 +1,45 @@
 # Miscellaneous functions
 # John Godlee (johngodlee@gmail.com)
 
+# Define lists of predictor and response variables
+plot_resp <- c("chm_mean", "chm_cov", "rc", "fol_dens", "cover_mean")
+plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean", "cell_area_cov")
+subplot_resp <- c("layer_div", "auc_canopy", "cover")
+subplot_pred <- c("hegyi", "rich", "ba_cov")
+
+# Define theme colours
+clust_pal <- c("#E58606", "#5D69B1", "#52BCA3", "#99C945")
+site_pal <- c("lightseagreen", "#DE6400")
+grey_col <- "darkgrey"
+
+# Define fancy names for predictor and response variables
+resp_names <- c(  
+  "auc_canopy" = "Foliage density",
+  "cover" = "Canopy closure",
+  "layer_div" = "Layer diversity",
+  "cover_mean" = "Canopy closure",
+  "chm_mean" = "Canopy height",
+  "chm_cov" = "Canopy roughness",
+  "rc" = "Canopy rugosity",
+  "fol_dens" = "Foliage density")
+
+pred_names <- c(
+  "tree_dens" = "Tree density",
+  "mi_mean" = "Mingling",
+  "cell_area_cov" = "Voronoi CoV",
+  "wi_mean" = "Winkelmass",
+  "rich" = "Richness",
+  "hegyi" = "Hegyi",
+  "ba_cov" = "Basal area CoV")
+
+#' Get the model P-value for a linear model
+#'
+#' @param x lm model object
+#'
+#' @return p value of model
+#' 
+#' @export
+#' 
 lmPval <- function(x) {
     if (class(x) != "lm") stop("Not an object of class 'lm' ")
     f <- summary(x)$fstatistic
@@ -9,6 +48,7 @@ lmPval <- function(x) {
     return(p)
 }
 
+# Sanitize column headers in an xtable
 colSanit <- function(x){
   paste0("{", x, "}") 
 }
@@ -29,86 +69,6 @@ commandOutput <- function(x, name){
     "}"
   )
 }
-
-paper_plot_id_lookup <- c(
-  "ABG_1" = "B1",
-  "ABG_2" = "B2",
-  "ABG_3" = "B3",
-  "ABG_4" = "B4",
-  "ABG_5" = "B5",
-  "ABG_6" = "B6",
-  "ABG_7" = "B7",
-  "ABG_8" = "B8",
-  "ABG_9" = "B9",
-  "ABG_10" = "B10",
-  "ABG_11" = "B11",
-  "ABG_12" = "B12",
-  "ABG_13" = "B13",
-  "ABG_14" = "B14",
-  "ABG_15" = "B15",
-  "TKW_7" = "M1",
-  "TKW_9" = "M2",
-  "TKW_10" = "M3",
-  "TKW_25" = "M4",
-  "TKW_13" = "M5",
-  "TKW_19" = "M6",
-  "TKW_21" = "M7"
-  )
-
-
-# Theme colours
-clust_pal <- c("#E58606", "#5D69B1", "#52BCA3", "#99C945")
-pal <- c("lightseagreen", "#DE6400", "dodgerblue", "tomato", "darkgrey", "#E0E0E0", "black")
-
-resp_names <- c(  
-  "Foliage density" = "auc_canopy",
-  "Foliage uniformity" = "cum_lm_resid",
-  "Cum. mod. slope" = "cum_lm_slope",
-  "Height peak dens." = "dens_peak_height",
-  "Canopy closure" = "cover",
-  "Canopy height" = "height_q95",
-  "Canopy height" = "height_q99",
-  "Layer diversity" = "layer_div",
-  "Foliage density CoV" = "point_cov",
-  "Shannon" = "shannon",
-  "Weibull scale" = "weib_scale",
-  "Weibull shape" = "weib_shape",
-  "Canopy closure" = "cover_mean",
-  "Canopy height" = "chm_mean",
-  "Canopy roughness" = "chm_cov",
-  "Canopy roughness" = "rough_mean",
-  "Roughness SD" = "rough_sd",
-  "Canopy rugosity" = "rc",
-  "Foliage density" = "fol_dens")
-
-pred_names <- c(
-  "Basal area" = "ba_sum",
-  "Basal area" = "ba_std",
-  "Stem Shannon" = "stem_shannon",
-  "Stem Shannon" = "stem_shannon_std",
-  "Tree Shannon" = "tree_shannon",
-  "Tree Shannon" = "tree_shannon_std",
-  "Tree density" = "tree_dens",
-  "Tree density" = "tree_dens_std",
-  "Mingling" = "mi_mean",
-  "Mingling" = "mi_mean_std",
-  "Voronoi CoV" = "cell_area_cov",
-  "Voronoi CoV" = "cell_area_cov_std",
-  "Winkelmass" = "wi_mean",
-  "Winkelmass" = "wi_mean_std",
-  "Richness" = "rich",
-  "Richness" = "rich_std",
-  "Hegyi" = "hegyi",
-  "Hegyi" = "hegyi_std",
-  "Basal area CoV" = "ba_cov",
-  "Basal area CoV" = "ba_cov_std",
-  "Crown area CoV" = "crown_area_cov",
-  "Crown area CoV" = "crown_area_cov_std",
-  "Mean DBH" = "diam_mean",
-  "Mean DBH" = "diam_mean_std",
-  "Point density" = "point_dens",
-  "Point density" = "point_dens_std")
-
 
 #' Effective number of layers in a point cloud distribution
 #'
@@ -209,10 +169,6 @@ lRipley <- function(x) {
     }
   )
 }
-
-# Functions to ascertain crop angles and pixel radii for equisolid projection fisheye camera lenses
-# John Godlee (johngodlee@gmail.com)
-# 2018_09_11
 
 #' Calculate the pixel radius for cropping an image to a given angular field of view
 #'
@@ -459,24 +415,13 @@ nearNeighb <- function(x, y, id = NULL, radius, zones = NULL) {
   return(nb)
 }
 
-#' Lorimer's Competition Zone Radius - Lorimer 1983
-#'
-#' @param k constant, usually 0.4
-#' @param n number of trees per hectare
-#'
-#' @return atomic vector of competition zone radius
-#' 
-#' @details Estimates the competition zone radius, based on the number of 
-#' trees per hectare in the plot multiplied by a constant (\eqn{k}).
-#' 
-#' @references Lorimer, C. G. (1983). Tests of age-independent competition 
-#' indices for individual trees in natural hardwood stands. Forest Ecology and 
-#' Management. Volume 6. Pages 343-360.
-#' 
-#' @export
-#' 
-lorimerCZR <- function(k, n) {
-  k * sqrt(10000 / n)
+# Get UTM zone from lat-long
+latLong2UTM <- function(x, y) {
+  unlist(lapply(1:length(x), function(z) {
+    paste((floor((as.numeric(x[z]) + 180) / 6) %% 60) + 1,
+      ifelse(as.numeric(y[z]) < 0, "S", "N"),
+      sep = "")
+  }))
 }
 
 #' Generate a valid UTM WGS84 proj4string given a UTM zone
@@ -495,29 +440,7 @@ UTMProj4 <- function(x){
   }))
 }
 
-#' Create a new rgl view
-#'
-rgl_init <- function(new.device = FALSE, bg = "white", width = 640) { 
-  if( new.device | rgl.cur() == 0 ) {
-    rgl.open()
-    par3d(windowRect = 50 + c( 0, 0, width, width ) )
-    rgl.bg(color = bg )
-  }
-  rgl.clear(type = c("shapes", "bboxdeco"))
-  rgl.viewpoint(theta = 15, phi = 20, zoom = 1)
-}
-
-#' Point centric Hegyi index
-#'
-#' @param 
-#'
-#' @return 
-#' 
-#' @examples
-#' 
-#' 
-#' @export
-#' 
+# Point centric Hegyi index
 hegyiPoint <- function(dbh, dist) {
   eq1 <- 1 / dist * dbh
   log(sum(eq1))
@@ -588,45 +511,6 @@ numFormat <- function(x, digits = 2, method = "round"){
     })
 }
 
-
-#' Generate a LaTeX command from R object
-#'
-#' @param stat atomic vector
-#' @param func character string with name of LaTeX function
-#'
-#' @return character string
-#' 
-#' @examples
-#' a <- 3.145
-#' texCmd(a, "pi")
-#' @export
-#' 
-texCmd <- function(stat, func){
-  paste0("\\newcommand{\\", func, "}{", stat, "}")
-}
-
-
-#' Point density - Purr 1962
-#' 
-#' @param dbh vector of DBH (diameter at breast height) measurements of 
-#'     competitor trees
-#' @param dist vector of distances from focal tree to competitor trees
-#'
-#' @return atomic vector of competition index for focal tree
-#' 
-#' @references Spurr, S. H. (1962). A measure of point density. Forest Science. 
-#' Volume 8. Issue 1. Pages 85–96.
-#' 
-#' @export
-#'
-pointDens <- function(dbh, dist) {
-  eq1 <- (dbh / dist)^2
-  ranks <- rank(dbh)
-  eq2 <- (0.25 * (ranks - 0.5) * eq1) / ranks
-  sum(eq2)
-}
-
-
 #' Format p-values for use in LaTeX
 #'
 #' @param p numeric vector of p-values
@@ -682,7 +566,6 @@ pFormat <- function(p, lev = c(0.001, 0.01, 0.05), asterisks = FALSE,
   }
   return(unlist(out))
 }
-
 
 #' Generate a species by site abundance matrix
 #'
@@ -751,4 +634,78 @@ abMat <- function(x, site_id, species_id, fpc = NULL, abundance = NULL) {
   comm <- as.data.frame(comm)
 
   return(comm)
+}
+
+
+pairGroups <- function(trt, m, a, b, pval, thresh = 0.05) {
+  # Make dataframe of pairwise comparison p-values 
+  lev <- sort(unique(c(a,b)))
+  dat <- data.frame(
+    a = factor(a, levels = lev),
+    b = factor(b, levels = lev), 
+    pval)
+
+  # Create symmetric matrix of p-values
+  pmat <- xtabs(dat$pval ~ dat$a + dat$b)
+  psym <- pmat + t(pmat)
+  diag(psym) <- 1
+
+  # Define function to extract final of a chain
+  lastC <- function(x) {
+    y <- sub(" +$", "", x)
+    p1 <- nchar(y)
+    cc <- substr(y, p1, p1)
+    return(cc)
+  }
+
+  # Define figures
+  n <- nrow(psym)
+  z <- data.frame(trt, m)
+  w <- z[order(z[, 2], decreasing = TRUE), ]
+  M <- rep("", n)
+  k <- 1
+  k1 <- 0
+  j <- 1
+  i <- 1
+  n_tmp <- n
+  test <- 0
+  counter <- 0
+  M[1] <- letters[k]
+  q <- as.numeric(rownames(w))
+
+  # For each group, apply number
+  while (j < n) {
+      counter <- counter + 1
+      if (counter > n)
+          break
+      for (i in j:n) {
+          s <- pvalue[q[i], q[j]] > alpha
+          if (s) {
+              if (lastC(M[i]) != letters[k])
+                M[i] <- paste(M[i], letters[k], sep = "")
+          }
+          else {
+              k <- k + 1
+              cambio <- i
+              test <- 0
+              ja <- j
+              for (jj in cambio:n) M[jj] <- paste(M[jj], "",
+                sep = "")
+              M[cambio] <- paste(M[cambio], letters[k], sep = "")
+              for (v in ja:cambio) {
+                if (pvalue[q[v], q[cambio]] <= alpha) {
+                  j <- j + 1
+                  test <- 1
+                }
+                else break
+              }
+              break
+          }
+      }
+      if (test == 0)
+          j <- j + 1
+  }
+  w <- data.frame(w, stat = M)
+
+  return(w) 
 }

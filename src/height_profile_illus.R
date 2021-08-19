@@ -14,8 +14,6 @@ source("functions.R")
 # Import data
 dat <- readRDS("../dat/tls/height_profile/P12S8_cylinder10.rds")
 
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
-
 # Set parameters
 voxel_dim <- 0.05
 z_width <- 0.5
@@ -96,7 +94,6 @@ shannon <- bin_fil %>%
 weib <- fitdistr(bin_fil$n_loess[bin_fil$n_loess > 0], "weibull")
 weib_shape <- weib$estimate[1]
 weib_scale <- weib$estimate[2]
-
 
 # Get error on a linear model of cumulative volume
 bin_fil$n_cum <- cumsum(bin_fil$vol)

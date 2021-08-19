@@ -18,7 +18,6 @@ subplot_trees_summ <- subplot_trees %>%
     ba = pi * (diam/2)^2) %>%
   group_by(plot_id, subplot) %>%
   summarise(
-    point_dens = pointDens(diam, distance),
     hegyi = hegyiPoint(diam, distance),
     rich = length(unique(species)),
     ba_sum = sum(ba, na.rm = TRUE),

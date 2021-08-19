@@ -389,11 +389,11 @@ dev.off()
 # Write some stats to file
 write(
   c(
-    texCmd(mi_sp_reps, "mispreps"),  # Number of replicates for Mi var with sp.
-    texCmd(mi_n_reps, "minreps"),  # Number of replicates for Mi var with mingling
-    texCmd(mi_n_sp, "minsp"),  # Number of species for Mi var with mingling
-    texCmd(wi_reps, "wireps"),  # Number of replicates for Wi var with inc. irregularity
-    texCmd(wi_k_n, "wikn"),  # Number of replicates for Wi var. with k 
-    texCmd(wi_k_i, "wiki")  # Number of individuals for Wi var. with k 
+    commandOutput(mi_sp_reps, "mispreps"),  # Number of replicates for Mi var with sp.
+    commandOutput(mi_n_reps, "minreps"),  # Number of replicates for Mi var with mingling
+    commandOutput(mi_n_sp, "minsp"),  # Number of species for Mi var with mingling
+    commandOutput(wi_reps, "wireps"),  # Number of replicates for Wi var with inc. irregularity
+    commandOutput(wi_k_n, "wikn"),  # Number of replicates for Wi var. with k 
+    commandOutput(wi_k_i, "wiki")  # Number of individuals for Wi var. with k 
     ),
   file = "../out/mingle_winkel_diag_var.tex")

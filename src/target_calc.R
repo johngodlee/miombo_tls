@@ -7,7 +7,7 @@ library(dplyr)
 
 # Import data 
 ## Plot ID translation
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 ## Coordinates for subplots where single scan at centre
 centre_scan_coords <- read.csv("../dat/raw/centre_scan_coords.csv")

@@ -15,88 +15,30 @@ library(xtable)
 source("functions.R")
 
 # Import data
-profile_stats <- read.csv("../dat/height_profile_summ.csv")
+plot_all_std <- readRDS("../dat/plot_all_std.rds")
+subplot_all_std <- readRDS("../dat/subplot_all_std.rds")
 
-subplot_trees_summ <- read.csv("../dat/subplot_summ.csv")
+# Filter data, to remove NAs
+plot_all_fil <- plot_all_std %>%
+  filter(across(all_of(c(plot_pred, plot_resp)), ~!is.na(.x)))
 
-plot_summ <- read.csv("../dat/plot_summ.csv")
-
-gap_frac <- read.csv("../dat/gap_frac.csv")
-
-canopy <- read.csv("../dat/plot_canopy_stats.csv")
-
-# Create clean subplot dataset
-subplot_resp <- c("layer_div", "auc_canopy", "cover")
-subplot_pred <- c("hegyi", "rich", "ba_cov")
-
-subplot_trees_summ_clean <- subplot_trees_summ[,c("plot_id", "subplot", subplot_pred)]
-
-profile_stats_clean <- profile_stats[,c("plot_id", "subplot", subplot_resp[1:2])]
-
-gap_frac_clean <- gap_frac[gap_frac$method == "tls",
-  c("plot_id", "subplot", subplot_resp[3])]
-
-subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean, 
-  by = c("plot_id", "subplot")) %>%
-  full_join(., gap_frac_clean, by = c("plot_id", "subplot")) %>%
-  mutate(plot_subplot = paste(plot_id, subplot, sep = "_"))
-
-# Create clean plots dataset
-plot_resp <- c("chm_mean", "chm_cov", "rc", "fol_dens", "cover_mean")
-plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean", "cell_area_cov")
-
-plot_summ_clean <- plot_summ[,c("seosaw_id", plot_pred, "man_clust")]
-names(plot_summ_clean)[1] <- "plot_id"
-
-canopy_clean <- canopy[,c("plot_id_new", plot_resp[1:4])]
-names(canopy_clean)[1] <- "plot_id"
-
-gap_frac_plot <- gap_frac_clean %>% 
-  group_by(plot_id) %>%
-  summarise(
-    cover_mean = mean(cover, na.rm = TRUE),
-    cover_sd = sd(cover, na.rm = TRUE))
-
-plot_all <- full_join(plot_summ_clean, canopy_clean, by = "plot_id") %>%
-  full_join(., gap_frac_plot, by = "plot_id")
-
-# Add veg. type clusters
-plot_all$man_clust <- as.character(plot_all$man_clust)
-subplot_all$man_clust <- plot_all$man_clust[match(subplot_all$plot_id, plot_all$plot_id)]
-
-# Standardise predictors
-
-subplot_all_mod <- subplot_all %>%
-  mutate(across(all_of(subplot_pred), 
-      ~as.vector(scale(.x)), .names = "{.col}")) %>%
-  filter(across(all_of(c(subplot_resp, subplot_pred)), ~!is.na(.x)))
-
-plot_all_mod <- plot_all %>%
-  mutate(across(all_of(plot_pred), 
-      ~as.vector(scale(.x)), .names = "{.col}")) %>%
-  filter(man_clust != "4") %>%
-  filter(across(all_of(c(plot_resp, plot_pred)), ~!is.na(.x)))
+subplot_all_fil <- subplot_all_std %>%
+  filter(across(all_of(c(subplot_pred, subplot_resp)), ~!is.na(.x)))
 
 # Height profile subplot mixed models
 
-# Construct other part of mixed model spec 
-other_vars <- paste(subplot_pred, collapse = " + ")
-
-# Create model formulas
-mod_flist <- paste0(subplot_resp, " ~ ", other_vars)
-
 # Run models
 mod_list <- list(
-  lme(layer_div ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(auc_canopy ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(cover ~ hegyi + rich + ba_cov, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML")
+  lme(layer_div ~ hegyi_std + rich_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(auc_canopy ~ hegyi_std + rich_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(cover ~ hegyi_std + rich_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML")
 )
 
 # Define null models 
 null_mod_list <- list(
-  lme(layer_div ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(auc_canopy ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML"),
-  lme(cover ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_mod, method = "REML")
+  lme(layer_div ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(auc_canopy ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(cover ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML")
 )
 
 # Are all models included?
@@ -129,7 +71,7 @@ sink()
 sig_vars_dredge <- lapply(dredge_list, function(x) {
   out <- x[1,!is.na(x[1,])]
   c(gsub("\\s~.*", "", as.character((attributes(x)$global.call))[2]), 
-    subplot_pred %in%
+    paste0(subplot_pred, "_std") %in%
        names(out[,-which(names(out) %in% 
           c("(Intercept)", "df", "logLik", "AICc", "delta", "weight")), 
         drop = FALSE]))
@@ -145,7 +87,7 @@ sig_vars_dredge_clean <- sig_vars_dredge_df %>%
         .x == TRUE ~ "\\checkmark",
         .x == FALSE ~ "",
         TRUE ~ .x))) %>%
-  mutate(resp = names(resp_names)[match(resp, resp_names)]) 
+  mutate(resp = resp_names[match(resp, names(resp_names))]) 
 
 sig_dredge_tab <- xtable(sig_vars_dredge_clean,
   label = "height_profile_sig_vars_dredge",
@@ -170,7 +112,7 @@ close(fileConn)
 # Look at model predicted values and random effects
 fe_df <- do.call(rbind, lapply(mod_list, function(x) {
   out <- as.data.frame(ggpredict(x,
-      terms = "rich", type = "fe"))
+      terms = "rich_std", type = "fe"))
   out$resp <- attributes(getResponse(x))$label
   return(out)
   }))
@@ -194,15 +136,18 @@ mod_pred <- do.call(rbind, lapply(mod_list, function(x) {
       TRUE ~ NA_character_), 
     resp = attributes(getResponse(x))$label) %>%
   mutate(
-    resp = names(resp_names)[match(resp, resp_names)],
-    term = names(pred_names)[match(term, pred_names)])
+    resp = resp_names[match(resp, names(resp_names))],
+    term = pred_names[match(term, paste0(names(pred_names), "_std"))])
   }))
 
 # Run models separately for different veg. types
+other_vars <- paste(paste0(subplot_pred, "_std"), collapse = " + ")
+mod_flist <- paste0(subplot_resp, " ~ ", other_vars)
+
 mod_list_site <- lapply(mod_flist, function(x) {
   lapply(1:4, function(y) { 
     lm(gsub(" \\+ \\(.*","", x), 
-      data = subplot_all_mod[subplot_all_mod$man_clust == y,])
+      data = subplot_all_fil[subplot_all_fil$man_clust == y,])
   })
   })
 
@@ -219,8 +164,8 @@ mod_pred_site <- do.call(rbind, lapply(mod_list_site, function(x) {
     mutate(
       effect = "fixed",
       site = y,
-      resp = names(resp_names)[match(resp, resp_names)],
-      term = names(pred_names)[match(term, pred_names)])
+    resp = resp_names[match(resp, names(resp_names))],
+    term = pred_names[match(term, paste0(names(pred_names), "_std"))])
     }))
   }))
 
@@ -251,11 +196,11 @@ ggplot() +
 dev.off()
 
 # Path analysis for main miombo plots
-subplot_clust1 <- subplot_all_mod[subplot_all_mod$man_clust %in% 1:2,]
+subplot_clust1 <- subplot_all_fil[subplot_all_fil$man_clust %in% 1:2,]
 
 mod_spec <- psem(
-  lme(cover ~ ba_cov + rich + hegyi, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
-  lme(ba_cov ~ rich + hegyi, random =  ~1|plot_id, data = subplot_clust1, method = "ML"),
+  lme(cover ~ ba_cov_std + rich_std + hegyi_std, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
+  lme(ba_cov_std ~ rich_std + hegyi_std, random =  ~1|plot_id, data = subplot_clust1, method = "ML"),
   data = subplot_clust1)
 
 mod_summ <- summary(mod_spec, .progressBar = FALSE)
@@ -266,32 +211,38 @@ sink()
 
 mod_summ_df <- as.data.frame(mod_summ$coefficients)
 
-ccind <- format(mod_summ_df$Estimate[mod_summ_df$Response == "cover" & mod_summ_df$Predictor == "ba_cov"] * 
-  mod_summ_df$Estimate[mod_summ_df$Response == "ba_cov" & mod_summ_df$Predictor == "rich"], digits = 2)
+ccind <- format(mod_summ_df$Estimate[mod_summ_df$Response == "cover" & mod_summ_df$Predictor == "ba_cov_std"] * 
+  mod_summ_df$Estimate[mod_summ_df$Response == "ba_cov_std" & mod_summ_df$Predictor == "rich_std"], digits = 2)
 
 ccdir <- 0.06
 
+mod_spec <- psem(
+  lm(cover ~ ba_cov_std + rich_std + hegyi_std, data = subplot_clust1), 
+  lm(ba_cov_std ~ rich_std + hegyi_std, data = subplot_clust1),
+  data = subplot_clust1)
+
+plot(mod_spec)
 
 # Whole plot canopy models
 plot_mod_list <- list(
-  lm(fol_dens ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
-    data = plot_all_mod, na.action = "na.fail"),
-  lm(cover_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
-    data = plot_all_mod, na.action = "na.fail"),
-  lm(chm_mean ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
-    data = plot_all_mod, na.action = "na.fail"),
-  lm(chm_cov ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
-    data = plot_all_mod, na.action = "na.fail"),
-  lm(rc ~ rich + tree_dens + ba_cov + mi_mean + wi_mean + cell_area_cov, 
-    data = plot_all_mod, na.action = "na.fail")
+  lm(fol_dens ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(cover_mean ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std,
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(chm_mean ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(chm_cov ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(rc ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std,
+    data = plot_all_fil, na.action = "na.fail")
   )
 
 plot_null_list <- list(
-  lm(fol_dens ~ 1, data = plot_all_mod),
-  lm(cover_mean ~ 1, data = plot_all_mod),
-  lm(chm_mean ~ 1, data = plot_all_mod),
-  lm(chm_cov ~ 1, data = plot_all_mod),
-  lm(rc ~ 1, data = plot_all_mod)
+  lm(fol_dens ~ 1, data = plot_all_fil),
+  lm(cover_mean ~ 1, data = plot_all_fil),
+  lm(chm_mean ~ 1, data = plot_all_fil),
+  lm(chm_cov ~ 1, data = plot_all_fil),
+  lm(rc ~ 1, data = plot_all_fil)
   )
 
 stopifnot(length(plot_mod_list) == length(plot_null_list))
@@ -335,7 +286,7 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
         .x == TRUE ~ "\\checkmark",
         .x == FALSE ~ "",
         TRUE ~ .x))) %>%
-  mutate(resp = names(resp_names)[match(resp, resp_names)]) %>%
+  mutate(resp = resp_names[match(resp, names(resp_names))]) %>%
   mutate(pval = pFormat(pval, digits = 2, ps = FALSE))
 
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
@@ -366,8 +317,8 @@ plot_mod_pred <- do.call(rbind, lapply(plot_mod_list, function(x) {
       TRUE ~ NA_character_), 
     resp = as.character(x$terms[[2]])) %>%
   mutate(
-    resp_out = names(resp_names)[match(resp, resp_names)],
-    term_out = names(pred_names)[match(term, pred_names)])
+    resp_out = resp_names[match(resp, names(resp_names))],
+    term_out = pred_names[match(term, paste0(names(pred_names), "_std"))])
   }))
 
 plot_mod_text <- function(x) {
@@ -379,22 +330,22 @@ plot_mod_text <- function(x) {
     pFormat(x$p.value, digits = 2))
 }
 
-rich_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+rich_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich_std" & 
   plot_mod_pred$resp == "chm_mean",])
 
-rich_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+rich_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich_std" & 
   plot_mod_pred$resp == "cover_mean",])
 
-rich_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich" & 
+rich_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich_std" & 
   plot_mod_pred$resp == "chm_cov",])
 
-tree_dens_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_dens" & 
+tree_dens_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_dens_std" & 
   plot_mod_pred$resp == "rc",])
 
-cov_ba_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "ba_cov" & 
+cov_ba_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "ba_cov_std" & 
   plot_mod_pred$resp == "chm_cov",])
 
-winkel_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "wi_mean" & 
+winkel_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "wi_mean_std" & 
   plot_mod_pred$resp == "cover_mean",])
 
 
@@ -406,7 +357,7 @@ ggplot() +
     colour = "black", height = 0) + 
   geom_point(data = plot_mod_pred,
     aes(x = estimate, y = term_out),
-    size = 2, shape = 21, colour = "black", fill = pal[5]) + 
+    size = 2, shape = 21, colour = "black", fill = grey_col) + 
   geom_text(data = plot_mod_pred,
     aes(x = estimate, y = term_out, label = psig),
     size = 8) + 

@@ -15,7 +15,7 @@ source("functions.R")
 file_list <- list.files(path = "../dat/tls/height_profile", pattern = "*.rds", 
   full.names = TRUE)
 
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 # Define parameters 
 voxel_dim <- 0.05  # 5 cm^3

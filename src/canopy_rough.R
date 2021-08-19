@@ -14,7 +14,7 @@ library(parallel)
 file_list <- list.files(path = "../dat/tls/plot_canopy_height", 
   pattern = "*.rds", full.names = TRUE)
 
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 
 # For each plot (file)
 out_list <- mclapply(file_list, function(x) {

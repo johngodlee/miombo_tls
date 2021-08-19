@@ -56,8 +56,8 @@ ggplot() +
     method = "lm", se = FALSE,
     aes(x = hemi, y = tls, colour = site)) + 
   geom_abline(intercept = 0, slope = 1) +
-  scale_colour_manual(name = "Site", values = pal[1:2]) + 
-  scale_fill_manual(name = "Site", values = pal[1:2]) + 
+  scale_colour_manual(name = "Site", values = site_pal) + 
+  scale_fill_manual(name = "Site", values = site_pal) + 
   labs(x = "Hemispherical photo", y = "Terrestrial LiDAR") +
   theme_bw() + 
   coord_equal()

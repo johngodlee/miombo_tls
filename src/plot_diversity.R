@@ -20,7 +20,7 @@ source("functions.R")
 
 # Import data
 stems_all <- read.csv("../dat/stems_all.csv")
-plot_id_lookup <- read.csv("../dat/raw/plot_id_lookup.csv")
+plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
 plot_loc <- read.csv("../dat/plot_centre.csv")
 plot_corners <- read.csv("../dat/plot_corners.csv")
 
@@ -67,8 +67,7 @@ nmds <- metaMDS(ba_mat)
 nmds_plots <- as.data.frame(nmds$points) %>%
   rownames_to_column("plot_id") %>%
   mutate(site = ifelse(grepl("P", plot_id), "Bicuar", "Mtarure")) %>%
-  left_join(., plot_id_lookup, by = c("plot_id" = "plot_id")) %>%
-  mutate(paper_plot_id = paper_plot_id_lookup[match(seosaw_id, names(paper_plot_id_lookup))])
+  left_join(., plot_id_lookup, by = c("plot_id" = "plot_id"))
 
 nmds_species <- as.data.frame(nmds$species) %>%
   rownames_to_column("species")
@@ -91,7 +90,7 @@ ggplot() +
     aes(x = MDS1, y = MDS2, fill = man_clust),
     shape = 21) +
   geom_label_repel(data = nmds_plots, 
-    aes(x = MDS1, y = MDS2, label = paper_plot_id, colour = man_clust)) +
+    aes(x = MDS1, y = MDS2, label = paper_id, colour = man_clust)) +
   scale_colour_manual(name = "Cluster", values = clust_pal) + 
   scale_fill_manual(name = "Cluster", values = clust_pal) + 
   guides(colour = "none") + 
