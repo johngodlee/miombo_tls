@@ -48,7 +48,8 @@ tree_mat <- stems_all %>%
 
 # Calculate Shannon diversity
 tree_shannon <- diversity(tree_mat)
-shannon <- data.frame(tree_shannon, plot_id = names(tree_shannon))
+shannon <- data.frame(tree_shannon = exp(tree_shannon), 
+  plot_id = names(tree_shannon))
 
 # Aggregate to stems trees
 trees_all <- stems_all %>%

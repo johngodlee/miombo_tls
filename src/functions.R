@@ -3,12 +3,12 @@
 
 # Define lists of predictor and response variables
 plot_resp <- c("chm_mean", "chm_cov", "rc", "fol_dens", "cover_mean")
-plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean", "cell_area_cov")
-subplot_resp <- c("layer_div", "auc_canopy", "cover", "cum_lm_se")
-subplot_pred <- c("hegyi", "rich", "ba_cov")
+plot_pred <- c("tree_shannon", "tree_dens", "ba_cov", "mi_mean", "wi_mean", "cell_area_cov")
+subplot_resp <- c("layer_div", "auc_canopy", "cum_lm_resid", "cover")
+subplot_pred <- c("hegyi", "shannon", "ba_cov")
 
 # Define theme colours
-clust_pal <- c("#E58606", "#5D69B1", "#52BCA3", "#99C945")
+clust_pal <- c("#4053d3", "#ddb310", "#b80058", "#00b25d")
 site_pal <- c("lightseagreen", "#DE6400")
 grey_col <- "darkgrey"
 
@@ -21,17 +21,18 @@ resp_names <- c(
   "chm_mean" = "Canopy height",
   "chm_cov" = "Canopy roughness",
   "rc" = "Canopy rugosity",
-  "cum_lm_se" = "Foliage uniformity",
+  "cum_lm_resid" = "Foliage uniformity",
   "fol_dens" = "Foliage density")
 
 pred_names <- c(
   "tree_dens" = "Tree density",
   "mi_mean" = "Mingling",
-  "cell_area_cov" = "Voronoi CoV",
+  "cell_area_cov" = "Voronoi CV",
   "wi_mean" = "Winkelmass",
-  "rich" = "Richness",
+  "shannon" = "Shannon",
+  "tree_shannon" = "Shannon",
   "hegyi" = "Hegyi",
-  "ba_cov" = "Basal area CoV")
+  "ba_cov" = "Basal area CV")
 
 #' Get the model P-value for a linear model
 #'

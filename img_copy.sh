@@ -8,7 +8,7 @@ cp img/viva.jpg workflow/img/
 cp img/ppk.pdf workflow/img/
 cp img/workflow_diag.pdf workflow/img/
 cp img/noise_vis.png workflow/img/
-cp img/height_profile_illus.pdf workflow/img/
+cp img/height_profile_illus_all.pdf workflow/img/
 cp img/tls_hemi_compare.pdf workflow/img/
 cp img/hemi_hemi.png workflow/img/
 cp img/hemi_tls.png workflow/img/

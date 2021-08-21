@@ -29,15 +29,17 @@ subplot_all_fil <- subplot_all_std %>%
 
 # Run models
 mod_list <- list(
-  lme(layer_div ~ hegyi_std + rich_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
-  lme(auc_canopy ~ hegyi_std + rich_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
-  lme(cover ~ hegyi_std + rich_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML")
+  lme(layer_div ~ hegyi_std + shannon_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(auc_canopy ~ hegyi_std + shannon_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(cum_lm_resid ~ hegyi_std + shannon_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(cover ~ hegyi_std + shannon_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML")
 )
 
 # Define null models 
 null_mod_list <- list(
   lme(layer_div ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
   lme(auc_canopy ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(cum_lm_resid ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
   lme(cover ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML")
 )
 
@@ -82,7 +84,7 @@ names(sig_vars_dredge_df) <- c("resp", subplot_pred)
 
 sig_vars_dredge_clean <- sig_vars_dredge_df %>% 
  left_join(., mod_stat_df[,c("resp", "daic", "rsq.R2c", "rsq.R2m")], by = "resp") %>%
-  mutate(across(all_of(c("rich", "hegyi", "ba_cov")), 
+  mutate(across(all_of(c("shannon", "hegyi", "ba_cov")), 
       ~case_when(
         .x == TRUE ~ "\\checkmark",
         .x == FALSE ~ "",
@@ -96,7 +98,7 @@ sig_dredge_tab <- xtable(sig_vars_dredge_clean,
   display = c("s", "s", "s", "s", "s", "f", "f", "f"),
   digits = c( NA,  NA,  NA,  NA,  NA,  1,   2,   2))
 
-names(sig_dredge_tab) <- c("Response", "Hegyi", "Richness", "CoV basal area", "$\\Delta$AIC", "R\\textsuperscript{2}\\textsubscript{c}", "R\\textsuperscript{2}\\textsubscript{m}")
+names(sig_dredge_tab) <- c("Response", "Hegyi", "Shannon", "CV basal area", "$\\Delta$AIC", "R\\textsuperscript{2}\\textsubscript{c}", "R\\textsuperscript{2}\\textsubscript{m}")
 
 fileConn <- file("../out/height_profile_dredge_best.tex")
 writeLines(print(sig_dredge_tab, 
@@ -112,7 +114,7 @@ close(fileConn)
 # Look at model predicted values and random effects
 fe_df <- do.call(rbind, lapply(mod_list, function(x) {
   out <- as.data.frame(ggpredict(x,
-      terms = "rich_std", type = "fe"))
+      terms = "shannon_std", type = "fe"))
   out$resp <- attributes(getResponse(x))$label
   return(out)
   }))
@@ -123,7 +125,7 @@ ggplot(fe_df) +
   geom_smooth(aes(x = x, y = predicted), colour = "black") + 
   facet_wrap(~resp, scales = "free") + 
   theme_bw() + 
-  labs(x = "Species richness", y = "")
+  labs(x = "Shannon", y = "")
 dev.off()
 
 # Get fixed effects slopes
@@ -199,8 +201,8 @@ dev.off()
 subplot_clust1 <- subplot_all_fil[subplot_all_fil$man_clust %in% 1:2,]
 
 mod_spec <- psem(
-  lme(cover ~ ba_cov_std + rich_std + hegyi_std, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
-  lme(ba_cov_std ~ rich_std + hegyi_std, random =  ~1|plot_id, data = subplot_clust1, method = "ML"),
+  lme(cover ~ ba_cov_std + shannon_std + hegyi_std, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
+  lme(ba_cov_std ~ shannon_std + hegyi_std, random =  ~1|plot_id, data = subplot_clust1, method = "ML"),
   data = subplot_clust1)
 
 mod_summ <- summary(mod_spec, .progressBar = FALSE)
@@ -212,28 +214,28 @@ sink()
 mod_summ_df <- as.data.frame(mod_summ$coefficients)
 
 ccind <- format(mod_summ_df$Estimate[mod_summ_df$Response == "cover" & mod_summ_df$Predictor == "ba_cov_std"] * 
-  mod_summ_df$Estimate[mod_summ_df$Response == "ba_cov_std" & mod_summ_df$Predictor == "rich_std"], digits = 2)
+  mod_summ_df$Estimate[mod_summ_df$Response == "ba_cov_std" & mod_summ_df$Predictor == "shannon_std"], digits = 2)
 
 ccdir <- 0.06
 
 mod_spec <- psem(
-  lm(cover ~ ba_cov_std + rich_std + hegyi_std, data = subplot_clust1), 
-  lm(ba_cov_std ~ rich_std + hegyi_std, data = subplot_clust1),
+  lm(cover ~ ba_cov_std + shannon_std + hegyi_std, data = subplot_clust1), 
+  lm(ba_cov_std ~ shannon_std + hegyi_std, data = subplot_clust1),
   data = subplot_clust1)
 
-plot(mod_spec)
+summary(mod_spec)
 
 # Whole plot canopy models
 plot_mod_list <- list(
-  lm(fol_dens ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
+  lm(fol_dens ~ tree_shannon_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
     data = plot_all_fil, na.action = "na.fail"),
-  lm(cover_mean ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std,
+  lm(cover_mean ~ tree_shannon_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std,
     data = plot_all_fil, na.action = "na.fail"),
-  lm(chm_mean ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
+  lm(chm_mean ~ tree_shannon_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
     data = plot_all_fil, na.action = "na.fail"),
-  lm(chm_cov ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
+  lm(chm_cov ~ tree_shannon_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
     data = plot_all_fil, na.action = "na.fail"),
-  lm(rc ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std,
+  lm(rc ~ tree_shannon_std + tree_dens_std + ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std,
     data = plot_all_fil, na.action = "na.fail")
   )
 
@@ -296,7 +298,7 @@ plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   display = c("s", "s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
   digits = c( NA,   NA,  NA,  NA, NA, NA,  NA,  NA,  1,   2,   NA))
 
-names(plot_sig_dredge_tab) <- c("Response", "Richness", "Tree density", "CoV basal area", "Mingling", "Winkelmass", "CoV Voronoi", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
+names(plot_sig_dredge_tab) <- c("Response", "Shannon", "Tree density", "CV basal area", "Mingling", "Winkelmass", "CV Voronoi", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
 
 fileConn <- file("../out/canopy_rough_dredge_best.tex")
 writeLines(print(plot_sig_dredge_tab, 
@@ -330,13 +332,13 @@ plot_mod_text <- function(x) {
     pFormat(x$p.value, digits = 2))
 }
 
-rich_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich_std" & 
+tree_shannon_height_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_shannon_std" & 
   plot_mod_pred$resp == "chm_mean",])
 
-rich_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich_std" & 
+tree_shannon_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_shannon_std" & 
   plot_mod_pred$resp == "cover_mean",])
 
-rich_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "rich_std" & 
+tree_shannon_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_shannon_std" & 
   plot_mod_pred$resp == "chm_cov",])
 
 tree_dens_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_dens_std" & 
@@ -377,9 +379,10 @@ write(
   c(
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "layer_div"] * 100, digits = 0), "bestLayerDivRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "auc_canopy"] * 100, digits = 0), "bestDensRsqS"),
-    commandOutput(rich_height_p, "richHeightP"),
-    commandOutput(rich_cover_p, "richCoverP"),
-    commandOutput(rich_rough_p, "richRoughP"),
+    commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestCumRsqS"),
+    commandOutput(tree_shannon_height_p, "shannonHeightP"),
+    commandOutput(tree_shannon_cover_p, "shannonCoverP"),
+    commandOutput(tree_shannon_rough_p, "shannonRoughP"),
     commandOutput(tree_dens_rug_p, "treeDensRugP"),
     commandOutput(cov_ba_rough_p, "covBARoughP"),
     commandOutput(winkel_cover_p, "wiCoverP"),

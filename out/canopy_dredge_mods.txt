@@ -1,134 +1,135 @@
 [[1]]
-Global model call: lm(formula = fol_dens ~ rich_std + tree_dens_std + ba_cov_std + 
+Global model call: lm(formula = fol_dens ~ tree_shannon_std + tree_dens_std + ba_cov_std + 
     mi_mean_std + wi_mean_std + cell_area_cov_std, data = plot_all_fil, 
     na.action = "na.fail")
 ---
 Model selection table 
-   (Int) ba_cov_std cll_are_cov_std mi_men_std rch_std tre_dns_std wi_men_std
-11 40910                       7338             6146.0                       
-17 39540                                                      5517           
-15 40930                       8073    1442.00  5780.0                       
-27 40820                       6490             5113.0        1334           
-43 40880                       7791             5947.0              -1014.000
-19 40250                       2862                           5140           
-12 40970    -196.90            7466             6251.0                       
-18 39300    1510.00                                           4784           
-   df logLik  AICc delta weight
-11  4 -183.6 378.3  0.00  0.332
-17  3 -186.4 380.4  2.10  0.116
-15  5 -183.4 381.7  3.40  0.061
-27  5 -183.5 381.9  3.60  0.055
-43  5 -183.5 382.0  3.62  0.054
-19  4 -185.5 382.1  3.74  0.051
-12  5 -183.6 382.2  3.91  0.047
-18  4 -186.1 383.2  4.90  0.029
+   (Int) ba_cov_std cll_are_cov_std mi_men_std tre_dns_std tre_shn_std
+9  39540                                              5517            
+19 40540                       6821                               5784
+11 40250                       2862                   5140            
+27 40500                       5192                   3325        3892
+51 40540                       8719                               6074
+25 39420                                              4945        1477
+10 39300     1510.0                                   4784            
+23 40600                       5403   -4968.00                    9388
+   wi_men_std df logLik  AICc delta weight
+9              3 -186.4 380.4  0.00  0.180
+19             4 -185.3 381.7  1.29  0.094
+11             4 -185.5 382.1  1.64  0.080
+27             5 -183.8 382.6  2.15  0.062
+51   -3148.00  5 -184.0 382.9  2.50  0.052
+25             4 -186.1 383.2  2.79  0.045
+10             4 -186.1 383.2  2.80  0.044
+23             5 -184.3 383.7  3.23  0.036
  [ reached getOption("max.print") -- omitted 56 rows ]
 Models ranked by AICc(x) 
 
 [[2]]
-Global model call: lm(formula = cover_mean ~ rich_std + tree_dens_std + ba_cov_std + 
-    mi_mean_std + wi_mean_std + cell_area_cov_std, data = plot_all_fil, 
-    na.action = "na.fail")
+Global model call: lm(formula = cover_mean ~ tree_shannon_std + tree_dens_std + 
+    ba_cov_std + mi_mean_std + wi_mean_std + cell_area_cov_std, 
+    data = plot_all_fil, na.action = "na.fail")
 ---
 Model selection table 
-    (Int) ba_cov_std cll_are_cov_std mi_men_std rch_std tre_dns_std wi_men_std
-9  0.4645                                       0.10000                       
-13 0.4708                            -0.0542400 0.12260                       
-41 0.4570                                       0.08307               -0.05021
-34 0.4420    0.07865                                                  -0.09286
-10 0.4601    0.03708                            0.08782                       
-49 0.4595                                                  0.076430   -0.08117
-42 0.4486    0.05340                            0.06043               -0.06506
-25 0.4665                                       0.08641    0.023830           
-   df logLik  AICc delta weight
-9   3  9.917 -12.1  0.00  0.169
-13  4 10.961 -10.8  1.27  0.089
-41  4 10.909 -10.7  1.38  0.085
-34  4 10.594 -10.1  2.01  0.062
-10  4 10.504  -9.9  2.19  0.056
-49  4 10.440  -9.8  2.32  0.053
-42  5 12.225  -9.5  2.67  0.044
-25  4 10.086  -9.1  3.02  0.037
+    (Int) ba_cov_std cll_are_cov_std mi_men_std tre_dns_std tre_shn_std
+34 0.4420    0.07865                                                   
+41 0.4595                                           0.07643            
+42 0.4498    0.05396                                0.04989            
+33 0.4526                                                              
+9  0.4720                                           0.08008            
+2  0.4570    0.07001                                                   
+50 0.4418    0.07444                                           0.022240
+1  0.4655                                                              
+   wi_men_std df logLik  AICc delta weight
+34   -0.09286  4 10.594 -10.1  0.00  0.172
+41   -0.08117  4 10.440  -9.8  0.31  0.147
+42   -0.08793  5 11.603  -8.2  1.91  0.066
+33   -0.08490  3  7.918  -8.1  1.99  0.063
+9              3  7.832  -7.9  2.16  0.058
+2              3  7.285  -6.9  3.25  0.034
+50   -0.08982  5 10.826  -6.7  3.46  0.030
+1              2  5.707  -6.6  3.50  0.030
  [ reached getOption("max.print") -- omitted 56 rows ]
 Models ranked by AICc(x) 
 
 [[3]]
-Global model call: lm(formula = chm_mean ~ rich_std + tree_dens_std + ba_cov_std + 
+Global model call: lm(formula = chm_mean ~ tree_shannon_std + tree_dens_std + ba_cov_std + 
     mi_mean_std + wi_mean_std + cell_area_cov_std, data = plot_all_fil, 
     na.action = "na.fail")
 ---
 Model selection table 
-   (Int) ba_cov_std cll_are_cov_std mi_men_std rch_std tre_dns_std wi_men_std
-9  5.585                                         1.256                       
-11 5.703                    0.46780              1.404                       
-13 5.623                              -0.32060   1.389                       
-41 5.597                                         1.283               0.081200
-25 5.583                                         1.270    -0.02566           
-10 5.585  -0.002034                              1.256                       
-27 5.735                    0.73670              1.732    -0.42320           
-12 5.774  -0.250100         0.62980              1.538                       
-   df logLik AICc delta weight
-9   3 -32.70 73.1  0.00  0.375
-11  4 -32.21 75.5  2.37  0.115
-13  4 -32.39 75.9  2.75  0.095
-41  4 -32.68 76.4  3.32  0.071
-25  4 -32.70 76.5  3.36  0.070
-10  4 -32.70 76.5  3.36  0.070
-27  5 -31.88 78.8  5.64  0.022
-12  5 -32.02 79.1  5.93  0.019
+   (Int) ba_cov_std cll_are_cov_std mi_men_std tre_dns_std tre_shn_std
+21 5.689                              -1.84300                  2.5780
+53 5.631                              -1.93400                  2.6020
+17 5.543                                                        1.0620
+23 5.628                  -0.316100   -2.03200                  2.6250
+22 5.680    0.05455                   -1.81600                  2.5460
+29 5.688                              -1.86000    -0.02000      2.6000
+25 5.590                                           0.46170      0.8760
+9  5.663                                           0.80110            
+   wi_men_std df logLik AICc delta weight
+21             4 -31.99 75.1  0.00  0.369
+53    -0.4455  5 -31.16 77.3  2.25  0.120
+17             3 -35.24 78.2  3.14  0.077
+23             5 -31.79 78.6  3.52  0.063
+22             5 -31.98 79.0  3.90  0.053
+29             5 -31.99 79.0  3.92  0.052
+25             4 -34.66 80.4  5.34  0.026
+9              3 -36.53 80.8  5.71  0.021
  [ reached getOption("max.print") -- omitted 56 rows ]
 Models ranked by AICc(x) 
 
 [[4]]
-Global model call: lm(formula = chm_cov ~ rich_std + tree_dens_std + ba_cov_std + 
+Global model call: lm(formula = chm_cov ~ tree_shannon_std + tree_dens_std + ba_cov_std + 
     mi_mean_std + wi_mean_std + cell_area_cov_std, data = plot_all_fil, 
     na.action = "na.fail")
 ---
 Model selection table 
-   (Int) ba_cov_std cll_are_cov_std mi_men_std rch_std tre_dns_std wi_men_std
-10 76.43     5.3640                             -8.990                       
-9  77.05                                        -7.221                       
-26 76.08     6.2190                             -7.692    -2.76100           
-12 75.51     6.5700         -3.0640            -10.360                       
-14 76.14     5.6910                    2.10700  -9.974                       
-42 76.21     5.6630                             -9.492               -1.19500
-11 77.36                     1.1920             -6.842                       
-13 76.93                               1.01600  -7.644                       
-   df logLik  AICc delta weight
-10  4 -66.87 144.8  0.00  0.269
-9   3 -68.95 145.6  0.80  0.180
-26  5 -66.47 147.9  3.14  0.056
-12  5 -66.52 148.0  3.22  0.054
-14  5 -66.58 148.2  3.34  0.050
-42  5 -66.77 148.5  3.73  0.042
-11  4 -68.89 148.9  4.05  0.035
-13  4 -68.90 148.9  4.06  0.035
+   (Int) ba_cov_std cll_are_cov_std mi_men_std tre_dns_std tre_shn_std
+17 77.30                                                        -6.157
+21 76.63                               8.46500                 -13.120
+1  76.98                                                              
+9  76.59                                           -4.7450            
+22 75.94     4.5760                   10.70000                 -15.800
+10 75.69     5.6270                                -7.4800            
+11 78.10                     6.1410                -5.5540            
+18 76.95     3.1850                                             -6.742
+   wi_men_std df logLik  AICc delta weight
+17             3 -70.50 148.7  0.00  0.121
+21             4 -69.27 149.6  0.91  0.077
+1              2 -72.52 149.8  1.13  0.069
+9              3 -71.32 150.4  1.66  0.053
+22             5 -67.81 150.6  1.91  0.047
+10             4 -69.84 150.8  2.04  0.044
+11             4 -69.86 150.8  2.10  0.042
+18             4 -69.86 150.8  2.10  0.042
  [ reached getOption("max.print") -- omitted 56 rows ]
 Models ranked by AICc(x) 
 
 [[5]]
-Global model call: lm(formula = rc ~ rich_std + tree_dens_std + ba_cov_std + mi_mean_std + 
-    wi_mean_std + cell_area_cov_std, data = plot_all_fil, na.action = "na.fail")
+Global model call: lm(formula = rc ~ tree_shannon_std + tree_dens_std + ba_cov_std + 
+    mi_mean_std + wi_mean_std + cell_area_cov_std, data = plot_all_fil, 
+    na.action = "na.fail")
 ---
 Model selection table 
-   (Int) ba_cov_std cll_are_cov_std mi_men_std  rch_std tre_dns_std wi_men_std
-17 876.0                                                     -96.70           
-49 869.3                                                     -98.64     -43.19
-18 880.3     -26.90                                          -83.62           
-21 872.8                                24.490               -99.15           
-19 870.7                   -21.4700                          -93.87           
-25 875.8                                          2.689      -98.45           
-50 873.0     -20.79                                          -88.42     -40.59
-57 869.4                                        -23.290      -83.89     -52.20
-   df logLik  AICc delta weight
-17  3 -112.3 232.2  0.00  0.265
-49  4 -111.2 233.4  1.18  0.147
-18  4 -111.9 234.9  2.69  0.069
-21  4 -111.9 234.9  2.70  0.069
-19  4 -112.1 235.2  3.01  0.059
-25  4 -112.2 235.6  3.36  0.050
-50  5 -110.9 236.9  4.66  0.026
-57  5 -110.9 236.9  4.67  0.026
+   (Int) ba_cov_std cll_are_cov_std mi_men_std tre_dns_std tre_shn_std
+9  876.0                                            -96.70            
+41 869.3                                            -98.64            
+21 871.9                               178.700                -189.600
+10 880.3     -26.90                                 -83.62            
+13 872.8                                24.490      -99.15            
+29 869.7                               125.700      -62.49    -120.800
+11 870.7                   -21.4700                 -93.87            
+25 876.3                                            -95.03      -4.306
+   wi_men_std df logLik  AICc delta weight
+9              3 -112.3 232.2  0.00  0.230
+41     -43.19  4 -111.2 233.4  1.18  0.127
+21             4 -111.9 234.8  2.61  0.062
+10             4 -111.9 234.9  2.69  0.060
+13             4 -111.9 234.9  2.70  0.059
+29             5 -110.1 235.2  2.99  0.052
+11             4 -112.1 235.2  3.01  0.051
+25             4 -112.2 235.6  3.34  0.043
  [ reached getOption("max.print") -- omitted 56 rows ]
 Models ranked by AICc(x) 
 

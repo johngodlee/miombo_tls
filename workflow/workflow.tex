@@ -31,13 +31,13 @@ This chapter provides expanded field and analytical methods for the study of tre
 
 \section{Terrestrial LIDAR field setup}
 
-Within each 1 ha (100x100 m) square plot, nine 10 m diameter circular subplots were laid out in a grid, with 35 m between subplot centre points (\autoref{subplot_plot}). These subplots constitute the basic sampling unit of the study. Within each subplot, a Leica HDS6100 phase-shift Terrestrial Laser Scanner (TLS) was used to capture woodland canopy structure. The number and position of scan locations within a subplot was determined by the arrangement and density of canopy material in the subplot. Scan positions were arranged to minimise shadows within the canopy, and to maximise canopy penetration. Between one and five scans were recorded per subplot, across all plots. Further information on the field setup of the TLS is presented in \autoref{scan_settings}.
+Within each 1 ha (100$\times$100 m) square plot, nine 10 m diameter circular subplots were laid out in a grid, with 35 m between subplot centre points (\autoref{subplot_plot}). These subplots constitute the basic sampling unit of the study. Within each subplot, a Leica HDS6100 phase-shift Terrestrial Laser Scanner (TLS) was used to capture woodland canopy structure. The number and position of scan locations within a subplot was determined by the arrangement and density of canopy material in the subplot. Scan positions were arranged to minimise shadows within the canopy, and to maximise canopy penetration. Between one and five scans were recorded per subplot, across all plots. Further information on the field setup of the TLS is presented in \autoref{scan_settings}.
 
 Five Leica 6" (15.24 cm) diameter planar tilt-and-turn cross-pattern reflective targets were used in each subplot to align scans (\autoref{target}). The five targets were located roughly in a quincunx pattern, with one target at the subplot centre and the remaining four targets arranged in a cross pattern around the edges of the subplot, ensuring that all scans could see all five targets. To facilitate alignment of scans among subplots, the location of each target in real space was recorded using a Leica VIVA GS10 GNSS (Global Navgation Satellite Systems) unit (\autoref{viva}). The GNSS was set up in a Post-Processing Kinematic (PPK) configuration with a base-station located \textasciitilde{}100 m from the edge of each 1 ha plot with an unobstructed view of the sky hemisphere where possible. The location of each target was measured for at least 4 minutes to minimise measurement error (\autoref{ppk}). 
 
 \begin{figure}
 	\includegraphics[width=0.5\linewidth]{plot}
-	\caption{The layout of 10 m diameter subplots within each 1 ha plot. Each subplot is situated inside a 15 m buffer from the plot edge, with 35 m between subplot centres. Subplots are arranged in a 3x3 grid. All distances are in metres.}
+	\caption{The layout of 10 m diameter subplots within each 1 ha plot. Each subplot is situated inside a 15 m buffer from the plot edge, with 35 m between subplot centres. Subplots are arranged in a 3$\times$3 grid. All distances are in metres.}
 	\label{subplot_plot}
 \end{figure}
 
@@ -110,7 +110,7 @@ Where $R$ is the radial position of a point on the image, $f$ is the focal lengt
 
 Photographs were taken facing directly to zenith using a camera-mounted spirit level, with the top of the camera body facing magnetic north, at a height of 1.3 m or above understorey vegetation, whichever was higher. Photographs were captured under uniform light conditions as much as possible, either under overcast skies or early in the day before direct sunlight could be seen on the photograph, to minimise lens flare, which can preclude accurate differentiation of plant material and sky, and `blooming', a phenomenon where light `bleeds' into dark areas of the image in highly contrasting light conditions \citep{Frazer2001}.
 
-ImageJ (Fiji version 2.1.0/1.53c) was used to binarise hemispherical photographs, to separate plant material from sky \citep{Schneider2012}. Images were binarised using the Huang algorithm \citep{Huang1995} using only the blue channel of the image, under the assumption that plant material reflects little blue light, while the sky reflects much more \citep{Brusa2014}. Images were saved as PNG files at the original pixel resolution, with a circular image of 4016x4016 pixels.
+ImageJ (Fiji version 2.1.0/1.53c) was used to binarise hemispherical photographs, to separate plant material from sky \citep{Schneider2012}. Images were binarised using the Huang algorithm \citep{Huang1995} using only the blue channel of the image, under the assumption that plant material reflects little blue light, while the sky reflects much more \citep{Brusa2014}. Images were saved as PNG files at the original pixel resolution, with a circular image of 4016$\times$4016 pixels.
 
 \begin{table}
 \centering 
@@ -129,7 +129,7 @@ Aperture & 5-7 \\
 ISO & 100-200 \\
 Exposure compensation & -0.7 \citep{Brusa2014} \\
 Focus & $\infty$ \citep{Hu2009, Frazer2001}\\
-Image size & Large Fine JPEG - circular image 4016x4016 px \\
+Image size & Large Fine JPEG - circular image 4016$\times$4016 px \\
 Orientation & Landscape \\
 \bottomrule
 \end{tabular} 
@@ -197,7 +197,7 @@ Where $\mu_{i}$ is the mean distance from point $i$ to all $k$ nearest neighbour
 
 \subsection{Foliage density profiles}
 
-To calculate subplot foliage density profiles, the 5 cm\textsuperscript{3} voxelised point cloud was first cropped to a 10 m diameter cylinder of infinite height. Ground points were identified using \texttt{filters.pmf} (Progressive Morphological Filter - PMF) in PDAL (sensu \citealt{Zhang2003}), and the height above ground of all points was calculated using \texttt{filters.hag\_nn} (Nearest Neighbour) in PDAL. Points below ground level and above the 99.9th percentile of height were excluded from further analyses. Height profile points were exported to XYZ coordinates then imported into R for further processing. 
+To calculate subplot foliage density profiles, the 5 cm\textsuperscript{3} voxelised point cloud was first cropped to a 10 m diameter cylinder of infinite height. Ground points were identified using \texttt{filters.pmf} (Progressive Morphological Filter - PMF) in PDAL (sensu \citealt{Zhang2003}), and the height above ground of all points was calculated using \texttt{filters.hag\_nn} (Nearest Neighbour) in PDAL. Points below ground level and above the 99th percentile of height were excluded from further analyses. Height profile points were exported to XYZ coordinates then imported into R for further processing. 
 
 In R, foliage density was calculated in 5 cm layers as the proportion of filled 5 cm\textsuperscript{3} voxels. A loess model with a span of 0.1 was fitted to the foliage density values in each layer to estimate the foliage density profile (\autoref{height_profile_illus}). The foliage density profile was further filtered to only tree canopy material, by discarding all points below 1.3 m.
 
@@ -223,18 +223,18 @@ Maximum canopy height has been used in other studies to describe canopy structur
 \begin{figure}
 \centering
 	\includegraphics[width=\linewidth]{height_profile_illus_all}
-	\caption{Subplot foliage volume height profile (top) and cumulative foliage volume profile (bottom) for a subplot in Bicuar National Park, Angola, to illustrate some of the canopy structure metrics extracted from each height profile. In the top panel: the dashed cyan line shows the 99.9th percentile of canopy height, used here as a measure of canopy top height in plot-level canopy surface modelling. The black trace shows the foliage density height profile, and the green trace shows the loess model fitted to the data, with the area under the canopy shaded grey. The bottom panel: the black trace shows the cumulative foliage volume through the canopy, taken from the loess fit in the top panel. The purple line shows the line of best fit of a linear model through this data. Not illustrated is the Effective Number of Layers (ENL) metric.}
+	\caption{Subplot foliage volume height profile (top) and cumulative foliage volume profile (bottom) for a subplot in Bicuar National Park, Angola, to illustrate some of the canopy structure metrics extracted from each height profile. In the top panel: the dashed cyan line shows the 99th percentile of canopy height, used here as a measure of canopy top height in plot-level canopy surface modelling. The black trace shows the foliage density height profile, and the green trace shows the loess model fitted to the data, with the area under the canopy shaded grey. The bottom panel: the black trace shows the cumulative foliage volume through the canopy, taken from the loess fit in the top panel. The purple line shows the line of best fit of a linear model through this data. Not illustrated is the Effective Number of Layers (ENL) metric.}
 	\label{height_profile_illus}
 \end{figure}
 
 \subsection{Canopy closure}
 
-Subplot canopy closure, i.e. the proportion of the sky hemisphere occluded by plant material, a.k.a. gap fraction or site factor \citep{Jennings1999}, was measured by simulating a hemispherical image at the centre of the subplot using the point cloud data from all scans per subplot. The point cloud was first cropped to a 20 m diameter cylinder around the subplot centre using PDAL. Points below 1.3 m and within a 50 cm sphere around the subplot centre at 1.3 m height were discarded, to prevent the simulated hemispherical image being occluded by understorey vegetation. POV-Ray was used to simulate the hemispherical image using ray-tracing \citep{Povray2004}. Filled voxels were represented in POV-Ray as non-reflective black cubes filling the 5 cm\textsuperscript{3} voxel volume, with a white uniform sky box and no light source. POV-Ray produced an image with identical qualities to that of the real hemispherical photograph, using a fisheye lens with an equisolid projection and a view angle of 180\textdegree, located at the subplot centre at 1.3 m above the ground, with the top of the camera facing magnetic north and the camera facing directly to zenith, producing a circular image of 4016x4016 pixels.
+Subplot canopy closure, i.e. the proportion of the sky hemisphere occluded by plant material, a.k.a. gap fraction or site factor \citep{Jennings1999}, was measured by simulating a hemispherical image at the centre of the subplot using the point cloud data from all scans per subplot. The point cloud was first cropped to a 20 m diameter cylinder around the subplot centre using PDAL. Points below 1.3 m and within a 50 cm sphere around the subplot centre at 1.3 m height were discarded, to prevent the simulated hemispherical image being occluded by understorey vegetation. POV-Ray was used to simulate the hemispherical image using ray-tracing \citep{Povray2004}. Filled voxels were represented in POV-Ray as non-reflective black cubes filling the 5 cm\textsuperscript{3} voxel volume, with a white uniform sky box and no light source. POV-Ray produced an image with identical qualities to that of the real hemispherical photograph, using a fisheye lens with an equisolid projection and a view angle of 180\textdegree, located at the subplot centre at 1.3 m above the ground, with the top of the camera facing magnetic north and the camera facing directly to zenith, producing a circular image of 4016$\times$4016 pixels.
 
-Hemiphot \citep{HemiPhot} was used to estimate closure from both the hemispherical photographs and the TLS POV-Ray simulation. Images were cropped to a circle of 60\textdegree{} zenith angle. It can be supposed that below 60\textdegree{}, under most woodland canopies, variation in tree canopy density does little to affect sunlight penetration, due to the greater depth of canopy at these angles \citep{Jupp2008}. Hemiphot calculates canopy closure in 90 evenly sized concentric rings. To obtain the total closure of a circular image:
+Hemiphot \citep{HemiPhot} was used to estimate closure from both the hemispherical photographs and the TLS POV-Ray simulation. Images were cropped to a circle of 60\textdegree{} zenith angle. It can be supposed that below 60\textdegree{}, under most woodland canopies, variation in tree canopy density does little to affect sunlight penetration, due to the greater depth of canopy at these angles \citep{Jupp2008}. To obtain the total closure of a circular image:
 
 \begin{equation}
-	C_{\alpha{}} = 1 - G_{\text{tot}} = \sum_{\alpha{} = 0.5}^{\alpha{} = 89.5}(G_{\alpha{}} A_{\alpha{}} / A_{\text{tot}})
+	C_{\alpha{}} = 1 - G_{\text{tot}} = \sum_{\alpha{} = 0.5}^{\alpha{} = 60.0}(G_{\alpha{}} A_{\alpha{}} / A_{\text{tot}})
 \end{equation}
 
 Where $G_{\alpha{}}$ is the fraction of unfilled pixels in ring $\alpha{}$, $A_{\alpha{}}$ is the sky area of the ring segment, and $A_{\text{tot}}$ is the total sky area of the hemisphere.
@@ -288,7 +288,7 @@ The canopy height of each 1 ha plot was estimated using unified point clouds fro
 
 Mean canopy height across the plot and the coefficient of variation of canopy height were extracted from the canopy surface model for use in statistical analyses. The coefficient of variation of canopy height describes canopy structural diversity measured by the heterogeneity of the canopy surface \citep{Parker2004}. Other studies in closed canopy temperate and boreal forests have used metrics similar to the Topographic Roughness Index to measure canopy surface heterogeneity, by comparing canopy height to that of neighbouring pixels in the canopy height model \citep{Weligepolage2012, HerreroHuerta2020}. In this study however, the sparse nature of the tree canopies meant that these metrics were overly influenced by canopy density and the edges of individual tree canopies. 
 
-\subsection{Canopy rugosity}
+\subsection{Canopy rugosity and foliage density}
 
 Canopy rugosity ($R_{c}$) was also calculated to describe structural complexity across the entire canopy profile, rather than just the canopy surface, sensu \citet{Hardiman2011}. $R_{c}$ first calculates the standard deviation of foliage density in 50 cm\textsuperscript{2} columns across the plot ($\sigma{}G_{z}$), then calculates the standard deviation of those standard deviations: 
 
@@ -296,7 +296,7 @@ Canopy rugosity ($R_{c}$) was also calculated to describe structural complexity 
 	R_{c} = \sigma{}(\sigma{}G_{z})_{x}
 \end{equation}
 
-Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation.
+Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation. Additionally, foliage density was calculated at the plot level as the sum of filled 50 cm\textsuperscript{3} voxels across the plot, and plot canopy closure was calculated as the mean of all subplot canopy closure estimates. 
 
 \section{Stand structure metrics}
 
@@ -378,7 +378,7 @@ In addition to spatial regularity, the spatial uniformity of stems is another im
 \begin{figure}
 \centering
 	\includegraphics[width=0.6\linewidth]{voronoi_example}
-	\caption{An example of a square plot with \wiki randomly located individuals, with polygons constructed by Voronoi tessellation.}
+	\caption{An example of a square plot with \wiki{} randomly located individuals, with polygons constructed by Voronoi tessellation.}
 	\label{voronoi_example}
 \end{figure}
 

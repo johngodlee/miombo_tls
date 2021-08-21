@@ -338,7 +338,7 @@ cell_area_plot <- ggplot() +
     aes(x = adj, y = cell_area_cov, group = rep)) + 
   geom_vline(xintercept = wi_samples, colour = "red", linetype = 2) +
   theme_bw() +
-  labs(x = "N substitutions", y = expression(CoV~sqrt("A")~(m^2)))
+  labs(x = "N substitutions", y = expression(CV~sqrt("A")~(m^2)))
   
 voronoi_gather <- do.call(rbind, lapply(wi_samples, function(x) {
   out <- voronoi_sf[[x+1]][[1]][[2]]

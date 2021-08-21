@@ -133,7 +133,7 @@
 * Stand structure
 	* Hegyi index - Crowding - Increases with increasing stem diameter and proximity to subplot centre. 
 	* Basal area - of trees within subplot
-	* CoV stem diameter - of trees within subplot
+	* CV stem diameter - of trees within subplot
 * Species diversity
 	* Species richness - Number species in neighbourhood
 * Canopy structure
@@ -147,7 +147,7 @@ Discarded stats:
 * ~~Point density - not variable enough at low competition, covaries with Hegyi~~
 * ~~Max canopy height - Too stochastic within a subplot.~~
 * ~~Peak foliage density height - uninformative~~
-* ~~Point CoV - Coefficient of Variation of point height distribution - uninformative, covaries with uniformity of height profile~~
+* ~~Point CV - Coefficient of Variation of point height distribution - uninformative, covaries with uniformity of height profile~~
 
 ### Whole plot
 

@@ -61,7 +61,7 @@ subplot_bivar_plot <- ggplot() +
     method = "lm", colour = "black") + 
   geom_smooth(data = subplot_bivar, 
     aes(x = val_pred, y = val_resp, colour = man_clust), 
-    method = "lm", se = FALSE, size = 0.5) + 
+    method = "lm", se = FALSE, size = 1) + 
   scale_colour_manual(name = "Veg. type", values = clust_pal) + 
   scale_fill_manual(name = "Veg. type", values = clust_pal) + 
   facet_grid(key_resp_pretty~key_pred_pretty, scales = "free") + 
@@ -82,7 +82,7 @@ plot_bivar_plot <- ggplot() +
     method = "lm", colour = "black") + 
   geom_smooth(data = plot_bivar, 
     aes(x = val_pred, y = val_resp, colour = man_clust), 
-    method = "lm", se = FALSE, size = 0.5) + 
+    method = "lm", se = FALSE, size = 1) + 
   scale_colour_manual(name = "Veg. type", values = clust_pal) + 
   scale_fill_manual(name = "Veg. type", values = clust_pal) + 
   facet_grid(key_resp_pretty~key_pred_pretty, scales = "free") + 
@@ -157,7 +157,7 @@ plot_list <- lapply(seq_along(bivar_list), function(x) {
       theme(
         axis.text.y = element_text())
   } 
-  if (x %in% c(4,8,12)) {
+  if (x %in% c(4,8,12,16)) {
     p <- p + 
       xlab(unique(bivar_list[[x]]$xvar)) + 
       theme(
@@ -167,9 +167,9 @@ plot_list <- lapply(seq_along(bivar_list), function(x) {
   p
   })
 
-pdf(file = "../img/plot_subplot_bivar.pdf", width = 10, height = 12)
+pdf(file = "../img/plot_subplot_bivar.pdf", width = 12, height = 12)
 wrap_plots(plot_list, byrow = FALSE) + 
-  plot_layout(ncol = 3, guides = "collect") &
+  plot_layout(ncol = 4, guides = "collect") &
   theme(legend.position = "bottom")
 dev.off()
 
@@ -400,26 +400,36 @@ bivar_lm_text <- function(x, resp, pred, man_clust, sc) {
 bacov_layerdiv <- bivar_lm_text(bivar_lm_summ, "layer_div", "ba_cov", "5", "subplot")
 bacov_foliage <- bivar_lm_text(bivar_lm_summ, "auc_canopy", "ba_cov", "5", "subplot")
 bacov_cover <- bivar_lm_text(bivar_lm_summ, "cover", "ba_cov", "5", "subplot")
-rich_layerdiv <- bivar_lm_text(bivar_lm_summ, "layer_div", "rich", "5", "subplot")
-rich_foliage <- bivar_lm_text(bivar_lm_summ, "auc_canopy", "rich", "5", "subplot")
-rich_cover <- bivar_lm_text(bivar_lm_summ, "cover", "rich", "5", "subplot")
+shannon_layerdiv <- bivar_lm_text(bivar_lm_summ, "layer_div", "shannon", "5", "subplot")
+shannon_foliage <- bivar_lm_text(bivar_lm_summ, "auc_canopy", "shannon", "5", "subplot")
+shannon_cover <- bivar_lm_text(bivar_lm_summ, "cover", "shannon", "5", "subplot")
 winkel_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "wi_mean", "5", "plot")
+voronoi_coverp <- bivar_lm_text(bivar_lm_summ, "cover", "cell_area_cov", "5", "plot")
 bacov_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "ba_cov", "5", "plot")
 bacov_roughp <- bivar_lm_text(bivar_lm_summ, "chm_cov", "ba_cov", "5", "plot")
 bacov_rugp <- bivar_lm_text(bivar_lm_summ, "rc", "ba_cov", "5", "plot")
+tree_shannon_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "tree_shannon", "5", "plot")
+tree_shannon_heightp <- bivar_lm_text(bivar_lm_summ, "chm_mean", "tree_shannon", "5", "plot")
+tree_shannon_roughp <- bivar_lm_text(bivar_lm_summ, "chm_cov", "tree_shannon", "5", "plot")
+tree_shannon_rugp <- bivar_lm_text(bivar_lm_summ, "rc", "tree_shannon", "5", "plot")
 
 write(
   c(
-    commandOutput(bacov_layerdiv, "baCovLayerDiv"),
-    commandOutput(bacov_foliage, "baCovFoliage"),
-    commandOutput(bacov_cover, "baCovCover"),
-    commandOutput(rich_layerdiv, "richLayerDiv"),
-    commandOutput(rich_foliage, "richFoliage"),
-    commandOutput(rich_cover, "richCover"),
-    commandOutput(winkel_coverp, "winkelCoverP"),
-    commandOutput(bacov_coverp, "baCovCoverP"),
-    commandOutput(bacov_roughp, "baCovRoughP"),
-    commandOutput(bacov_rugp, "baCovRugosityP")
+    commandOutput(bacov_layerdiv, "baCovLayerDivB"),
+    commandOutput(bacov_foliage, "baCovFoliageB"),
+    commandOutput(bacov_cover, "baCovCoverB"),
+    commandOutput(shannon_layerdiv, "shannonLayerDivB"),
+    commandOutput(shannon_foliage, "shannonFoliageB"),
+    commandOutput(shannon_cover, "shannonCoverB"),
+    commandOutput(winkel_coverp, "winkelCoverPB"),
+    commandOutput(voronoi_coverp, "voronoiCoverPB"),
+    commandOutput(bacov_coverp, "baCovCoverPB"),
+    commandOutput(bacov_roughp, "baCovRoughPB"),
+    commandOutput(bacov_rugp, "baCovRugosityPB"),
+    commandOutput(tree_shannon_coverp, "shannonCoverPB"),
+    commandOutput(tree_shannon_heightp, "shannonHeightPB"),
+    commandOutput(tree_shannon_roughp, "shannonRoughPB"),
+    commandOutput(tree_shannon_rugp, "shannonRugPB")
     ),
   file = "../out/bivar_paper_var.tex")
 

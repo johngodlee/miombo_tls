@@ -17,10 +17,10 @@ canopy <- read.csv("../dat/plot_canopy_stats.csv")
 # Create clean subplot dataset
 subplot_trees_summ_clean <- subplot_trees_summ[,c("plot_id", "subplot", subplot_pred)]
 
-profile_stats_clean <- profile_stats[,c("plot_id", "subplot", subplot_resp[1:2])]
+profile_stats_clean <- profile_stats[,c("plot_id", "subplot", subplot_resp[1:3])]
 
 gap_frac_clean <- gap_frac[gap_frac$method == "tls",
-  c("plot_id", "subplot", subplot_resp[3])]
+  c("plot_id", "subplot", subplot_resp[4])]
 
 subplot_all <- full_join(subplot_trees_summ_clean, profile_stats_clean, 
   by = c("plot_id", "subplot")) %>%
