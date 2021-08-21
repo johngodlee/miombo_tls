@@ -4,7 +4,7 @@
 # Define lists of predictor and response variables
 plot_resp <- c("chm_mean", "chm_cov", "rc", "fol_dens", "cover_mean")
 plot_pred <- c("rich", "tree_dens", "ba_cov", "mi_mean", "wi_mean", "cell_area_cov")
-subplot_resp <- c("layer_div", "auc_canopy", "cover")
+subplot_resp <- c("layer_div", "auc_canopy", "cover", "cum_lm_se")
 subplot_pred <- c("hegyi", "rich", "ba_cov")
 
 # Define theme colours
@@ -21,6 +21,7 @@ resp_names <- c(
   "chm_mean" = "Canopy height",
   "chm_cov" = "Canopy roughness",
   "rc" = "Canopy rugosity",
+  "cum_lm_se" = "Foliage uniformity",
   "fol_dens" = "Foliage density")
 
 pred_names <- c(

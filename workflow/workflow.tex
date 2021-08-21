@@ -27,7 +27,7 @@
 
 \section{Introduction}
 
-This chapter provides expanded field and analytical methods for the study of tree canopy structure in southern African woodlands, presented in brief in Chapter 5. The study aimed to understand the effects of tree species diversity and stand structure on tree canopy structural complexity, using terrestrial LiDAR. Firstly, I provide technical details on the field setup for the terrestrial LiDAR and the hemispherical photography used to validate terrestrial LiDAR canopy closure estimates. Secondly, I describe the processing chain used to extract canopy complexity metrics from the terrestrial LiDAR point clouds. Thirdly, I describe in further detail the behaviour and suitability of the different canopy complexity metrics and stand structural metrics used in the study.
+This chapter provides expanded field and analytical methods for the study of tree canopy structure in southern African woodlands, presented in brief in Chapter 5. The study aimed to understand the effects of tree species diversity and stand structure on tree canopy structural complexity, using terrestrial LiDAR. Firstly, I provide technical details on the field setup for the terrestrial LiDAR and the hemispherical photography used to validate terrestrial LiDAR canopy closure estimates. Secondly, I describe the processing chain used to extract canopy complexity metrics from the terrestrial LiDAR point clouds. Thirdly, I describe in further detail the behaviour and suitability of the different canopy complexity and stand structural metrics used in the study.
 
 \section{Terrestrial LIDAR field setup}
 
@@ -190,7 +190,7 @@ Where $\mu_{i}$ is the mean distance from point $i$ to all $k$ nearest neighbour
 
 \begin{figure}
 \centering
-	\includegraphics[width=\linewidth]{noise_vis}
+	\includegraphics[width=0.7\linewidth]{noise_vis}
 	\caption{A 2 m deep cross section of a subplot point cloud showing the efficacy of the noise reduction and voxelisation process. Red points are excluded by the process, while green points are preserved for further analysis.}
 	\label{noise_vis}
 \end{figure}
@@ -201,7 +201,11 @@ To calculate subplot foliage density profiles, the 5 cm\textsuperscript{3} voxel
 
 In R, foliage density was calculated in 5 cm layers as the proportion of filled 5 cm\textsuperscript{3} voxels. A loess model with a span of 0.1 was fitted to the foliage density values in each layer to estimate the foliage density profile (\autoref{height_profile_illus}). The foliage density profile was further filtered to only tree canopy material, by discarding all points below 1.3 m.
 
-Multiple statistics were extracted from the foliage density profile for use in statistical analyses. Total canopy foliage density was calculated as the area under the curve of the canopy foliage density profile, using trapezoid estimation. The Effective Number of Layers (ENL) in the foliage density profile was used to estimate canopy structural complexity, using the true-numbers equivalent Shannon entropy of foliage density among 50 cm layers (sensu \citealt{Ehbrecht2016}):
+\section{Subplot canopy complexity metrics}
+
+\subsection{Effective Number of Layers}
+
+The Effective Number of Layers (ENL) in the foliage density profile was used to estimate canopy structural complexity, using the true-numbers equivalent Shannon entropy of foliage density among 50 cm layers (sensu \citealt{Ehbrecht2016}):
 
 \begin{equation}
 	\text{ENL} = \exp\Big(-\sum_{i=1}^{N} p_{i} \times \ln p_{i} \Big)
@@ -209,7 +213,10 @@ Multiple statistics were extracted from the foliage density profile for use in s
 
 Where $N$ is the number of 50 cm bins in the height profile, and $p_{i}$ is the proportion of filled voxels in layer $i$ (foliage density). While \citet{Ehbrecht2016} used 1 m layers, their study was conducted in temperate deciduous forest where the maximum height of the sampled forest stands was 40 m, whereas the maximum canopy height in this study was only 22 m. Both \citet{Ehbrecht2016} and \citet{Montes2004} assert that layer thickness is largely arbitrary, but should be determined with respect to the variability within the canopy, thus in the sparse and highly variable savanna tree canopies measured in this study, narrower layers were chosen. 
 
-To describe the uniformity of the foliage density distribution through the canopy, a linear model of foliage density with height was fitted. Under a completely even distribution of foliage material through the canopy, the residuals of the linear model tend to zero, while clumping causes deviations from this uniform distribution and increases the sum of residuals.
+
+\subsection{Foliage density profile and uniformity}
+
+Subplot canopy foliage density was calculated as the area under the curve of the canopy foliage density profile, using trapezoid estimation. To describe the uniformity of the foliage density distribution through the canopy, a linear model of cumulative foliage volume over height was fitted (\autoref{height_profile_illus}). Under a completely even distribution of foliage material through the canopy, the residuals of the linear model tend to zero, while clumping causes deviations from this uniform distribution and increases the sum of squared residuals. 
 
 Maximum canopy height has been used in other studies to describe canopy structural complexity \citep{Scheuermann2018}. At the small spatial scale of the subplots used in this study however, there proved to be too much stochastic variation in canopy height among subplots due to the distribution of individual trees to make this statistic informative as a measure of canopy complexity. Canopy height was instead calculated later at the plot level. 
 
@@ -257,10 +264,11 @@ Canopy closure estimates from the TLS were validated using estimates from hemisp
 	\label{hemi_tls_ex}
 \end{figure}
 
-\subsection{Whole plot canopy complexity}
+\section{Whole plot canopy complexity metrics}
 
-The canopy height of each 1 ha plot was estimated using unified point clouds from all subplots. The unified point cloud was voxelised to 10 cm\textsuperscript{3}, and the 99th percentile of height from each 10 cm\textsuperscript{2} column was taken as the canopy height. Maximum height was not used as this occasionally constituted a severe outlier which skewed further 
-canopy surface model smoothing. The point cloud was then cropped to the plot boundaries, located using PPK GNSS similar to the TLS targets. A pit-filling algorithm described in \citet{Khosravipour2014} was used to smooth the canopy surface model, at a resolution of 50 cm, by removing gaps within trees caused by incomplete penetration of the LiDAR beam (\autoref{P1_both}). 
+\subsection{Canopy height}
+
+The canopy height of each 1 ha plot was estimated using unified point clouds from all subplots. The unified point cloud was voxelised to 10 cm\textsuperscript{3}, and the 99th percentile of height from each 10 cm\textsuperscript{2} column was taken as the canopy height. Maximum height was not used as this occasionally constituted a severe outlier which skewed further canopy surface model smoothing. The point cloud was then cropped to the plot boundaries, located using PPK GNSS similar to the TLS targets. A pit-filling algorithm described in \citet{Khosravipour2014} was used to smooth the canopy surface model, at a resolution of 50 cm, by removing gaps within trees caused by incomplete penetration of the LiDAR beam (\autoref{P1_both}). 
 
 \begin{figure}
 	\begin{subfigure}{0.45\linewidth}
@@ -278,13 +286,17 @@ canopy surface model smoothing. The point cloud was then cropped to the plot bou
 	\label{P1_both}
 \end{figure}
 
-Mean canopy height across the plot and the coefficient of variation of canopy height were extracted from the canopy surface model for use in statistical analyses. The coefficient of variation of canopy height describes canopy structural diversity measured by the heterogeneity of the canopy surface \citep{Parker2004}. Other studies in closed canopy temperate and boreal forests have used metrics similar to the Topographic Roughness Index to measure canopy surface heterogeneity, by comparing canopy height to that of neighbouring pixels in the canopy height model \citep{Weligepolage2012, HerreroHuerta2020}. In this study however, the sparse nature of the tree canopies meant that these metrics were overly influenced by canopy density and the edges of individual tree canopies. Canopy rugosity ($R_{c}$) was also calculated to describe structural complexity across the entire canopy profile, rather than just the canopy surface, sensu \citet{Hardiman2011}. $R_{c}$ first calculates the standard deviation of foliage density in 50 cm\textsuperscript{2} columns across the plot ($\sigma{}G_{z}$), then calculates the standard deviation of those standard deviations: 
+Mean canopy height across the plot and the coefficient of variation of canopy height were extracted from the canopy surface model for use in statistical analyses. The coefficient of variation of canopy height describes canopy structural diversity measured by the heterogeneity of the canopy surface \citep{Parker2004}. Other studies in closed canopy temperate and boreal forests have used metrics similar to the Topographic Roughness Index to measure canopy surface heterogeneity, by comparing canopy height to that of neighbouring pixels in the canopy height model \citep{Weligepolage2012, HerreroHuerta2020}. In this study however, the sparse nature of the tree canopies meant that these metrics were overly influenced by canopy density and the edges of individual tree canopies. 
+
+\subsection{Canopy rugosity}
+
+Canopy rugosity ($R_{c}$) was also calculated to describe structural complexity across the entire canopy profile, rather than just the canopy surface, sensu \citet{Hardiman2011}. $R_{c}$ first calculates the standard deviation of foliage density in 50 cm\textsuperscript{2} columns across the plot ($\sigma{}G_{z}$), then calculates the standard deviation of those standard deviations: 
 
 \begin{equation}
 	R_{c} = \sigma{}(\sigma{}G_{z})_{x}
 \end{equation}
 
-Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation. Plot level canopy closure was calculated as the mean of subplot TLS canopy closure estimates. Plot level foliage density was calculated as the sum of filled 50 cm\textsuperscript{3} voxels above 1.3 m and below the 99th percentile of height.
+Where $G_{z}$ is the vertical height axis $z$, $x$ is the horizontal axis, and $\sigma{}$ is the standard deviation.
 
 \section{Stand structure metrics}
 
@@ -321,9 +333,7 @@ Where $k$ is the number of nearest neighbours considered for each reference tree
 	\label{mingling_both}
 \end{figure}
 
-\subsection{Spatial distribution of stems}
-
-\subsubsection{Uniform angle index}
+\subsection{Uniform angle index}
 
 The uniform angle index (winkelmass, $W$) was calculated to estimate the degree of spatial regularity in stem spatial distribution. Here, $W$ was calculated at the plot level as the mean of $W_{i}$) according to \citet{Gadow2002}: 
 
@@ -361,7 +371,7 @@ Where $k$ is the number of neighbours considered, $\alpha_{j}$ is the angle betw
 	\label{wi_k}
 \end{figure}
 
-\subsubsection{Voronoi tessellation}
+\subsection{Voronoi tessellation}
 
 In addition to spatial regularity, the spatial uniformity of stems is another important aspect of tree spatial distribution. While the uniform angle index effectively measures similarity to a grid-like distribution of individuals, it does not account for variation in the relative distance of stems from their neighbours over the plot area. Spatial uniformity is defined here by two criteria: equality of spacing among individuals within the plot, and even coverage of individuals across the plot \citep{Ong2012}. Departures from spatial uniformity indicate clustering of individuals. Voronoi tessellation is a method of partitioning an n-dimensional space into regions according to the closest individual (\autoref{voronoi_example}). Voronoi tessellation was conducted on stem location within each plot. The coefficient of variation of the area of Voronoi cells was then used as a measure of spatial clustering which is sensitive to both the criteria defining spatial uniformity, and is independent of tree density (\autoref{voronoi_diag}). As clustering increases, individuals within clusters will exhibit progressively smaller Voronoi cells, while individuals at the edges of clusters will exhibit progressively larger Voronoi cells, thus increasing the coefficient of variation of cell area.
 
