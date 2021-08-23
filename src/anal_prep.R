@@ -45,7 +45,8 @@ plot_all <- full_join(plot_summ_clean, canopy_clean, by = "plot_id") %>%
 
 # Add veg. type clusters
 plot_all$man_clust <- as.character(plot_all$man_clust)
-subplot_all$man_clust <- plot_all$man_clust[match(subplot_all$plot_id, plot_all$plot_id)]
+subplot_all$man_clust <- plot_all$man_clust[
+  match(subplot_all$plot_id, plot_all$plot_id)]
 
 # Standardise predictors
 subplot_all_std <- subplot_all %>%

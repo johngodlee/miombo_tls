@@ -17,7 +17,7 @@ sed '9s/{CV basal area}/{\\thead{Basal area\\\\CV}}/' out/canopy_rough_dredge_be
 	sed '9s/{CV Voronoi}/{\\thead{Voronoi\\\\CV}}/' |\
 	sed	'9s/{Tree density}/{\\thead{Tree\\\\density}}/' |\
 	sed	'9s/{Winkelmass}/{\\thead{Uniform\\\\angle index}}/' |\
-	sed '7i\\\setlength{\\tabcolsep}{4pt}' > out/canopy_rough_dredge_best_fmt.tex
+	sed '7i\\\setlength{\\tabcolsep}{3pt}' > out/canopy_rough_dredge_best_fmt.tex
 
 sed '9s/{CV basal area}/{\\thead{Basal area\\\\CV}}/' out/height_profile_dredge_best.tex > out/height_profile_dredge_best_fmt.tex
 

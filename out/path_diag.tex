@@ -1,0 +1,35 @@
+\begin{tikzpicture}[
+	mybox/.style={
+    	rectangle,
+    	draw,
+    	very thick,
+    	inner sep=0pt,
+    	minimum width=20mm,
+    	minimum height=10mm,
+    	text width=2cm,
+		align=center
+    },
+    myarrow/.style={
+    	thick,
+    	-Stealth 
+    },
+    mypathnode/.style={
+    	text width=1cm,
+    	align=center,
+    	fill=white
+    }
+]
+
+\node [mybox] (A1) at (0,0) {Shannon};
+\node [mybox] (B1) [above right=of A1] {Basal area\\CV};
+\node [mybox] (C1) [below right=of B1] {Hegyi};
+\node [mybox] (D1) [below right=of A1] {Canopy\\closure};
+
+\path[myarrow] (A1.north) edge node[mypathnode] {\shannonBaPath} (B1.west); 
+\path [myarrow] (C1.north) edge node[mypathnode] {\hegyiBaPath} (B1.east); 
+\path [myarrow] (B1.south) edge node[mypathnode] {\baCoverPath} (D1.north); 
+\path [myarrow] (A1.south) edge node[mypathnode] {\shannonCoverPath} (D1.west); 
+\path [myarrow] (C1.south) edge node[mypathnode] {\hegyiCoverPath} (D1.east); 
+
+\end{tikzpicture}
+

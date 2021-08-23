@@ -22,3 +22,6 @@ cp img/wi_k.pdf workflow/img/
 cp img/voronoi_example.pdf workflow/img/
 cp img/voronoi_diag.pdf workflow/img/
 cp img/hegyi.pdf workflow/img/
+
+# Copy tables to workflow directory
+cp out/auspos_close.tex workflow/inc/

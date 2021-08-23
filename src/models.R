@@ -93,7 +93,7 @@ sig_vars_dredge_clean <- sig_vars_dredge_df %>%
 
 sig_dredge_tab <- xtable(sig_vars_dredge_clean,
   label = "height_profile_sig_vars_dredge",
-  caption = "Explanatory variables included in the best model for each canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the hegyi crowding index and the random effects of vegetation type and plot. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
+  caption = "Explanatory variables included in the best model for each canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the random effects of vegetation type and plot. Positive $\\Delta$AICvalues indicate that the model is of better quality than the null model. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
   align = c("c","l","c","c","c","c","c","c"),
   display = c("s", "s", "s", "s", "s", "f", "f", "f"),
   digits = c( NA,  NA,  NA,  NA,  NA,  1,   2,   2))
@@ -213,10 +213,30 @@ sink()
 
 mod_summ_df <- as.data.frame(mod_summ$coefficients)
 
-ccind <- format(mod_summ_df$Estimate[mod_summ_df$Response == "cover" & mod_summ_df$Predictor == "ba_cov_std"] * 
-  mod_summ_df$Estimate[mod_summ_df$Response == "ba_cov_std" & mod_summ_df$Predictor == "shannon_std"], digits = 2)
+ccind <- format(
+  mod_summ_df$Estimate[
+    mod_summ_df$Response == "cover" & mod_summ_df$Predictor == "ba_cov_std"] * 
+  mod_summ_df$Estimate[
+    mod_summ_df$Response == "ba_cov_std" & mod_summ_df$Predictor == "shannon_std"], 
+  digits = 2)
 
-ccdir <- 0.06
+path_extract <- function(x,y) { 
+  paste0(
+    format(mod_summ_df$Std.Estimate[
+      mod_summ_df$Response == y & mod_summ_df$Predictor == x], 
+      digits = 2), 
+    pFormat(mod_summ_df$P.Value[
+      mod_summ_df$Response == y & mod_summ_df$Predictor == x], 
+      asterisks = TRUE)
+    )
+}
+
+shannon_ba_path <- path_extract("shannon_std", "ba_cov_std")
+hegyi_ba_path <- path_extract("hegyi_std", "ba_cov_std")
+ba_cover_path <- path_extract("ba_cov_std", "cover")
+hegyi_cover_path <- path_extract("hegyi_std", "cover")
+shannon_cover_path <- path_extract("shannon_std", "cover")
+
 
 mod_spec <- psem(
   lm(cover ~ ba_cov_std + shannon_std + hegyi_std, data = subplot_clust1), 
@@ -293,7 +313,7 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
 
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   label = "canopy_sig_vars_dredge",
-  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model.",
+  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model. Positive $\\Delta$AICvalues indicate that the model is of better quality than the null model.",
   align = c("c", "l", "c", "c", "c", "c", "c", "c", "c", "c", "S[table-format=<1.2]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
   digits = c( NA,   NA,  NA,  NA, NA, NA,  NA,  NA,  1,   2,   NA))
@@ -386,8 +406,12 @@ write(
     commandOutput(tree_dens_rug_p, "treeDensRugP"),
     commandOutput(cov_ba_rough_p, "covBARoughP"),
     commandOutput(winkel_cover_p, "wiCoverP"),
-    commandOutput(ccdir, "ccdir"),
-    commandOutput(ccind, "ccind")
+    commandOutput(ccind, "ccind"),
+    commandOutput(shannon_ba_path, "shannonBaPath"),
+    commandOutput(hegyi_ba_path, "hegyiBaPath"),
+    commandOutput(ba_cover_path, "baCoverPath"),
+    commandOutput(hegyi_cover_path, "hegyiCoverPath"),
+    commandOutput(shannon_cover_path, "shannonCoverPath")
     ),
   file = "../out/models_var.tex")
 
