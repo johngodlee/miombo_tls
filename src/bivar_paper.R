@@ -173,6 +173,47 @@ wrap_plots(plot_list, byrow = FALSE) +
   theme(legend.position = "bottom")
 dev.off()
 
+
+# Compare plot and subplot stand structure and diversity statistics
+pred_list <- list("subplot" = subplot_pred, "plot" = plot_pred)
+pred_comb <- lapply(seq_along(pred_list), function(x) {
+  apply(t(combn(pred_list[[x]], 2)), 1, function(y) {
+    if (names(pred_list)[x] == "subplot") {
+      out <- subplot_all_std[,c("plot_id", "subplot", "man_clust", y)]
+      names(out) <- c("plot_id", "subplot", "man_clust", "x", "y")
+    } else {
+      out <- plot_all_std[,c("plot_id", "man_clust", y)]
+      names(out) <- c("plot_id", "man_clust", "x", "y")
+    }
+    out$x_var <- y[1]
+    out$y_var <- y[2]
+
+    p <- ggplot(out, aes(x = x, y = y)) + 
+      geom_point(aes(fill = man_clust), shape = 21, colour = "black") + 
+      geom_smooth(method = "lm", colour = "black", se = TRUE) + 
+      geom_smooth(method = "lm", aes(colour = man_clust), se = FALSE) + 
+      scale_fill_manual(name = "Veg. type", values = clust_pal) + 
+      scale_colour_manual(name = "Veg. type", values = clust_pal) +
+      labs(x = pred_names[match(y[1], names(pred_names))], 
+        y = pred_names[match(y[2], names(pred_names))]) + 
+      theme_bw() 
+
+    return(p)
+  })
+})
+
+pdf(file = "../img/pred_comp_subplot.pdf", width = 12, height = 5)
+wrap_plots(pred_comb[[1]], byrow = FALSE) + 
+  plot_layout(ncol = 3, guides = "collect") &
+  theme(legend.position = "bottom")
+dev.off()
+
+pdf(file = "../img/pred_comp_plot.pdf", width = 12, height = 12)
+wrap_plots(pred_comb[[2]], byrow = FALSE) + 
+  plot_layout(ncol = 3, guides = "collect") &
+  theme(legend.position = "bottom")
+dev.off()
+
 # Compare metrics within plot and subplot
 canopy_resp_list <- list("subplot" = subplot_resp, "plot" = plot_resp)
 canopy_comp <- lapply(seq_along(canopy_resp_list), function(x) {
