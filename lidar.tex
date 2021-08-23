@@ -119,7 +119,7 @@ Statistical analysis of the determinants of plot level canopy complexity metrics
 
 Indicator species analysis shows that the four identified vegetation types constitute common southern African savanna floristic archetypes (\autoref{indval}). Cluster 1, found in Bicuar National Park contains typical miombo species from the Detarioideae subfamily, such as \textit{Julbernardia paniculata}. Cluster 1 is the most frequent vegetation type in this study, with 12 plots. Cluster 1 has the highest stem density, but lower AGB than Clusters 2 or 3, which contain larger individuals with disproportionately higher biomass. Cluster 2, found in Mtarure Forest Reserve, is dominated by \textit{Pteleopsis myrtifolia}, a common miombo species from the Combretaceae family. Indeed, Cluster 2 also contained other common miombo species shared with plots in Cluster 1, such as \textit{Julbernardia globiflora} and \textit{Pseudolachnostylis maprouneifolia}, but these clusters remain distinct due to biogeographic variation in endemic genera at the longitudinal extremes of the miombo ecoregion represented by the two sites in this study. Cluster 3 represents \textit{Baikiaea} woodland, found on Kalahari sands in southern Angola. It is species poor and dominated by \textit{Baikiaea plurijuga} which forms large spreading canopy trees with high AGB. Other shrubby species that coppice readily in response to disturbance by fire such as \textit{Baphia massaiensis} are also common. Cluster 4, found in Mtarure is a type of ex-Acacia woodland, dominated by \textit{Vachellia} and \textit{Senegalia} spp. This vegetation type was not well represented in the study, with only two plots, precluding its use in some multi-level statistical analyses due to lack of replication. Cluster 4 had far lower AGB than the other clusters (\autoref{clust_summ}). 
 
-Differences in canopy structure among the four vegetation types are evident through observation of canopy surface models for typical plots within each vegetation type (\autoref{veg_type_tile}). Cluster 1 shows many overlapping crowns forming a nearly contiguous canopy surface. Though most trees in Cluster 1 have smaller crowns than those in Cluster 2, which also forms a nearly contiguous canopy. The largest trees in Cluster 2 grow taller and have a wider spreading canopy than those in other vegetation types. Cluster 3 shows two distinct size classes of tree, the large \textit{Baikiaea plurijuga} forming clear isolated canopies, and much smaller scattered shrubby individuals in the understorey. Cluster 4 shows many small shrubby individuals with irregular canopy shapes, but a greater total crown area coverage than Cluster 3. 
+Differences in canopy structure among the four vegetation types are evident through observation of canopy surface models for typical plots within each vegetation type (\autoref{veg_type_tile}), and by comparing canopy complexity metrics (\autoref{canopy_metric_box}). Cluster 1 shows many overlapping crowns forming a nearly contiguous canopy surface, and the heighest plot foliage density of all clusters. Though most trees in Cluster 1 have smaller crowns than those in Cluster 2, which also forms a nearly contiguous canopy. The largest trees in Cluster 2 grow taller and have a wider spreading canopy than those in other vegetation types. Cluster 3 shows two distinct size classes of tree, the large \textit{Baikiaea plurijuga} forming clear isolated canopies, and much smaller scattered shrubby individuals in the understorey. Cluster 4 shows many small shrubby individuals with irregular canopy shapes, but a greater total crown area coverage than Cluster 3. 
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{nmds}
@@ -136,16 +136,26 @@ At the plot level, effects of species diversity and stand structure on canopy co
 \begin{landscape}
 \begin{figure}
 	\includegraphics[width=\linewidth]{bivar}
-	\caption[Bivariate plots comparing diversity, stand structure and canopy complexity]{Bivariate relationships between diversity/stand structure metrics (x axis) and canopy complexity metrics (y axis), at both the subplot level (left) and the plot level (right). Points and linear model lines of best fit are coloured by vegetation type. Black lines of best fit are linear models including all plots, with a 95\% confidence interval. See \autoref{bivar_lm_summ} for a comparison of linear model fits by vegetation type.}
+	\caption[Bivariate plots comparing diversity, stand structure and canopy complexity]{Bivariate relationships between diversity/stand structure metrics (x axis) and canopy complexity metrics (y axis), at both the subplot level (left) and the plot level (right). Points and linear model lines of best fit are coloured by vegetation type. Black lines of best fit are linear models including all plots, with a 95\% confidence interval. See \autoref{bivar_lm_summ_veg_type} for a comparison of linear model fits by vegetation type.}
 	\label{subplot_canopy_bivar}
 \end{figure}
 \end{landscape}
 
+\input{out/bivar_lm_summ_all_fmt}
+
 \begin{figure}
 	\includegraphics[width=\linewidth]{veg_type_tile}
-	\caption{Representative canopy surface models for each vegetation type identified in the Non-metric Multi-dimensional Scaling (NMDS) analysis. Panel titles show the plot name and the vegetation type.}
+	\caption{Representative canopy surface models for each vegetation type identified in the Non-metric Multi-dimensional Scaling (NMDS) clustering analysis. Panel titles show the plot name and the vegetation type.}
 	\label{veg_type_tile}
 \end{figure}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{canopy_metric_box}
+	\caption{Box plots showing variation in canopy complexity metrics among the four vegetation types identified in the Non-metric Multi-dimensional Scaling (NMDS) clustering analysis. Thick lines show the median, boxes show the interquartile range (IQR), whiskers show 1.5$\times$IQR, and points show outliers beyond these limits. Labels above each box plot group vegetation types according to significant differences in pairwise Tukey's tests; vegetation types sharing a letter are not significantly different.}
+	\label{canopy_metric_box}
+\end{figure}
+
+
 
 \subsection{Subplot mixed models}
 
@@ -222,6 +232,6 @@ Lots of disturbance is exogenous, i.e. not controlled by stand composition, lots
 
 %\section{Supplementary Material} \beginsupplement
 
-\input{out/bivar_lm_summ_fmt}
+\input{out/bivar_lm_summ_veg_type_fmt}
 
 \end{document}

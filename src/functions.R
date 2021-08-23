@@ -28,7 +28,7 @@ pred_names <- c(
   "tree_dens" = "Tree density",
   "mi_mean" = "Mingling",
   "cell_area_cov" = "Voronoi CV",
-  "wi_mean" = "Winkelmass",
+  "wi_mean" = "Uniform angle index",
   "shannon" = "Shannon",
   "tree_shannon" = "Shannon",
   "hegyi" = "Hegyi",

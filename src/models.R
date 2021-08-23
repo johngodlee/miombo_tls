@@ -93,7 +93,7 @@ sig_vars_dredge_clean <- sig_vars_dredge_df %>%
 
 sig_dredge_tab <- xtable(sig_vars_dredge_clean,
   label = "height_profile_sig_vars_dredge",
-  caption = "Explanatory variables included in the best model for each canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the random effects of vegetation type and plot. Positive $\\Delta$AICvalues indicate that the model is of better quality than the null model. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
+  caption = "Explanatory variables included in the best model for each canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the random effects of vegetation type and plot. Positive $\\Delta$AIC values indicate that the model is of better quality than the null model. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
   align = c("c","l","c","c","c","c","c","c"),
   display = c("s", "s", "s", "s", "s", "f", "f", "f"),
   digits = c( NA,  NA,  NA,  NA,  NA,  1,   2,   2))
@@ -313,7 +313,7 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
 
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   label = "canopy_sig_vars_dredge",
-  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model. Positive $\\Delta$AICvalues indicate that the model is of better quality than the null model.",
+  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model. Positive $\\Delta$AIC values indicate that the model is of better quality than the null model.",
   align = c("c", "l", "c", "c", "c", "c", "c", "c", "c", "c", "S[table-format=<1.2]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
   digits = c( NA,   NA,  NA,  NA, NA, NA,  NA,  NA,  1,   2,   NA))

@@ -178,13 +178,14 @@ $(IMGDIR)/schematic.pdf : drawio/schematic.drawio
 	./drawio_export.sh $< $@
 
 # Format some tables
-$(OUTDIR)/indval_fmt.tex $(OUTDIR)/clust_summ_fmt.tex $(OUTDIR)/height_profile_dredge_best_fmt.tex $(OUTDIR)/canopy_rough_dredge_best_fmt.tex $(OUTDIR)/bivar_lm_summ_fmt.tex : \
+$(OUTDIR)/indval_fmt.tex $(OUTDIR)/clust_summ_fmt.tex $(OUTDIR)/height_profile_dredge_best_fmt.tex $(OUTDIR)/canopy_rough_dredge_best_fmt.tex $(OUTDIR)/bivar_lm_summ_all_fmt.tex $(OUTDIR)/bivar_lm_summ_veg_type_fmt.tex : \
 	table_fmt.sh \
 	$(OUTDIR)/indval.tex \
 	$(OUTDIR)/clust_summ.tex \
 	$(OUTDIR)/height_profile_dredge_best.tex \
 	$(OUTDIR)/canopy_rough_dredge_best.tex \
-	$(OUTDIR)/bivar_lm_summ.tex 
+	$(OUTDIR)/bivar_lm_summ_all.tex \
+	$(OUTDIR)/bivar_lm_summ_veg_type.tex 
 	@echo Format tables
 	./table_fmt.sh $< $@
 
@@ -206,7 +207,8 @@ $(TEXFILE).pdf : \
 	$(OUTDIR)/indval.tex \
 	$(OUTDIR)/height_profile_dredge_best_fmt.tex \
 	$(OUTDIR)/canopy_rough_dredge_best_fmt.tex \
-	$(OUTDIR)/bivar_lm_summ_fmt.tex \
+	$(OUTDIR)/bivar_lm_summ_all_fmt.tex \
+	$(OUTDIR)/bivar_lm_summ_veg_type_fmt.tex \
 	$(IMGDIR)/map.pdf \
 	$(IMGDIR)/nmds.pdf \
 	$(IMGDIR)/bivar.pdf \

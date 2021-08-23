@@ -343,37 +343,73 @@ bivar_lm_summ_clean <- bivar_lm_summ %>%
     ) %>%
   dplyr::select(resp, pred, man_clust, slope, mod_f, mod_rsq, pred_t)
 
-bivar_lm_summ_clean$resp[seq_len(nrow(bivar_lm_summ_clean))[
-    -seq(1, nrow(bivar_lm_summ_clean), 
-      by = length(unique(bivar_lm_summ_clean$man_clust)))]] <- ""
+bivar_lm_summ_all <- bivar_lm_summ_clean %>%
+  filter(man_clust == "All") %>%
+  dplyr::select(-man_clust)
 
-bivar_lm_summ_clean$pred[seq_len(nrow(bivar_lm_summ_clean))[
-    -seq(1, nrow(bivar_lm_summ_clean), 
-      by = length(unique(bivar_lm_summ_clean$man_clust)))]] <- ""
+dups <- c(2:3,5:6,8:9,11:12,14:18,20:24,26:30,32:36,38:42)
+no_dups_seq <- seq_len(nrow(bivar_lm_summ_all))[-dups]
+first_entries <- c(c(no_dups_seq - lag(no_dups_seq))[-1], 6)
 
-bivar_lm_summ_clean$resp[seq(1, nrow(bivar_lm_summ_clean), 
-      by = length(unique(bivar_lm_summ_clean$man_clust)))] <- gsub("(.*)", "{\\\\multirow{5}{*}{\\1}}", bivar_lm_summ_clean$resp[seq(1, nrow(bivar_lm_summ_clean), 
-      by = length(unique(bivar_lm_summ_clean$man_clust)))])
+bivar_lm_summ_all$resp[dups] <- ""
 
-bivar_lm_summ_clean$pred[seq(1, nrow(bivar_lm_summ_clean), 
-      by = length(unique(bivar_lm_summ_clean$man_clust)))] <- gsub("(.*)", "{\\\\multirow{5}{*}{\\1}}", bivar_lm_summ_clean$pred[seq(1, nrow(bivar_lm_summ_clean), 
-      by = length(unique(bivar_lm_summ_clean$man_clust)))])
+for (i in seq_along(bivar_lm_summ_all$resp[first_entries])) {
+  bivar_lm_summ_all$resp[no_dups_seq[i]] <- gsub("(.*)", paste0("{\\\\multirow{", first_entries[i], "}{*}{\\1}}"), bivar_lm_summ_all$resp[no_dups_seq[i]])
+}
 
-bivar_lm_summ_tab <- xtable(bivar_lm_summ_clean,
+bivar_lm_summ_all_tab <- xtable(bivar_lm_summ_all,
   label = "bivar_lm_summ",
-  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error. R\\textsuperscript{2} refers to the whole model. T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
+  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics across all vegetation types. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error. T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
+  align = c("l", "l", "l", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
+  display = c("s", "s", "s", "s", "s", "s", "s"))
+
+names(bivar_lm_summ_all_tab) <- c("Response", "Predictor", "Slope", "F", "R\\textsuperscript{2}", "T")
+
+fileConn <- file("../out/bivar_lm_summ_all.tex")
+writeLines(print(bivar_lm_summ_all_tab, 
+  include.rownames = FALSE, 
+  caption.placement = "top",
+  booktabs = TRUE,
+  hline.after = c(-1, no_dups_seq-1, nrow(bivar_lm_summ_all)),
+  sanitize.colnames.function = colSanit, 
+  sanitize.text.function = function(x) {x}), 
+  fileConn)
+close(fileConn)
+
+bivar_lm_summ_veg_type <- bivar_lm_summ_clean %>%
+  filter( man_clust != "All")
+
+bivar_lm_summ_veg_type$resp[seq_len(nrow(bivar_lm_summ_veg_type))[
+    -seq(1, nrow(bivar_lm_summ_veg_type), 
+      by = length(unique(bivar_lm_summ_veg_type$man_clust)))]] <- ""
+
+bivar_lm_summ_veg_type$pred[seq_len(nrow(bivar_lm_summ_veg_type))[
+    -seq(1, nrow(bivar_lm_summ_veg_type), 
+      by = length(unique(bivar_lm_summ_veg_type$man_clust)))]] <- ""
+
+bivar_lm_summ_veg_type$resp[seq(1, nrow(bivar_lm_summ_veg_type), 
+      by = length(unique(bivar_lm_summ_veg_type$man_clust)))] <- gsub("(.*)", "{\\\\multirow{4}{*}{\\1}}", bivar_lm_summ_veg_type$resp[seq(1, nrow(bivar_lm_summ_veg_type), 
+      by = length(unique(bivar_lm_summ_veg_type$man_clust)))])
+
+bivar_lm_summ_veg_type$pred[seq(1, nrow(bivar_lm_summ_veg_type), 
+      by = length(unique(bivar_lm_summ_veg_type$man_clust)))] <- gsub("(.*)", "{\\\\multirow{4}{*}{\\1}}", bivar_lm_summ_veg_type$pred[seq(1, nrow(bivar_lm_summ_veg_type), 
+      by = length(unique(bivar_lm_summ_veg_type$man_clust)))])
+
+bivar_lm_summ_veg_type_tab <- xtable(bivar_lm_summ_veg_type,
+  label = "bivar_lm_summ",
+  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error.  T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
   align = c("l", "l", "l", "c", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s"))
 
-names(bivar_lm_summ_tab) <- c("Response", "Predictor", "Cluster", "Slope", "F", "R\\textsuperscript{2}", "T")
+names(bivar_lm_summ_veg_type_tab) <- c("Response", "Predictor", "Cluster", "Slope", "F", "R\\textsuperscript{2}", "T")
 
-fileConn <- file("../out/bivar_lm_summ.tex")
-writeLines(print(bivar_lm_summ_tab, 
+fileConn <- file("../out/bivar_lm_summ_veg_type.tex")
+writeLines(print(bivar_lm_summ_veg_type_tab, 
   tabular.environment = "longtable",
   include.rownames = FALSE, 
   caption.placement = "top",
   booktabs = TRUE,
-  hline.after = c(-1, 0, seq(5,nrow(bivar_lm_summ_clean), 5)),
+  hline.after = c(-1, 0, seq(4,nrow(bivar_lm_summ_veg_type), 4)),
   sanitize.colnames.function = colSanit, 
   sanitize.text.function = function(x) {x}), 
   fileConn)
@@ -404,7 +440,7 @@ shannon_layerdiv <- bivar_lm_text(bivar_lm_summ, "layer_div", "shannon", "5", "s
 shannon_foliage <- bivar_lm_text(bivar_lm_summ, "auc_canopy", "shannon", "5", "subplot")
 shannon_cover <- bivar_lm_text(bivar_lm_summ, "cover", "shannon", "5", "subplot")
 winkel_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "wi_mean", "5", "plot")
-voronoi_coverp <- bivar_lm_text(bivar_lm_summ, "cover", "cell_area_cov", "5", "plot")
+voronoi_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "cell_area_cov", "5", "plot")
 bacov_coverp <- bivar_lm_text(bivar_lm_summ, "cover_mean", "ba_cov", "5", "plot")
 bacov_roughp <- bivar_lm_text(bivar_lm_summ, "chm_cov", "ba_cov", "5", "plot")
 bacov_rugp <- bivar_lm_text(bivar_lm_summ, "rc", "ba_cov", "5", "plot")

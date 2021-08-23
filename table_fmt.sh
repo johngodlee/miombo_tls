@@ -22,5 +22,6 @@ sed '9s/{CV basal area}/{\\thead{Basal area\\\\CV}}/' out/canopy_rough_dredge_be
 sed '9s/{CV basal area}/{\\thead{Basal area\\\\CV}}/' out/height_profile_dredge_best.tex > out/height_profile_dredge_best_fmt.tex
 
 
-sed '3i\\\setlength{\\tabcolsep}{4pt}' out/bivar_lm_summ.tex |\
-	sed 's/{Winkelmass}/{Uniform angle index}/g' > out/bivar_lm_summ_fmt.tex
+sed '3i\\\setlength{\\tabcolsep}{4pt}' out/bivar_lm_summ_all.tex > out/bivar_lm_summ_all_fmt.tex
+
+sed '3i\\\setlength{\\tabcolsep}{4pt}' out/bivar_lm_summ_veg_type.tex > out/bivar_lm_summ_veg_type_fmt.tex
