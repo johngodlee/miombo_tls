@@ -438,7 +438,7 @@ bivar_lm_summ_veg_type$pred[seq(1, nrow(bivar_lm_summ_veg_type),
 
 bivar_lm_summ_veg_type_tab <- xtable(bivar_lm_summ_veg_type,
   label = "bivar_lm_summ_veg_type",
-  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error.  T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
+  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics, grouped by vegetation type. Note that models plot level canopy complexity metrics could not be fitted for Cluster 4, as this cluster only contained two plots. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error.  T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
   align = c("l", "l", "l", "c", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s"))
 

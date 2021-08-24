@@ -349,21 +349,49 @@ sink(file = "../out/canopy_dredge_mods.txt")
 plot_dredge_list
 sink()
 
-plot_sig_vars_dredge <- lapply(plot_dredge_list, function(x) {
-  out <- x[1,!is.na(x[1,])]
-  c(gsub("\\s~.*", "", as.character((attributes(x)$global.call))[2]), 
-    plot_pred %in%
-      gsub("_std", "", 
-      names(out[,-which(names(out) %in% 
+# Which vars were included in best model?
+plot_best_mods <- c(2, 1, 1, 2, 2)
+
+plot_best_mod_list <- list(
+  lm(fol_dens ~ tree_shannon_std + cell_area_cov_std, 
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(cover_mean ~ ba_cov_std + wi_mean_std,
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(chm_mean ~ mi_mean_std + tree_shannon_std, 
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(chm_cov ~ tree_shannon_std + mi_mean_std, 
+    data = plot_all_fil, na.action = "na.fail"),
+  lm(rc ~ tree_dens_std + wi_mean_std,
+    data = plot_all_fil, na.action = "na.fail")
+)
+
+plot_best_mod_stat_df <- do.call(rbind, lapply(seq_along(plot_best_mod_list), function(x) {
+  data.frame(
+    resp = as.character(plot_best_mod_list[[x]]$terms[[2]]),
+    daic = AIC(plot_null_list[[x]]) - AIC(plot_best_mod_list[[x]]),
+    dbic = BIC(plot_null_list[[x]]) - BIC(plot_best_mod_list[[x]]),
+    pval = lmPval(plot_best_mod_list[[x]]),
+    rsq = summary(plot_best_mod_list[[x]])$r.squared,
+    logl = logLik(plot_best_mod_list[[x]]),
+    nulllogl = logLik(plot_null_list[[x]])
+  )
+}))
+
+
+plot_sig_vars_dredge <- lapply(seq_along(plot_dredge_list), function(x) {
+  out <- plot_dredge_list[[x]][plot_best_mods[x],!is.na(plot_dredge_list[[x]][plot_best_mods[x],])]
+  c(gsub("\\s~.*", "", as.character((attributes(plot_dredge_list[[x]])$global.call))[2]), 
+    paste0(plot_pred, "_std") %in%
+       names(out[,-which(names(out) %in% 
           c("(Intercept)", "df", "logLik", "AICc", "delta", "weight")), 
-        drop = FALSE])))
+        drop = FALSE]))
   })
 
 plot_sig_vars_dredge_df <- as.data.frame(do.call(rbind, plot_sig_vars_dredge))
 names(plot_sig_vars_dredge_df) <- c("resp", plot_pred)
 
 plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>% 
- left_join(., plot_mod_stat_df[,c("resp", "daic", "rsq", "pval")], by = "resp") %>%
+ left_join(., plot_best_mod_stat_df[,c("resp", "daic", "rsq", "pval")], by = "resp") %>%
   mutate(across(all_of(plot_pred), 
       ~case_when(
         .x == TRUE ~ "\\checkmark",
@@ -437,6 +465,8 @@ voronoi_dens_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "cell_area_c
 winkel_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "wi_mean_std" & 
   plot_mod_pred$resp == "cover_mean",])
 
+ba_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "ba_cov_std" & 
+  plot_mod_pred$resp == "cover_mean",])
 
 pdf(file = "../img/canopy_rough_slopes.pdf", height = 4, width = 9)
 ggplot() +
@@ -475,6 +505,7 @@ write(
     commandOutput(tree_dens_rug_p, "treeDensRugP"),
     commandOutput(cov_ba_rough_p, "covBARoughP"),
     commandOutput(winkel_cover_p, "wiCoverP"),
+    commandOutput(ba_cover_p, "baCoverP"),
     commandOutput(voronoi_dens_p, "voronoiDensP"),
     commandOutput(shannon_ba_cover_path, "shannonBaCoverPath"),
     commandOutput(shannon_ba_path, "shannonBaPath"),
@@ -492,7 +523,9 @@ write(
     commandOutput(mi_mean_height_path, "minglHeightPath"),
     commandOutput(dens_height_path, "densHeightPath"),
     commandOutput(ba_height_path, "baHeightPath"),
-    commandOutput(height_sem_r2, "heightSemRsq")
+    commandOutput(height_sem_r2, "heightSemRsq"),
+    commandOutput(tree_shannon_ba_height_path, "treeShannonBaHeightPath"),
+    commandOutput(tree_shannon_dens_height_path, "treeShannonDensHeightPath")
     ),
   file = "../out/models_var.tex")
 
