@@ -1,0 +1,52 @@
+
+Structural Equation Model of height_mod_spec 
+
+Call:
+  chm_mean ~ tree_dens_std + ba_cov_std + tree_shannon_std + mi_mean_std
+  tree_dens_std ~ tree_shannon_std + mi_mean_std
+  ba_cov_std ~ tree_shannon_std + mi_mean_std
+
+    AIC      BIC
+ 32.141   44.606
+
+---
+Tests of directed separation:
+
+                    Independ.Claim Test.Type DF Crit.Value P.Value 
+  ba_cov_std ~ tree_dens_std + ...      coef 14      1.627  0.1261 
+
+Global goodness-of-fit:
+
+  Fisher's C = 4.141 with P-value = 0.126 and on 2 degrees of freedom
+
+---
+Coefficients:
+
+       Response        Predictor Estimate Std.Error DF Crit.Value P.Value
+       chm_mean    tree_dens_std  -0.0541    0.5279 13    -0.1025  0.9199
+       chm_mean       ba_cov_std   0.0729    0.4498 13     0.1621  0.8737
+       chm_mean tree_shannon_std   2.5945    0.9225 13     2.8126  0.0147
+       chm_mean      mi_mean_std  -1.8534    0.8776 13    -2.1118  0.0546
+  tree_dens_std tree_shannon_std   1.1010    0.4012 15     2.7443  0.0151
+  tree_dens_std      mi_mean_std  -0.8491    0.4130 15    -2.0561  0.0576
+     ba_cov_std tree_shannon_std   0.5861    0.4708 15     1.2449  0.2323
+     ba_cov_std      mi_mean_std  -0.4891    0.4846 15    -1.0093  0.3288
+  Std.Estimate  
+       -0.0272  
+        0.0366  
+        1.2774 *
+       -0.8865  
+        1.0800 *
+       -0.8092  
+        0.5747  
+       -0.4660  
+
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05
+
+---
+Individual R-squared:
+
+       Response method R.squared
+       chm_mean   none      0.49
+  tree_dens_std   none      0.34
+     ba_cov_std   none      0.09

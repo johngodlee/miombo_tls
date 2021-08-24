@@ -91,17 +91,17 @@ Total foliage density was calculated within each subplot as the area under the c
 
 Plot level canopy surface models were extracted using the 99th percentile of canopy height in 10 cm\textsuperscript{2} columns. A pit-filling algorithm provided by \citet{Khosravipour2014} was applied at 50 cm\textsuperscript{2} resolution to reduce the effects of incomplete canopy penetration in dense canopies. Whole plot canopy complexity was measured by two metrics. Canopy top roughness was measured as the coefficient of variation of canopy height across the plot. Canopy rugosity was measured according to \citet{Hardiman2011}, as the coefficient of variation of vertical and horizontal foliage density within 0.5 m\textsuperscript{3} cubic bins. 
 
-\subsubsection{Stand structure}
+\subsubsection{Stand structure and diversity}
 
 For each subplot, an adapted version of the Iterative Hegyi index was used to estimate crowding, as an alternative to stem density which does not adequately capture crowding at small spatial scales when only a small number of trees are included in the sample \citep{Hegyi1974}. The coefficient of variation of stem diameter was calculated as a measure of the heterogeneity of tree size in the neighbourhood. 
 
 At the plot level, the regularity of species spatial distribution was estimated using the spatial mingling index \citep{Gadow2002}, which scores each tree based on whether it shares species identity with its nearest neighbours. The spatial regularity of trees was estimated using the uniform angle index (winkelmass) \citep{Gadow2002}, which scores each tree based on the angles between nearest neighbours. Additionally, the degree of spatial clustering of trees was measured using Voronoi tessellation, as the coefficient of variation of Voronoi cell areas \citep{Ong2012}. Finally, plot level tree density was calculated to estimate crowding at the plot scale. See Chapter 6 for more information on the behaviour of the spatial mingling index and uniform angle index.
 
+Species diversity at both the subplot and plot level was measured using the exponential Shannon index (i.e. the Hill number of order $q=1$), calculated using tree species abundance. At the subplot level trees were included if they had canopy material inside the 10 m diameter subplot, while at the plot level trees were included if the largest stem was inside the plot boundaries.
+
 \subsubsection{Statistical analysis}
 
 Non-metric Multi-dimensional Scaling (NMDS) was used to describe variation in species composition among plots, using genus-level basal area weighted abundance in each plot. Stems that could not be identified to genus were excluded from this analysis, which accounted for \perIndet{}\% of the total basal area recorded. Four distinct vegetation types, two from each site (\autoref{clust_summ}), were identified using hirerarchical clustering of the four dominant NMDS ordination axes. Clusters were further described using Dufr\^{e}ne-Legendre indicator species analysis and by ranking tree species according to abundance across all plots within each cluster. 
-
-Species diversity at both the subplot and plot level was measured using the exponential Shannon index (i.e. the Hill number of order $q=1$), calculated using tree species abundance.
 
 Linear mixed effects models tested the effects of tree species diversity and stand structural diversity on subplot canopy complexity metrics. Mixed models used a nested random intercept structure to account for the sampling design of subplots within plots and plots within vegetation types. Separate models were fitted for each canopy complexity metric, resulting in four models at the subplot level. Effect sizes among fixed effects in maximal models were compared for each canopy complexity metric, using the 95\% confidence interval of the effect size to ascertain whether a fixed effect was significant by whether the confidence interval overlapped zero \citep{Nakagawa2007}. AIC values and Akaike weights of models with different combinations of fixed effects were compared to determine which combination of diversity and structural metrics best explained variation in each canopy complexity metric. 
 
@@ -109,9 +109,9 @@ Path analysis was used to test whether tree species diversity may influence cano
 
 Statistical analysis of the determinants of plot level canopy complexity metrics were conducted using linear models. Again, these models excluded the ex-Acacia vegetation type due to lack of replication. As with the subplot linear mixed models, predictor variable effect sizes were used to assess predictor variable significance, and comparison of candidate models using AIC, Akaike weights, and model R\textsuperscript{2} values was used to determine which combination of predictors best explained each canopy complexity metric.
 
-\input{out/clust_summ_fmt}
+\input{out/clust_summ_fmt.tex}
 
-\input{out/indval_fmt}
+\input{out/indval_fmt.tex}
 
 \section{Results}
 
@@ -129,19 +129,24 @@ Differences in canopy structure among the four vegetation types are evident thro
 
 \subsection{Bivariate relationships}
 
-Bivariate plots and linear models show that subplot species diversity, measured as the true-numbers equivalent of the Shannon diversity index of the tree neighbourhood around each 10 m diameter subplot, appears to have weak positive effects on subplot canopy layer diversity (\shannonLayerDivB{}), canopy closure (\shannonCoverB{}) and foliage density (\shannonFoliageB{}) (\autoref{subplot_canopy_bivar}). The Hegyi crowding index had strong positive effects on all canopy complexity metrics, as expected. The effect of Hegyi crowding on subplot canopy complexity metrics was similar across all vegetation types. Structural diversity, measured as the coefficient of variation of subplot stem basal area had significant weak positive effects on total canopy foliage (\baCovFoliageB{}), layer diversity (\baCovLayerDivB{}), and  canopy closure (\baCovCoverB{}). 
+Bivariate plots and linear models show that subplot species diversity, measured as the true-numbers equivalent of the Shannon diversity index of the tree neighbourhood around each 10 m diameter subplot, appears to have weak positive effects on subplot canopy layer diversity, canopy closure and foliage density (\autoref{subplot_bivar}, \autoref{bivar_lm_summ_all}). The Hegyi crowding index had strong positive effects on all canopy complexity metrics, as expected. The effect of Hegyi crowding on subplot canopy complexity metrics was similar across all vegetation types (\autoref{bivar_lm_summ_veg_type}). Structural diversity, measured as the coefficient of variation of subplot stem basal area had significant weak positive effects on total canopy foliage, layer diversity, and canopy closure. 
 
-At the plot level, effects of species diversity and stand structure on canopy complexity were similarly weak (\autoref{subplot_canopy_bivar}). The effect of spatial regularity of stems on canopy closure, measured by uniform angle index, was clearly negative (\winkelCoverPB{}), while the effect of spatial clustering of stems, measured by the coefficient of variation of Voronoi cell area, was negligible (\voronoiCoverPB{}). Additionally, there was a non-significant negative effect of the coefficient of variation of basal area on whole canopy rugosity (\baCovRugosityPB{}). As expected, tree density had strong positive effects on foliage density, canopy height and canopy closure, and negative effects on canopy roughness and canopy rugosity. Species diversity appeared to have strong positive relationships with canopy closure (\shannonCoverPB{}) and canopy height (\shannonHeightPB{}), and negative effects on canopy roughness (\shannonRoughPB{}) and canopy rugosity (\shannonRugPB{}). Linear models were highly leveraged by one particularly speciose plot in Cluster 2, with over 40 species, though when this plot was removed, linear model slopes remained significant and with the same sign. Additionally, Cluster 4 represented an outlier in plot level bivariate relationships, with low canopy closure, low canopy height, low species diversity, and low variation in stem size.
+At the plot level, effects of species diversity and stand structure on canopy complexity were similarly weak, but not significant except for the effect on canopy height, which explained more variance in canopy height than tree density (\autoref{plot_bivar}, \autoref{bivar_lm_summ_all}). The effect of spatial regularity of stems on canopy closure, measured by uniform angle index, was clearly negative, while the effect of spatial clustering of stems, measured by the coefficient of variation of Voronoi cell area, was negligible. Additionally, there was a non-significant negative effect of the coefficient of variation of basal area on whole canopy rugosity. As expected, tree density had strong positive and significant effects on foliage density and canopy closure, and negative effects on canopy roughness and canopy rugosity. Cluster 4 represented an outlier in plot level bivariate relationships, with low canopy closure, low canopy height, low species diversity, and low variation in stem size.
 
-\begin{landscape}
+\input{out/bivar_lm_summ_all_fmt.tex}
+
 \begin{figure}
-	\includegraphics[width=\linewidth]{bivar}
-	\caption[Bivariate plots comparing diversity, stand structure and canopy complexity]{Bivariate relationships between diversity/stand structure metrics (x axis) and canopy complexity metrics (y axis), at both the subplot level (left) and the plot level (right). Points and linear model lines of best fit are coloured by vegetation type. Black lines of best fit are linear models including all plots, with a 95\% confidence interval. See \autoref{bivar_lm_summ_veg_type} for a comparison of linear model fits by vegetation type.}
-	\label{subplot_canopy_bivar}
+	\includegraphics[width=\linewidth]{bivar_subplot}
+	\caption[Bivariate plots comparing diversity, stand structure and canopy complexity]{Subplot level bivariate relationships between diversity/stand structure metrics (x axis) and canopy complexity metrics (y axis). Points and linear model lines of best fit are coloured by vegetation type. Black lines of best fit are linear models including all plots, with a 95\% confidence interval. See \autoref{bivar_lm_summ_veg_type} for a comparison of linear model fits by vegetation type.}
+	\label{subplot_bivar}
 \end{figure}
-\end{landscape}
 
-\input{out/bivar_lm_summ_all_fmt}
+\begin{figure}
+	\includegraphics[width=\linewidth]{bivar_plot}
+	\caption[Bivariate plots comparing diversity, stand structure and canopy complexity]{Plot level bivariate relationships between diversity/stand structure metrics (x axis) and canopy complexity metrics (y axis). Points and linear model lines of best fit are coloured by vegetation type. Black lines of best fit are linear models including all plots, with a 95\% confidence interval. See \autoref{bivar_lm_summ_veg_type} for a comparison of linear model fits by vegetation type.}
+	\label{plot_bivar}
+\end{figure}
+
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{veg_type_tile}
@@ -159,7 +164,7 @@ At the plot level, effects of species diversity and stand structure on canopy co
 
 \subsection{Subplot mixed models}
 
-Linear mixed effects models showed that species diversity of the subplot neighbourhood had negligible and poorly constrained effects on canopy complexity (\autoref{height_profile_mod_rich_slopes_sites}). As seen in the subplot bivariate relationships \autoref{subplot_canopy_bivar}, the Hegyi crowding index had strong positive effects on all measured canopy complexity metrics, though these effects were non-significant for vegetation clusters 3 and 4. Heterogeneity of stem basal area had a significant positive effect on layer diversity, but there was wide variation in vegetation type marginal effects for Clusters 3 and 4, due to low levels of replication. Cluster 3 had a significant positive effect of species diversity on foliage distribution uniformity, while none of the other vegetation clusters did.
+Linear mixed effects models showed that species diversity of the subplot neighbourhood contributed to both layer diversity and canopy closure (\autoref{height_profile_sig_vars_dredge}), despite their low R\textsuperscript{2} in bivariate linear models, and low effect sizes in maximal linear mixed models (\autoref{height_profile_mod_rich_slopes_sites}). As also seen in the subplot bivariate relationships \autoref{subplot_bivar}, the Hegyi crowding index had strong positive effects on all measured canopy complexity metrics, though these effects were non-significant for vegetation clusters 3 and 4. Heterogeneity of stem basal area had a significant positive effect on layer diversity and foliage density, but there was wide variation in vegetation type marginal effects for Clusters 3 and 4, due to low levels of replication. Cluster 3 had strong positive effects of species diversity on foliage uniformity and layer diversity. The random effects of vegetation type and plot identity described most of the variation in layer diversity and foliage density. Foliage uniformity was poorly explained by all combinations of fixed effects, with the best model only explaining \bestUnifRsqS\%. All models were better than random effects only models according to AIC values.
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{height_profile_mod_rich_slopes_sites}
@@ -167,15 +172,13 @@ Linear mixed effects models showed that species diversity of the subplot neighbo
 	\label{height_profile_mod_rich_slopes_sites}
 \end{figure}
 
-Model selection showed that none of the best models for subplot canopy complexity metrics included species diversity (\autoref{height_profile_sig_vars_dredge}). The coefficient of variation of basal area was included in the best models for layer diversity and foliage density, with the fixed effects for these models explaining \bestLayerDivRsqS\% and \bestDensRsqS\% of the variation in these metrics, respectively. The random effects of vegetation type and plot identity described most of the variation in layer diversity and foliage density. All models were better than random effects only models according to AIC values.
-
-\input{out/height_profile_dredge_best_fmt}
+\input{out/height_profile_dredge_best_fmt.tex}
 
 \subsection{Whole-plot multivariate linear models}
 
-While species diversity had varying effects on different plot level canopy complexity metrics, the confidence intervals on these effect sizes were wide (\autoref{canopy_rough_slopes}). Species diversity had a significant positive effect on canopy height (\shannonHeightP{}), a non-significant positive effect on canopy closure (\shannonCoverP{}), but a negative effect on canopy surface roughness (\shannonRoughP{}). Plot tree density had negligible effects on canopy complexity, except for canopy rugosity (\treeDensRugP{}), in contrast to the effect of Hegyi crowding on subplot canopy complexity. Structural diversity, measured by the coefficient of variation of basal area had a positive effect on canopy roughness (\covBARoughP{}). Spatially explicit measures of structural and species diversity, measured by the uniform angle index and spatial mingling index respectively, had negligible effects on all canopy complexity metrics. One exception was the effect of uniform angle index, i.e. the spatial clustering of stems, on canopy closure, which was clearly negative (\wiCoverP{}). 
+While species diversity had varying effects on different plot level canopy complexity metrics, the confidence intervals on these effect sizes were wide (\autoref{canopy_rough_slopes}). Species diversity had a significant positive effect on canopy height (\shannonHeightP{}), a non-significant positive effect on canopy closure (\shannonCoverP{}), but a negative effect on canopy surface roughness (\shannonRoughP{}) and whole canopy rugosity (\shannonRugP{}). Plot tree density had negligible effects on canopy complexity, except for canopy rugosity (\treeDensRugP{}), in contrast to the effect of Hegyi crowding on subplot canopy complexity. Spatially explicit measures of structural diversity, measured by the uniform angle index and Voronoi cell area CV respectively, had negligible effects on all canopy complexity metrics. One exception was the effect of uniform angle index, i.e. the spatial clustering of stems, on canopy closure, which was clearly negative (\wiCoverP{}), and the effect of Voronoi cell area on foliage density, which was positive (\voronoiDensP{}). 
 
-Despite the weak effect sizes of species diverity on canopy complexity at the plot level, model selection showed that canopy height, canopy roughness, and canopy closure were better explained by models which included species diversity (\autoref{canopy_sig_vars_dredge}). Additionally, the best model for canopy closure included spatial clustering of trees. Though the model for canopy roughness was only marginally better than a null model, and had a non-significant p-value. Canopy rugosity was poorly predicted by all candidate models.
+Despite the weak effect sizes of species diverity on canopy complexity at the plot level, model selection showed that canopy height and canopy roughness were better explained by models which included species diversity (\autoref{canopy_sig_vars_dredge}). Additionally, the best model for canopy height also included spatial mingling of tree species. The model for canopy roughness was no better than a null model, and all models had non-significant p-values. Voronoi cell area CV was not included in any models.
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{canopy_rough_slopes}
@@ -183,24 +186,27 @@ Despite the weak effect sizes of species diverity on canopy complexity at the pl
 	\label{canopy_rough_slopes}
 \end{figure}
 
-
-\input{out/canopy_rough_dredge_best_fmt}
+\input{out/canopy_rough_dredge_best_fmt.tex}
 
 \subsection{Path analysis}
 
-The path analysis investigating the indirect effect of subplot species diversity on canopy closure via the coefficient of variation of basal area showed that while species diversity had a strong positive significant effect on basal area variation, the effect of basal area variation on canopy closure remained negligible (\autoref{path_diag}). The indirect effect of species diversity on canopy closure via basal area coefficient of variation was \ccind{}, while the direct effect was \shannonCoverPath{}. As in the bivariate relationships and plot level linear models, species diversity had a weak positive significant effect on canopy closure, while the major driver of canopy closure was the Hegyi crowding index.
+The path analysis investigating the indirect effect of subplot species diversity on canopy closure via the coefficient of variation of basal area showed that while species diversity had a strong positive significant effect on basal area variation, the effect of basal area variation on canopy closure remained negligible (\autoref{path_diag_cover}). The indirect effect of species diversity on canopy closure via basal area coefficient of variation was \shannonBaCoverPath{}, while the direct effect was \shannonCoverPath{}. As in the bivariate relationships and plot level linear models, species diversity had a weak positive significant effect on canopy closure, while the major driver of canopy closure was the Hegyi crowding index.
 
 \begin{figure}
-	\input{out/path_diag.tex}
+	\input{out/path_diag_cover.tex}
 	\caption{Directed Acyclic Graph showing standardised path coefficients of paths in the path analysis of the indirect effect of subplot species diversity (Shannon diversity index) on canopy closure via coefficient of variation of basal area. Asterisks define p-value thresholds: *<0.05, **<0.01, ***<0.001.}
-	\label{path_diag}
+	\label{path_diag_cover}
 \end{figure}
 
+\begin{figure}
+	\input{out/path_diag_height.tex}
+	\caption{Directed Acyclic Graph showing standardised path coefficients of paths in the path analysis of the indirect effect of plot species diversity (Shannon diversity index) and species mingling on mean canopy height via stand structural metrics of coefficient of variation of basal area and tree density. Asterisks define p-value thresholds: *<0.05, **<0.01, ***<0.001.}
+	\label{path_diag_height}
+\end{figure}
 
+\subsection{Covariance of subplot and plot measures of canopy complexity}
 
-\subsection{Comparing subplot and plot measures of canopy complexity}
-
-Plot and subplot canopy complexity metrics were highly correlated in many cases, with similar relationships among vegetation types (\autoref{canopy_rough_slopes}). Most subplot and plot level canopy metrics covaried in a predictable manner. For example, increased canopy height led to an increase in canopy closure. Plot canopy height especially, tended to be strongly positively correlated with subplot canopy complexity metrics. Additionally, as canopy rugosity increased, many subplot canopy complexity and density metrics decreased. Subplot metrics varied greatly within plots, producing large uncertainty in plot level estimates of these metrics. 
+Plot and subplot canopy complexity metrics were highly correlated in many cases, with similar relationships among vegetation types (\autoref{canopy_rough_slopes}). Most subplot and plot level canopy metrics covaried in a predictable manner. For example, increased canopy height led to an increase in canopy closure. Plot canopy height especially, tended to be strongly positively correlated with subplot canopy complexity metrics. Additionally, as canopy rugosity increased, many subplot canopy complexity and density metrics decreased. Subplot metrics varied greatly within plots, producing large uncertainty in plot level estimates of these metrics. All subplot level canopy complexity metrics positive correlated with each other (\autoref{canopy_metric_comp_subplot}). Plot level canopy complexity also generally correlated (\autoref{canopy_metric_comp_plot}). Plot level measures of spatial heterogeneity in canopy structure, i.e. canopy surface roughness and canopy rugosity, were negatively correlated with measures of canopy density, i.e. foliage density, canopy closure, and canopy height. Measures of canopy spatial heterogeneity positively correlated with each other, as did measures of canopy density.
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{plot_subplot_bivar}
@@ -210,7 +216,7 @@ Plot and subplot canopy complexity metrics were highly correlated in many cases,
 
 \section{Discussion}
 
-This study investigated relationships between tree species diversity, stand structure, and several metrics of tree canopy complexity using terrestrial LiDAR in southern African savannas, with a view to improving understanding of the biotic drivers of variation in canopy complexity and vegetation dynamics. Species diversity appeared to generally have weak positive effects on canopy complexity metrics at both the subplot and plot scales. Plots with greater species diversity produced taller tree canopies, with a more complex within-canopy complexity, and greater canopy closure. However, inherent variability in canopy complexity among and within plots makes it difficult to conclusively infer a generalisable species diversity effect across all plots. 
+This study investigated relationships between tree species diversity, stand structure, and several metrics of tree canopy complexity using terrestrial LiDAR in southern African savannas, with a view to improving understanding of the biotic drivers of variation in canopy complexity and vegetation dynamics. Species diversity appeared to generally have weak positive effects on canopy complexity metrics related to canopy density at both the subplot and plot scales. Plots with greater species diversity produced taller tree canopies, with greater canopy closure and foliage density. 
 
 Plot level canopy complexity metrics were generally better predicted by species diversity and stand structure than subplot metrics. While positive relationships between species diversity and subplot canopy complexity metrics were observed in the subplot bivariate models, subplot linear mixed effects models did not show strong species diversity effects. Additionally, none of the best models for subplot canopy complexity metrics included species diversity as a fixed effect. This finding suggests a large degree of stochastic variability in canopy complexity within plots, that masks species effects at smaller spatial scales. The prevalence of disturbance events such as fire and damage by elephants in southern African woodlands, as well as tree-fall, small-scale variability in edaphic factors, and stochastic tree germination all contribute to heterogeneity in canopy complexity \citep{}. This study demonstrates the importance of large sample units and a high degree of replication when measuring canopy complexity, especially in disturbed systems, to effectively account for the inherent heterogeneity in the system \citep{}.
  
@@ -226,7 +232,11 @@ Thoughts on the suitability of different canopy complexity metrics in sparse and
 
 Lots of disturbance is exogenous, i.e. not controlled by stand composition, lots of noise
 
-\section{Conclusion}
+In bivariate relationships tree density had a strong effect on canopy complexity metrics at the plot level, but did not feature prominently in the best quality mixed models for those metrics. Tree density covaried with basal area coefficient of variation, with denser plots also exhibiting greater variation in tree size. This is also reflected in the bivariate relationship between tree density and canopy height. Further path analysis showed that tree species diversity and spatial mingling of tree species increased tree density and variation in tree size, which caused an increase in canopy height. 
+
+Hegyi index is a key driver of canopy complexity at subplot, so what drives variation in the Hegyi index. Discussion
+
+All subplot canopy complexity metrics postiviely covaried. This indicates that for rapid assessments of canopy complexity, simple canopy closure measurements are sufficient to characterise canopy complexity, at the spatial scale of an individual tree neighbourhood. In closed-canopy forest ecosystems, measures of canopy spatial heterogeneity often correlate with canopy closure \citep{}. In the savannas studied here however, the sparser and discontinuous canopy results in a negative relationship. \todo{MORE}
 
 \printbibliography
 
@@ -256,7 +266,6 @@ Lots of disturbance is exogenous, i.e. not controlled by stand composition, lots
 	\label{pred_comp_subplot}
 \end{figure}
 
-canopy_metric_comp_subplot.pdf
-\input{out/bivar_lm_summ_veg_type_fmt}
+\input{out/bivar_lm_summ_veg_type_fmt.tex}
 
 \end{document}

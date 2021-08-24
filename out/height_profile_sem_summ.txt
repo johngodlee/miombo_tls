@@ -1,5 +1,5 @@
 
-Structural Equation Model of mod_spec 
+Structural Equation Model of cover_mod_spec 
 
 Call:
   cover ~ ba_cov_std + shannon_std + hegyi_std

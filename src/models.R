@@ -70,9 +70,30 @@ dredge_list
 sink()
 
 # Which vars were included in best model?
-sig_vars_dredge <- lapply(dredge_list, function(x) {
-  out <- x[1,!is.na(x[1,])]
-  c(gsub("\\s~.*", "", as.character((attributes(x)$global.call))[2]), 
+best_mods <- c(2, 2, 1, 2)
+
+best_mod_list <- list(
+  lme(layer_div ~ hegyi_std + shannon_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(auc_canopy ~ hegyi_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(cum_lm_resid ~ hegyi_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
+  lme(cover ~ hegyi_std + shannon_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML")
+)
+
+best_mod_stat_df <- do.call(rbind, lapply(seq_along(best_mod_list), function(x) {
+  data.frame(
+    resp = attributes(getResponse(best_mod_list[[x]]))$label,
+    daic = AIC(null_mod_list[[x]]) - AIC(best_mod_list[[x]]),
+    dbic = BIC(null_mod_list[[x]]) - BIC(best_mod_list[[x]]),
+    rsq = r.squaredGLMM(best_mod_list[[x]]),
+    nullrsq = r.squaredGLMM(null_mod_list[[x]]),
+    logl = logLik(best_mod_list[[x]]),
+    nulllogl = logLik(null_mod_list[[x]])
+  )
+}))
+
+sig_vars_dredge <- lapply(seq_along(dredge_list), function(x) {
+  out <- dredge_list[[x]][best_mods[x],!is.na(dredge_list[[x]][best_mods[x],])]
+  c(gsub("\\s~.*", "", as.character((attributes(dredge_list[[x]])$global.call))[2]), 
     paste0(subplot_pred, "_std") %in%
        names(out[,-which(names(out) %in% 
           c("(Intercept)", "df", "logLik", "AICc", "delta", "weight")), 
@@ -83,7 +104,7 @@ sig_vars_dredge_df <- as.data.frame(do.call(rbind, sig_vars_dredge))
 names(sig_vars_dredge_df) <- c("resp", subplot_pred)
 
 sig_vars_dredge_clean <- sig_vars_dredge_df %>% 
- left_join(., mod_stat_df[,c("resp", "daic", "rsq.R2c", "rsq.R2m")], by = "resp") %>%
+ left_join(., best_mod_stat_df[,c("resp", "daic", "rsq.R2c", "rsq.R2m")], by = "resp") %>%
   mutate(across(all_of(c("shannon", "hegyi", "ba_cov")), 
       ~case_when(
         .x == TRUE ~ "\\checkmark",
@@ -93,7 +114,7 @@ sig_vars_dredge_clean <- sig_vars_dredge_df %>%
 
 sig_dredge_tab <- xtable(sig_vars_dredge_clean,
   label = "height_profile_sig_vars_dredge",
-  caption = "Explanatory variables included in the best model for each canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the random effects of vegetation type and plot. Positive $\\Delta$AIC values indicate that the model is of better quality than the null model. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
+  caption = "Explanatory variables included in the best model for each subplot canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the random effects of vegetation type and plot. Positive $\\Delta$AIC values >2 indicate that the model is of better quality than the null model. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
   align = c("c","l","c","c","c","c","c","c"),
   display = c("s", "s", "s", "s", "s", "f", "f", "f"),
   digits = c( NA,  NA,  NA,  NA,  NA,  1,   2,   2))
@@ -197,53 +218,93 @@ ggplot() +
   labs(x = "Estimate", y = "")
 dev.off()
 
-# Path analysis for main miombo plots
+# Path analysis for main miombo plots, canopy closure
 subplot_clust1 <- subplot_all_fil[subplot_all_fil$man_clust %in% 1:2,]
 
-mod_spec <- psem(
+cover_mod_spec <- psem(
   lme(cover ~ ba_cov_std + shannon_std + hegyi_std, random = ~1|plot_id , data = subplot_clust1, method = "ML"), 
   lme(ba_cov_std ~ shannon_std + hegyi_std, random =  ~1|plot_id, data = subplot_clust1, method = "ML"),
   data = subplot_clust1)
 
-mod_summ <- summary(mod_spec, .progressBar = FALSE)
+# plot(cover_mod_spec)
+
+cover_mod_summ <- summary(cover_mod_spec, .progressBar = FALSE)
 
 sink(file = "../out/height_profile_sem_summ.txt")
-mod_summ
+cover_mod_summ
 sink()
 
-mod_summ_df <- as.data.frame(mod_summ$coefficients)
+cover_mod_summ_df <- as.data.frame(cover_mod_summ$coefficients)
 
-ccind <- format(
-  mod_summ_df$Estimate[
-    mod_summ_df$Response == "cover" & mod_summ_df$Predictor == "ba_cov_std"] * 
-  mod_summ_df$Estimate[
-    mod_summ_df$Response == "ba_cov_std" & mod_summ_df$Predictor == "shannon_std"], 
-  digits = 2)
+shannon_ba_cover_path <- format(
+  cover_mod_summ_df$Std.Estimate[
+    cover_mod_summ_df$Response == "cover" & cover_mod_summ_df$Predictor == "ba_cov_std"] * 
+  cover_mod_summ_df$Std.Estimate[
+    cover_mod_summ_df$Response == "ba_cov_std" & cover_mod_summ_df$Predictor == "shannon_std"],
+  digits = 2, nsmall = 4, scientific = FALSE)
 
-path_extract <- function(x,y) { 
+path_extract <- function(dat, x,y) { 
   paste0(
-    format(mod_summ_df$Std.Estimate[
-      mod_summ_df$Response == y & mod_summ_df$Predictor == x], 
+    format(dat$Std.Estimate[
+      dat$Response == y & dat$Predictor == x], 
       digits = 2), 
-    pFormat(mod_summ_df$P.Value[
-      mod_summ_df$Response == y & mod_summ_df$Predictor == x], 
+    pFormat(dat$P.Value[
+      dat$Response == y & dat$Predictor == x], 
       asterisks = TRUE)
     )
 }
 
-shannon_ba_path <- path_extract("shannon_std", "ba_cov_std")
-hegyi_ba_path <- path_extract("hegyi_std", "ba_cov_std")
-ba_cover_path <- path_extract("ba_cov_std", "cover")
-hegyi_cover_path <- path_extract("hegyi_std", "cover")
-shannon_cover_path <- path_extract("shannon_std", "cover")
+shannon_ba_path <- path_extract(cover_mod_summ_df, "shannon_std", "ba_cov_std")
+hegyi_ba_path <- path_extract(cover_mod_summ_df, "hegyi_std", "ba_cov_std")
+ba_cover_path <- path_extract(cover_mod_summ_df, "ba_cov_std", "cover")
+hegyi_cover_path <- path_extract(cover_mod_summ_df, "hegyi_std", "cover")
+shannon_cover_path <- path_extract(cover_mod_summ_df, "shannon_std", "cover")
 
+cover_sem_r2m <- cover_mod_summ$R2$Marginal[1]
+cover_sem_r2c <- cover_mod_summ$R2$Conditional[1]
 
-mod_spec <- psem(
-  lm(cover ~ ba_cov_std + shannon_std + hegyi_std, data = subplot_clust1), 
-  lm(ba_cov_std ~ shannon_std + hegyi_std, data = subplot_clust1),
-  data = subplot_clust1)
+# Path analysis for all plots at plot level, canopy height
+height_mod_spec <- psem(
+  lm(chm_mean ~ tree_dens_std + ba_cov_std + tree_shannon_std + mi_mean_std, 
+    data = plot_all_fil), 
+  lm(tree_dens_std ~ tree_shannon_std + mi_mean_std, 
+    data = plot_all_fil),
+  lm(ba_cov_std ~ tree_shannon_std + mi_mean_std, 
+    data = plot_all_fil),
+  data = plot_all_fil)
 
-summary(mod_spec)
+height_mod_summ <- summary(height_mod_spec, .progressBar = FALSE)
+
+height_sem_r2 <- height_mod_summ$R2$R.squared[1]
+
+sink(file = "../out/canopy_height_sem_summ.txt")
+height_mod_summ
+sink()
+
+height_mod_summ_df <- as.data.frame(height_mod_summ$coefficients)
+
+tree_shannon_ba_height_path <- format(
+  height_mod_summ_df$Std.Estimate[
+    height_mod_summ_df$Response == "chm_mean" & height_mod_summ_df$Predictor == "ba_cov_std"] * 
+  height_mod_summ_df$Std.Estimate[
+    height_mod_summ_df$Response == "ba_cov_std" & height_mod_summ_df$Predictor == "tree_shannon_std"],
+  digits = 2, nsmall = 4, scientific = FALSE)
+
+tree_shannon_dens_height_path <- format(
+  height_mod_summ_df$Std.Estimate[
+    height_mod_summ_df$Response == "chm_mean" & height_mod_summ_df$Predictor == "tree_dens_std"] * 
+  height_mod_summ_df$Std.Estimate[
+    height_mod_summ_df$Response == "tree_dens_std" & height_mod_summ_df$Predictor == "tree_shannon_std"],
+  digits = 2, nsmall = 4, scientific = FALSE)
+
+tree_shannon_ba_path <- path_extract(height_mod_summ_df, "tree_shannon_std", "ba_cov_std")
+tree_shannon_dens_path <- path_extract(height_mod_summ_df, "tree_shannon_std", "tree_dens_std")
+tree_shannon_height_path <- path_extract(height_mod_summ_df, "tree_shannon_std", "chm_mean")
+mi_mean_ba_path <- path_extract(height_mod_summ_df, "mi_mean_std", "ba_cov_std")
+mi_mean_dens_path <- path_extract(height_mod_summ_df, "mi_mean_std", "tree_dens_std")
+mi_mean_height_path <- path_extract(height_mod_summ_df, "mi_mean_std", "chm_mean")
+dens_height_path <- path_extract(height_mod_summ_df, "tree_dens_std", "chm_mean")
+ba_height_path <- path_extract(height_mod_summ_df, "ba_cov_std", "chm_mean")
 
 # Whole plot canopy models
 plot_mod_list <- list(
@@ -313,7 +374,7 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
 
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   label = "canopy_sig_vars_dredge",
-  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model. Positive $\\Delta$AIC values indicate that the model is of better quality than the null model.",
+  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model. Positive $\\Delta$AIC values >2 indicate that the model is of better quality than the null model.",
   align = c("c", "l", "c", "c", "c", "c", "c", "c", "c", "c", "S[table-format=<1.2]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
   digits = c( NA,   NA,  NA,  NA, NA, NA,  NA,  NA,  1,   2,   NA))
@@ -361,11 +422,17 @@ tree_shannon_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_
 tree_shannon_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_shannon_std" & 
   plot_mod_pred$resp == "chm_cov",])
 
+tree_shannon_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_shannon_std" & 
+  plot_mod_pred$resp == "rc",])
+
 tree_dens_rug_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "tree_dens_std" & 
   plot_mod_pred$resp == "rc",])
 
 cov_ba_rough_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "ba_cov_std" & 
   plot_mod_pred$resp == "chm_cov",])
+
+voronoi_dens_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "cell_area_cov_std" & 
+  plot_mod_pred$resp == "fol_dens",])
 
 winkel_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "wi_mean_std" & 
   plot_mod_pred$resp == "cover_mean",])
@@ -399,19 +466,33 @@ write(
   c(
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "layer_div"] * 100, digits = 0), "bestLayerDivRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "auc_canopy"] * 100, digits = 0), "bestDensRsqS"),
+    commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestUnifRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestCumRsqS"),
     commandOutput(tree_shannon_height_p, "shannonHeightP"),
     commandOutput(tree_shannon_cover_p, "shannonCoverP"),
     commandOutput(tree_shannon_rough_p, "shannonRoughP"),
+    commandOutput(tree_shannon_rug_p, "shannonRugP"),
     commandOutput(tree_dens_rug_p, "treeDensRugP"),
     commandOutput(cov_ba_rough_p, "covBARoughP"),
     commandOutput(winkel_cover_p, "wiCoverP"),
-    commandOutput(ccind, "ccind"),
+    commandOutput(voronoi_dens_p, "voronoiDensP"),
+    commandOutput(shannon_ba_cover_path, "shannonBaCoverPath"),
     commandOutput(shannon_ba_path, "shannonBaPath"),
     commandOutput(hegyi_ba_path, "hegyiBaPath"),
     commandOutput(ba_cover_path, "baCoverPath"),
     commandOutput(hegyi_cover_path, "hegyiCoverPath"),
-    commandOutput(shannon_cover_path, "shannonCoverPath")
+    commandOutput(shannon_cover_path, "shannonCoverPath"),
+    commandOutput(cover_sem_r2m, "coverSemRm"),
+    commandOutput(cover_sem_r2c, "coverSemRc"), 
+    commandOutput(tree_shannon_ba_path, "treeShannonBaPath"),
+    commandOutput(tree_shannon_dens_path, "treeShannonDensPath"),
+    commandOutput(tree_shannon_height_path, "treeShannonHeightPath"),
+    commandOutput(mi_mean_ba_path, "minglBaPath"),
+    commandOutput(mi_mean_dens_path, "minglDensPath"),
+    commandOutput(mi_mean_height_path, "minglHeightPath"),
+    commandOutput(dens_height_path, "densHeightPath"),
+    commandOutput(ba_height_path, "baHeightPath"),
+    commandOutput(height_sem_r2, "heightSemRsq")
     ),
   file = "../out/models_var.tex")
 

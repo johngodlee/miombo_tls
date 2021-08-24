@@ -1,0 +1,39 @@
+\begin{tikzpicture}[
+	mybox/.style={
+    	rectangle,
+    	draw,
+    	very thick,
+    	inner sep=0pt,
+    	minimum width=20mm,
+    	minimum height=10mm,
+    	text width=2cm,
+		align=center
+    },
+    myarrow/.style={
+    	thick,
+    	-Stealth 
+    },
+    mypathnode/.style={
+    	text width=1cm,
+    	align=center,
+    	fill=white
+    }
+]
+
+\node [mybox] (A1) at (0,0) {Canopy height};
+\node [mybox] (B1) [above left=of A1] {Shannon};
+\node [mybox] (C1) [above right=of A1] {Tree density};
+\node [mybox] (D1) [below left=of A1] {Basal area CV};
+\node [mybox] (E1) [below right=of A1] {Mingling};
+
+\path [myarrow] (B1.south east) edge node[mypathnode] {\treeShannonHeightPath} (A1.north west);
+\path [myarrow] (C1.south west) edge node[mypathnode] {\densHeightPath} (A1.north east);
+\path [myarrow] (D1.north east) edge node[mypathnode] {\baHeightPath} (A1.south west);
+\path [myarrow] (E1.north west) edge node[mypathnode] {\minglHeightPath} (A1.south east);
+
+\path [myarrow] (B1.south) edge node[mypathnode] {\treeShannonBaPath} (D1.north);
+\path [myarrow] (B1.east) edge node[mypathnode] {\treeShannonDensPath} (C1.west);
+\path [myarrow] (E1.west) edge node[mypathnode] {\minglBaPath} (D1.east);
+\path [myarrow] (E1.north) edge node[mypathnode] {\minglDensPath} (C1.south);
+
+\end{tikzpicture}

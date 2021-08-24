@@ -101,11 +101,11 @@ wrap_plots(subplot_bivar_plot, plot_bivar_plot, ncol = 2) +
   theme(legend.position = "bottom") 
 dev.off()
 
-pdf(file = "../img/bivar_subplot.pdf", width = 10, height = 5)
+pdf(file = "../img/bivar_subplot.pdf", width = 9, height = 8)
 subplot_bivar_plot 
 dev.off()
 
-pdf(file = "../img/bivar_plot.pdf", width = 10, height = 5)
+pdf(file = "../img/bivar_plot.pdf", width = 9, height = 8)
 plot_bivar_plot 
 dev.off()
 
@@ -399,7 +399,7 @@ for (i in seq_along(bivar_lm_summ_all$resp[first_entries])) {
 }
 
 bivar_lm_summ_all_tab <- xtable(bivar_lm_summ_all,
-  label = "bivar_lm_summ",
+  label = "bivar_lm_summ_all",
   caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics across all vegetation types. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error. T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
   align = c("l", "l", "l", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
   display = c("s", "s", "s", "s", "s", "s", "s"))
@@ -437,7 +437,7 @@ bivar_lm_summ_veg_type$pred[seq(1, nrow(bivar_lm_summ_veg_type),
       by = length(unique(bivar_lm_summ_veg_type$man_clust)))])
 
 bivar_lm_summ_veg_type_tab <- xtable(bivar_lm_summ_veg_type,
-  label = "bivar_lm_summ",
+  label = "bivar_lm_summ_veg_type",
   caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error.  T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
   align = c("l", "l", "l", "c", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s"))
