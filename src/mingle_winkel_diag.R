@@ -39,15 +39,18 @@ sp_list <- lapply(seq_len(100), function(x) {
 
 # Calculate mean spatial mingling for each plot, 
 # Create a tidy dataframe
-sp_mingl_df <- do.call(rbind, mclapply(seq_along(sp_list), function(x) {
-  message(x, "/", length(sp_list))
-  do.call(rbind, lapply(sp_list[[x]], function(y) {
-    data.frame(
-      x = y$x[1],
-      spm = mean(spatialMingling(y$x_grid, y$y_grid, y$sp, k = 4, adj = TRUE))
-      )
-    }))
-  }, mc.cores = 4))
+#sp_mingl_df <- do.call(rbind, mclapply(seq_along(sp_list), function(x) {
+#  message(x, "/", length(sp_list))
+#  do.call(rbind, lapply(sp_list[[x]], function(y) {
+#    data.frame(
+#      x = y$x[1],
+#      spm = mean(spatialMingling(y$x_grid, y$y_grid, y$sp, k = 4, adj = TRUE))
+#      )
+#    }))
+#  }, mc.cores = 4))
+#
+#saveRDS(sp_mingl_df, "../src/sp_mingl_df.rds")
+sp_mingl_df <- readRDS("../src/sp_mingl_df.rds")
 
 # Plot behaviour of spatial mingling
 sp_plot <- ggplot() + 
@@ -116,29 +119,35 @@ repl_list <- lapply(repl_list, function(x) {
     })
 repl_list <- list(repl_list)
 
-for (i in seq_len(1000)) {
-  repl_list[[i + 1]] <- repl_list[[i]]
-  repl_list[[i + 1]] <- lapply(repl_list[[i + 1]], function(x) {
-    repls <- sample(seq_len(nrow(grid_df)), 2)
-    repl_a <- x$sp[repls[1]]
-    repl_b <- x$sp[repls[2]]
-    x$sp[repls[1]] <- repl_b
-    x$sp[repls[2]] <- repl_a
-    x$adj <- i
-    x
-  })
-}
+#for (i in seq_len(1000)) {
+#  repl_list[[i + 1]] <- repl_list[[i]]
+#  repl_list[[i + 1]] <- lapply(repl_list[[i + 1]], function(x) {
+#    repls <- sample(seq_len(nrow(grid_df)), 2)
+#    repl_a <- x$sp[repls[1]]
+#    repl_b <- x$sp[repls[2]]
+#    x$sp[repls[1]] <- repl_b
+#    x$sp[repls[2]] <- repl_a
+#    x$adj <- i
+#    x
+#  })
+#}
+#
+#repl_df <- do.call(rbind, mclapply(seq_along(repl_list), function(x) {
+#  message(x, "/", length(repl_list))
+#  do.call(rbind, lapply(repl_list[[x]], function(y) {
+#    data.frame(
+#      adj = y$adj[1],
+#      spm = mean(spatialMingling(y$Var1, 
+#          y$Var2, y$sp, k = 4, adj = TRUE))
+#      )
+#  }))
+#  }, mc.cores = 4))
 
-repl_df <- do.call(rbind, mclapply(seq_along(repl_list), function(x) {
-  message(x, "/", length(repl_list))
-  do.call(rbind, lapply(repl_list[[x]], function(y) {
-    data.frame(
-      adj = y$adj[1],
-      spm = mean(spatialMingling(y$Var1, 
-          y$Var2, y$sp, k = 4, adj = TRUE))
-      )
-  }))
-  }, mc.cores = 4))
+#saveRDS(repl_df, "../dat/mi_var.rds")
+#saveRDS(sp_mingl_df, "../dat/mi_sp.rds")
+
+repl_df <- readRDS("../dat/mi_var.rds")
+sp_mingl_df <- readRDS("../dat/mi_sp.rds")
 
 repl_df_g <- repl_df %>%
   group_by(adj) %>%
@@ -157,9 +166,6 @@ dev.off()
 pdf(file = "../img/mingling_both.pdf", width = 12, height = 5)
 (sp_plot | subs_plot)
 dev.off()
-
-saveRDS(repl_df, "../dat/mi_var.rds")
-saveRDS(sp_mingl_df, "../dat/mi_sp.rds")
 
 # Winkelmass
 xy_vec <- seq(2,50, 4)
@@ -185,19 +191,23 @@ for (i in seq_len(200)) {
   }, mc.cores = 4)
 }
 
-wi_df <- do.call(rbind, mclapply(seq_along(wi_list), function(x) {
-  message(x, "/", length(wi_list))
-  do.call(rbind, mclapply(wi_list[[x]], function(y) {
-    data.frame(
-      adj = y$adj[1],
-      wi = mean(winkelmass(y$x, y$y, k = 4))
-      )
-    }, mc.cores = 4))
-  }, mc.cores = 4))
+#wi_df <- do.call(rbind, mclapply(seq_along(wi_list), function(x) {
+#  message(x, "/", length(wi_list))
+#  do.call(rbind, mclapply(wi_list[[x]], function(y) {
+#    data.frame(
+#      adj = y$adj[1],
+#      wi = mean(winkelmass(y$x, y$y, k = 4))
+#      )
+#    }, mc.cores = 4))
+#  }, mc.cores = 4))
 
-wi_df_clean <- wi_df %>%
-  group_by(adj) %>%
-  mutate(run = row_number())
+#wi_df_clean <- wi_df %>%
+#  group_by(adj) %>%
+#  mutate(run = row_number())
+
+#saveRDS(wi_df_clean, "../dat/wi_var.rds")
+
+wi_df_clean <- readRDS("../dat/wi_var.rds")
 
 wi_samples <- c(0,50,100,150,200)
 
@@ -248,20 +258,24 @@ for (i in seq_len(wi_k_n)) {
   wi_k_reps[[i]] <- dat[sample(seq_len(nrow(dat)), wi_k_i, replace = TRUE),]
 }
 
-wi_k_df <- do.call(rbind, mclapply(seq_along(wi_k_reps), function(x) {
-  message(x, "/", length(wi_k_reps))
-  do.call(rbind, lapply(seq(4,20), function(y) {
-    message(y)
-    data.frame(
-      k = y,
-      wi = mean(winkelmass(wi_k_reps[[x]]$x, wi_k_reps[[x]]$y, k = y))
-      )
-    }))
-  }, mc.cores = 4))
+#wi_k_df <- do.call(rbind, mclapply(seq_along(wi_k_reps), function(x) {
+#  message(x, "/", length(wi_k_reps))
+#  do.call(rbind, lapply(seq(4,20), function(y) {
+#    message(y)
+#    data.frame(
+#      k = y,
+#      wi = mean(winkelmass(wi_k_reps[[x]]$x, wi_k_reps[[x]]$y, k = y))
+#      )
+#    }))
+#  }, mc.cores = 4))
+#
+#wi_k_df_clean <- wi_k_df %>% 
+#  group_by(k) %>%
+#  mutate(run = row_number())
+#
+#saveRDS(wi_k_df_clean, "../dat/wi_k.rds")
 
-wi_k_df_clean <- wi_k_df %>% 
-  group_by(k) %>%
-  mutate(run = row_number())
+wi_k_df_clean <- readRDS("../dat/wi_k.rds")
 
 wi_k_plot <- ggplot() + 
   geom_line(data = wi_k_df_clean, aes(x = k, y = wi, group = run)) + 
@@ -287,44 +301,43 @@ pdf(file = "../img/wi_k_summ.pdf", width = 6, height = 4)
 wi_k_summ_plot
 dev.off()
 
-saveRDS(wi_df_clean, "../dat/wi_var.rds")
-saveRDS(wi_k_df_clean, "../dat/wi_k.rds")
-
 # Voronoi tessellation
-voronoi_sf <- mclapply(seq_along(wi_list), function(i) {
-  lapply(seq_along(wi_list[[i]]), function(x) {
-    message(i, "/", length(wi_list), ", ", x, "/", length(wi_list[[i]]))
-    
-    # Create sf object of stem locations
-    x_sf <- st_as_sf(wi_list[[i]][[x]], coords = c("x", "y")) 
-    x_sf_bbox <- st_as_sfc(st_bbox(x_sf))
+#voronoi_sf <- mclapply(seq_along(wi_list), function(i) {
+#  lapply(seq_along(wi_list[[i]]), function(x) {
+#    message(i, "/", length(wi_list), ", ", x, "/", length(wi_list[[i]]))
+#    
+#    # Create sf object of stem locations
+#    x_sf <- st_as_sf(wi_list[[i]][[x]], coords = c("x", "y")) 
+#    x_sf_bbox <- st_as_sfc(st_bbox(x_sf))
+#
+#    # Voronoi tessellation polygons
+#    x_voronoi <- st_voronoi(st_union(x_sf), x_sf_bbox) %>%
+#      st_cast() %>%
+#      st_make_valid() %>%
+#      st_intersection(., x_sf_bbox) %>%
+#      st_sf() %>%
+#      mutate(poly_id = row_number())
+#
+#    return(list(x_sf, x_voronoi))
+#    })
+#  }, mc.cores = 4)
+#
+#saveRDS(voronoi_sf, "../dat/voronoi_vertex.rds")
+voronoi_sf <- readRDS("../dat/voronoi_vertex.rds")
 
-    # Voronoi tessellation polygons
-    x_voronoi <- st_voronoi(st_union(x_sf), x_sf_bbox) %>%
-      st_cast() %>%
-      st_make_valid() %>%
-      st_intersection(., x_sf_bbox) %>%
-      st_sf() %>%
-      mutate(poly_id = row_number())
-
-    return(list(x_sf, x_voronoi))
-    })
-  }, mc.cores = 4)
-
-saveRDS(voronoi_sf, "../dat/voronoi_vertex.rds")
-
-# Find maximum vertex distance of each voronoi cell
-cell_area <- do.call(rbind, mclapply(seq_along(voronoi_sf), function(x) {
-  do.call(rbind, lapply(seq_along(voronoi_sf[[x]]), function(y) {
-    message(x, "/", length(voronoi_sf), ", ", y, "/", length(voronoi_sf[[x]]))
-
-    cell_area_sqrt <- sqrt(st_area(voronoi_sf[[x]][[y]][[2]]))
-
-    data.frame(cell_area_sqrt, adj = x, rep = y)
-  }))
-}, mc.cores = 4))
-
-saveRDS(cell_area, "../dat/voronoi_cell_area.rds")
+## Find maximum vertex distance of each voronoi cell
+#cell_area <- do.call(rbind, mclapply(seq_along(voronoi_sf), function(x) {
+#  do.call(rbind, lapply(seq_along(voronoi_sf[[x]]), function(y) {
+#    message(x, "/", length(voronoi_sf), ", ", y, "/", length(voronoi_sf[[x]]))
+#
+#    cell_area_sqrt <- sqrt(st_area(voronoi_sf[[x]][[y]][[2]]))
+#
+#    data.frame(cell_area_sqrt, adj = x, rep = y)
+#  }))
+#}, mc.cores = 4))
+#
+#saveRDS(cell_area, "../dat/voronoi_cell_area.rds")
+cell_area <- readRDS("../dat/voronoi_cell_area.rds")
 
 cell_area_summ <- cell_area %>%
   group_by(adj, rep) %>%
@@ -379,7 +392,6 @@ voronoi_ex <- ggplot() +
 pdf(file = "../img/voronoi_example.pdf", width = 5, height = 4.5)
 voronoi_ex
 dev.off()
-
 
 pdf(file = "../img/voronoi_diag.pdf", width = 8, height = 5)
 cell_area_plot + voronoi_maps + 

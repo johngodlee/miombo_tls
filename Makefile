@@ -1,7 +1,9 @@
-# Compile TLS manuscript
+# Compile TLS manuscript and workflow 
 
 # Define variables
-TEXFILE  = lidar
+MANUTEXFILE  = lidar
+WORKTEXFILE  = workflow
+
 SRCDIR   = ./src
 IMGDIR   = ./img
 OUTDIR   = ./out
@@ -9,10 +11,10 @@ DATDIR   = ./dat
 
 # Include .pdf here to ensure it is always built
 # latexmk always run, make cannot easily track dependencies in .aux, .bib etc.
-.PHONY : $(TEXFILE).pdf all clean 
+.PHONY : $(MANUTEXFILE).pdf all clean 
 
 # Depends on final PDF, which starts dependency chain
-all : $(TEXFILE).pdf 
+all : $(MANUTEXFILE).pdf $(WORKTEXFILE).pdf
 
 # R scripts
 
@@ -144,7 +146,7 @@ $(DATDIR)/plot_all_std.rds $(DATDIR)/subplot_all_std.rds : \
 	cd $(SRCDIR) ; Rscript $(notdir $<)
 
 # Bivariate plots
-$(IMGDIR)/plot_subplot_bivar.pdf $(IMGDIR)/bivar.pdf $(OUTDIR)/bivar_paper_summ.tex $(OUTDIR)/bivar_paper_var.tex : $(SRCDIR)/bivar_paper.R \
+$(IMGDIR)/pred_comp_plot.pdf $(IMGDIR)/pred_comp_subplot.pdf $(IMGDIR)/canopy_metric_comp_subplot.pdf $(IMGDIR)/canopy_metric_comp_plot.pdf $(IMGDIR)/canopy_metric_box.pdf $(IMGDIR)/bivar_plot.pdf $(IMGDIR)/bivar_subplot.pdf $(IMGDIR)/plot_subplot_bivar.pdf $(IMGDIR)/bivar.pdf $(OUTDIR)/bivar_paper_summ.tex $(OUTDIR)/bivar_paper_var.tex : $(SRCDIR)/bivar_paper.R \
 	$(SRCDIR)/functions.R \
 	$(DATDIR)/plot_all_std.rds \
 	$(DATDIR)/subplot_all_std.rds
@@ -161,6 +163,13 @@ $(OUTDIR)/models_var.tex $(IMGDIR)/canopy_rough_slopes.pdf $(OUTDIR)/canopy_roug
 	$(DATDIR)/gap_frac.csv \
 	$(DATDIR)/plot_canopy_stats.csv
 	@echo Statistical models
+	cd $(SRCDIR) ; Rscript $(notdir $<)
+
+# Mingling and Winkelmass diagrams
+$(OUTDIR)/mingle_winkel_diag_var.tex $(IMGDIR)/mingling_nspecies.pdf $(IMGDIR)/mingling_nspecies_map.pdf $(IMGDIR)/mingling_nmingl.pdf $(IMGDIR)/mingling_both.pdf $(IMGDIR)/wi_diagram.pdf $(IMGDIR)/wi_k.pdf $(IMGDIR)/wi_k_summ.pdf $(IMGDIR)/voronoi_example.pdf $(IMGDIR)/voronoi_diag.pdf : \
+	$(SRCDIR)/mingle_winkel_diag.R \
+	$(SRCDIR)/functions.R
+	@echo Stand structure diagrams
 	cd $(SRCDIR) ; Rscript $(notdir $<)
 
 # Map of study sites
@@ -202,9 +211,9 @@ $(OUTDIR)/var.tex : \
 	@echo Compile LaTeX variables
 	cat $^ > $@
 
-# Compile main tex and show errors 
-$(TEXFILE).pdf : \
-	$(TEXFILE).tex \
+# Compile manuscript tex
+$(MANUTEXFILE).pdf : \
+	$(MANUTEXFILE).tex \
 	$(OUTDIR)/var.tex \
 	$(OUTDIR)/clust_summ_fmt.tex \
 	$(OUTDIR)/indval_fmt.tex \
@@ -212,6 +221,8 @@ $(TEXFILE).pdf : \
 	$(OUTDIR)/canopy_rough_dredge_best_fmt.tex \
 	$(OUTDIR)/bivar_lm_summ_all_fmt.tex \
 	$(OUTDIR)/bivar_lm_summ_veg_type_fmt.tex \
+	$(OUTDIR)/path_diag_cover.tex \
+	$(OUTDIR)/path_diag_height.tex \
 	$(IMGDIR)/map.pdf \
 	$(IMGDIR)/nmds.pdf \
 	$(IMGDIR)/bivar.pdf \
@@ -219,9 +230,46 @@ $(TEXFILE).pdf : \
 	$(IMGDIR)/height_profile_mod_rich_slopes_sites.pdf \
 	$(IMGDIR)/canopy_rough_slopes.pdf \
 	$(IMGDIR)/path_diag.pdf \
+	$(IMGDIR)/canopy_metric_box.pdf \
+	$(IMGDIR)/bivar_plot.pdf \
+	$(IMGDIR)/bivar_subplot.pdf \
+	$(IMGDIR)/canopy_metric_comp_subplot.pdf \
+	$(IMGDIR)/canopy_metric_comp_plot.pdf \
+	$(IMGDIR)/pred_comp_plot.pdf \
+	$(IMGDIR)/pred_comp_subplot.pdf \
 	$(IMGDIR)/plot_subplot_bivar.pdf
 	@echo Compile manuscript
 	latexmk -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make -bibtex $<
+
+# Compile workflow tex 
+$(WORKTEXFILE).pdf : \
+	$(WORKTEXFILE).tex \
+	$(OUTDIR)/mingle_winkel_diag_var.tex \
+	$(OUTDIR)/hemi_anal_var.tex \
+	$(IMGDIR)/plot.pdf \
+	$(IMGDIR)/target_situ.jpg \
+	$(IMGDIR)/target_face.jpg \
+	$(IMGDIR)/viva.jpg \
+	$(IMGDIR)/ppk.pdf \
+	$(IMGDIR)/workflow_diag.pdf \
+	$(IMGDIR)/noise_vis.png \
+	$(IMGDIR)/height_profile_illus_all.pdf \
+	$(IMGDIR)/tls_hemi_compare.pdf \
+	$(IMGDIR)/hemi_hemi.png \
+	$(IMGDIR)/hemi_tls.png \
+	$(IMGDIR)/P1_raw.png \
+	$(IMGDIR)/P1_pit.png \
+	$(IMGDIR)/mingling_nspecies.pdf \
+	$(IMGDIR)/mingling_nmingl.pdf \
+	$(IMGDIR)/winkelmass.pdf \
+	$(IMGDIR)/wi_diagram.pdf \
+	$(IMGDIR)/wi_k.pdf \
+	$(IMGDIR)/voronoi_example.pdf \
+	$(IMGDIR)/voronoi_diag.pdf \
+	$(IMGDIR)/hegyi.pdf 
+	@echo Compile manuscript
+	latexmk -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make -bibtex $<
+
 
 # Clean up stray intermediary files
 clean :

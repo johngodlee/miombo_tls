@@ -83,7 +83,7 @@ cover_mod <- lme(tls_cover ~ hemi_cover*site, random = ~1|plot_id,
   data = cover_spread)
 
 lme_stat <- paste0("$\\beta$(", cover_mod$fixDF$X[4], ")=",
-  format(cover_mod$coefficients$fixed[4], digits = 2), "\\pm", 
+  format(cover_mod$coefficients$fixed[4], digits = 2), "$\\pm$", 
   format(cover_mod$varFix[4,4], digits = 2), ", ", 
   pFormat(anova(cover_mod)[4,4], digits = 2))
 

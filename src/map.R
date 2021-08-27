@@ -44,7 +44,7 @@ pa_cnt$name <- c("Bicuar", "Mtarure")
 site_map <- ggplot() + 
   geom_sf(data = saf, colour = "black", fill = "lightgrey") +
   geom_point(data = pa_cnt, aes(x = X, y = Y), 
-    fill = "red3", size = 3, shape = 21, colour = "black") + 
+    size = 3) + 
   geom_label_repel(data = pa_cnt, 
     aes(x = X, y = Y, label = name), colour = "black", show.legend = FALSE) + 
   ylim(-34, 5) +
