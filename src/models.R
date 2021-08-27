@@ -35,6 +35,8 @@ mod_list <- list(
   lme(cover ~ hegyi_std + shannon_std + ba_cov_std, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML")
 )
 
+subplot_mod_n <- length(mod_list)
+
 # Define null models 
 null_mod_list <- list(
   lme(layer_div ~ 1, random = ~1|man_clust/plot_id, data = subplot_all_fil, method = "REML"),
@@ -114,8 +116,8 @@ sig_vars_dredge_clean <- sig_vars_dredge_df %>%
 
 sig_dredge_tab <- xtable(sig_vars_dredge_clean,
   label = "height_profile_sig_vars_dredge",
-  caption = "Explanatory variables included in the best model for each subplot canopy structure variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the random effects of vegetation type and plot. Positive $\\Delta$AIC values >2 indicate that the model is of better quality than the null model. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
-  align = c("c","l","c","c","c","c","c","c"),
+  caption = "Explanatory variables included in the best model for each subplot canopy complexity variable. $\\Delta$AIC shows the difference in model AIC value compared to a null model which included only the random effects of vegetation type and plot. $\\Delta$AIC values >2 indicate that the model is of better quality than the null model. R\\textsuperscript{2}\\textsubscript{c} is the R\\textsuperscript{2} of the best model, while R\\textsuperscript{2}\\textsubscript{m} is the R\\textsuperscript{2} of the model fixed effects only.",
+  align = c("c","l","c","c","c","S[table-format=3.1]","c","c"),
   display = c("s", "s", "s", "s", "s", "f", "f", "f"),
   digits = c( NA,  NA,  NA,  NA,  NA,  1,   2,   2))
 
@@ -258,7 +260,7 @@ shannon_ba_path <- path_extract(cover_mod_summ_df, "shannon_std", "ba_cov_std")
 hegyi_ba_path <- path_extract(cover_mod_summ_df, "hegyi_std", "ba_cov_std")
 ba_cover_path <- path_extract(cover_mod_summ_df, "ba_cov_std", "cover")
 hegyi_cover_path <- path_extract(cover_mod_summ_df, "hegyi_std", "cover")
-shannon_cover_path <- path_extract(cover_mod_summ_df, "shannon_std", "cover")
+shannon_cover_path <- as.character(-as.numeric(path_extract(cover_mod_summ_df, "shannon_std", "cover")))
 
 cover_sem_r2m <- cover_mod_summ$R2$Marginal[1]
 cover_sem_r2c <- cover_mod_summ$R2$Conditional[1]
@@ -402,7 +404,7 @@ plot_sig_vars_dredge_clean <- plot_sig_vars_dredge_df %>%
 
 plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
   label = "canopy_sig_vars_dredge",
-  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model. Positive $\\Delta$AIC values >2 indicate that the model is of better quality than the null model.",
+  caption = "Explanatory variables included in the best linear model for each plot-level canopy complexity metric. $\\Delta$AIC shows the difference in model AIC value compared to a null model. $\\Delta$AIC values >2 indicate that the model is of better quality than the null model.",
   align = c("c", "l", "c", "c", "c", "c", "c", "c", "c", "c", "S[table-format=<1.2]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s", "f", "f", "s"),
   digits = c( NA,   NA,  NA,  NA, NA, NA,  NA,  NA,  1,   2,   NA))
@@ -413,6 +415,7 @@ fileConn <- file("../out/canopy_rough_dredge_best.tex")
 writeLines(print(plot_sig_dredge_tab, 
   include.rownames = FALSE, 
   caption.placement = "top",
+  table.placement = "",
   booktabs = TRUE,
   sanitize.colnames.function = colSanit, 
   sanitize.text.function = function(x) {x}), 
@@ -468,7 +471,7 @@ winkel_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "wi_mean_std
 ba_cover_p <- plot_mod_text(plot_mod_pred[plot_mod_pred$term == "ba_cov_std" & 
   plot_mod_pred$resp == "cover_mean",])
 
-pdf(file = "../img/canopy_rough_slopes.pdf", height = 4, width = 9)
+pdf(file = "../img/canopy_rough_slopes.pdf", height = 4, width = 11)
 ggplot() +
   geom_vline(xintercept = 0, linetype = 2) +
   geom_errorbarh(data = plot_mod_pred, 
@@ -483,7 +486,8 @@ ggplot() +
   facet_wrap(~resp_out, scales = "free_x", nrow = 1) + 
   theme_bw() + 
   theme(legend.position = "none") + 
-  labs(x = "Estimate", y = "")
+  labs(x = "Estimate", y = "") + 
+  theme(panel.spacing = unit(1, "lines"))
 dev.off()
 
 # Output model sta
@@ -494,6 +498,7 @@ sink()
 # Write text stats
 write(
   c(
+    commandOutput(subplot_mod_n, "subModN"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "layer_div"] * 100, digits = 0), "bestLayerDivRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "auc_canopy"] * 100, digits = 0), "bestDensRsqS"),
     commandOutput(format(mod_stat_df$rsq.R2c[mod_stat_df$resp == "cum_lm_resid"] * 100, digits = 0), "bestUnifRsqS"),

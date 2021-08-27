@@ -37,17 +37,28 @@ chm_nona_clean <- chm_nona %>%
       paper_plot_id == "M5" ~ "Cluster 2: M5",
       TRUE ~ NA_character_))
 
+chm_nona_clean_split <- split(chm_nona_clean, chm_nona_clean$paper_plot_id)
+
+veg_type_tile_plots <- lapply(chm_nona_clean_split, function(x) {
+  ggplot() + 
+    geom_tile(data = x, aes(x = x, y = y, fill = Z, colour = Z), 
+      size = 0.5) + 
+    scale_fill_scico(name = "Canopy height (m)", palette = "bamako", 
+      limits=c(0, 20)) + 
+    scale_colour_scico(name = "Canopy height (m)", palette = "bamako", 
+      limits=c(0, 20)) + 
+    ggtitle(unique(x$paper_plot_id)) + 
+    theme_bw() + 
+    labs(x = "", y = "") + 
+    coord_equal()
+  })
+
 
 # Create plot of vegetation types
 pdf(file = "../img/veg_type_tile.pdf", width = 7, height = 7)
-ggplot() + 
-  geom_tile(data = chm_nona_clean, aes(x = x, y = y, fill = Z, colour = Z), 
-    size = 0.5) + 
-  scale_fill_scico(name = "Height (m)", palette = "bamako") + 
-  scale_colour_scico(name = "Height (m)", palette = "bamako") + 
-  facet_wrap(~paper_plot_id, scales = "free") + 
-  theme_bw() + 
-  labs(x = "", y = "")
+wrap_plots(veg_type_tile_plots) + 
+  plot_layout(guides = "collect") &  
+  theme(legend.position = "bottom") 
 dev.off()
 
 # Filter to one plot that looks good

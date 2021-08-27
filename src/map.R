@@ -81,10 +81,12 @@ site_maps <- lapply(pa, function(x) {
     plot_centre_fix_fil <- st_as_sf(plots_fil[plots_fil$site == "AGO",], coords = c("X", "Y"))
     plot_pal <- clust_pal[c(1,3)]
     plot_title <- "Bicuar"
+    plot_x_ticks <- seq(from = 38.8, to = 39.2, by = 0.2)
   } else {
     plot_centre_fix_fil <- st_as_sf(plots_fil[plots_fil$site == "TZA",], coords = c("X", "Y"))
     plot_pal <- clust_pal[c(2,4)]
     plot_title <- "Mtarure"
+    plot_x_ticks <- seq(from = 14.2, to = 15.4, by = 0.4)
   }
 
   st_crs(plot_centre_fix_fil) <- 4326
@@ -116,8 +118,13 @@ site_maps <- lapply(pa, function(x) {
   white_x_pal <- white_x$pal_col
   names(white_x_pal) <- white_x$leg_plot
 
-  scale_x <- seq(plyr::round_any(max_extent[1], 0.2, round), plyr::round_any(max_extent[2], 0.2, round), 0.2)
-  scale_y <- seq(plyr::round_any(max_extent[3], 0.2, round), plyr::round_any(max_extent[4], 0.2, round), 0.2)
+  if (any(grepl("Bicuar", unlist(x)))) { 
+    scale_x <- seq(plyr::round_any(max_extent[1], 0.4, round), plyr::round_any(max_extent[2], 0.4, round), 0.4)
+    scale_y <- seq(plyr::round_any(max_extent[3], 0.2, round), plyr::round_any(max_extent[4], 0.2, round), 0.2)
+  } else {
+    scale_x <- seq(plyr::round_any(max_extent[1], 0.1, round), plyr::round_any(max_extent[2], 0.1, round), 0.1)
+    scale_y <- seq(plyr::round_any(max_extent[3], 0.1, round), plyr::round_any(max_extent[4], 0.1, round), 0.1)
+  }
 
   plot_mean_coords <- apply(st_coordinates(plot_centre_fix_fil), 2, mean)
   site_crs <- UTMProj4(latLong2UTM(plot_mean_coords[1], plot_mean_coords[2]))

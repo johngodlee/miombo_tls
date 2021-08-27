@@ -105,7 +105,7 @@ pdf(file = "../img/bivar_subplot.pdf", width = 9, height = 8)
 subplot_bivar_plot 
 dev.off()
 
-pdf(file = "../img/bivar_plot.pdf", width = 9, height = 8)
+pdf(file = "../img/bivar_plot.pdf", width = 11, height = 8)
 plot_bivar_plot 
 dev.off()
 
@@ -167,7 +167,7 @@ plot_list <- lapply(seq_along(bivar_list), function(x) {
   p
   })
 
-pdf(file = "../img/plot_subplot_bivar.pdf", width = 12, height = 12)
+pdf(file = "../img/plot_subplot_bivar.pdf", width = 14, height = 12)
 wrap_plots(plot_list, byrow = FALSE) + 
   plot_layout(ncol = 4, guides = "collect") &
   theme(legend.position = "bottom")
@@ -196,7 +196,10 @@ pred_comb <- lapply(seq_along(pred_list), function(x) {
       scale_colour_manual(name = "Veg. type", values = clust_pal) +
       labs(x = pred_names[match(y[1], names(pred_names))], 
         y = pred_names[match(y[2], names(pred_names))]) + 
-      theme_bw() 
+      theme_bw() + 
+      guides(colour = "none") + 
+      guides(fill = guide_legend(override.aes = list(size=5)))
+
 
     return(p)
   })
@@ -236,7 +239,10 @@ canopy_comp <- lapply(seq_along(canopy_resp_list), function(x) {
       scale_colour_manual(name = "Veg. type", values = clust_pal) +
       labs(x = resp_names[match(y[1], names(resp_names))], 
         y = resp_names[match(y[2], names(resp_names))]) + 
-      theme_bw() 
+      theme_bw() + 
+      guides(colour = "none") + 
+      guides(fill = guide_legend(override.aes = list(size=5)))
+
 
     return(p)
   })
@@ -400,7 +406,7 @@ for (i in seq_along(bivar_lm_summ_all$resp[first_entries])) {
 
 bivar_lm_summ_all_tab <- xtable(bivar_lm_summ_all,
   label = "bivar_lm_summ_all",
-  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics across all vegetation types. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error. T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
+  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics across all vegetation types. Slope refers to the slope of the predictor term in the model, $\\pm$1 standard error. T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
   align = c("l", "l", "l", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
   display = c("s", "s", "s", "s", "s", "s", "s"))
 
@@ -410,6 +416,7 @@ fileConn <- file("../out/bivar_lm_summ_all.tex")
 writeLines(print(bivar_lm_summ_all_tab, 
   include.rownames = FALSE, 
   caption.placement = "top",
+  table.placement = "",
   booktabs = TRUE,
   hline.after = c(-1, no_dups_seq-1, nrow(bivar_lm_summ_all)),
   sanitize.colnames.function = colSanit, 
@@ -438,7 +445,7 @@ bivar_lm_summ_veg_type$pred[seq(1, nrow(bivar_lm_summ_veg_type),
 
 bivar_lm_summ_veg_type_tab <- xtable(bivar_lm_summ_veg_type,
   label = "bivar_lm_summ_veg_type",
-  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics, grouped by vegetation type. Note that models plot level canopy complexity metrics could not be fitted for Cluster 4, as this cluster only contained two plots. Slope refers to the slope of the predictor term in the model, $\\pm{}$ 1 standard error.  T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
+  caption = "Summary statistics of bivariate linear models comparing canopy complexity metrics with diversity and stand structural metrics, grouped by vegetation type. Note that models plot level canopy complexity metrics could not be fitted for Cluster 4, as this cluster only contained two plots. Slope refers to the slope of the predictor term in the model, $\\pm$1 standard error.  T is the t-value of the slope of the predictor term in the model, Asterisks indicate the p-value of these terms (***<0.001, **<0.01, *<0.05).",
   align = c("l", "l", "l", "c", "c", "c", "c", "S[table-format=-2.2, table-space-text-post = {***}]"),
   display = c("s", "s", "s", "s", "s", "s", "s", "s"))
 
@@ -449,6 +456,7 @@ writeLines(print(bivar_lm_summ_veg_type_tab,
   tabular.environment = "longtable",
   include.rownames = FALSE, 
   caption.placement = "top",
+  table.placement = "",
   booktabs = TRUE,
   hline.after = c(-1, 0, seq(4,nrow(bivar_lm_summ_veg_type), 4)),
   sanitize.colnames.function = colSanit, 

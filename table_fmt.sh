@@ -10,7 +10,7 @@ sed '12,13s/1//' out/indval.tex |\
 	sed '23s/4/{\\multirow{3}{*}{4}}/' |\
 	sed '9s/{Indicator value}/{\\thead{Indicator\\\\value}}/' > out/indval_fmt.tex
 
-sed '9s/{Stem density}/\\thead{Stem density\\\\(Stems ha\\textsuperscript{-1})}/' out/clust_summ.tex |\
+sed '9s/{Stem density}/\\thead{Stem density\\\\(stems ha\\textsuperscript{-1})}/' out/clust_summ.tex |\
 	sed '9s/{AGB}/\\thead{AGB\\\\(t ha\\textsuperscript{-1})}/' > out/clust_summ_fmt.tex
 
 sed '9s/{CV basal area}/{\\thead{Basal area\\\\CV}}/' out/canopy_rough_dredge_best.tex |\
@@ -21,7 +21,9 @@ sed '9s/{CV basal area}/{\\thead{Basal area\\\\CV}}/' out/canopy_rough_dredge_be
 
 sed '9s/{CV basal area}/{\\thead{Basal area\\\\CV}}/' out/height_profile_dredge_best.tex > out/height_profile_dredge_best_fmt.tex
 
-
 sed '3i\\\setlength{\\tabcolsep}{4pt}' out/bivar_lm_summ_all.tex > out/bivar_lm_summ_all_fmt.tex
+
+sed '3i{\\\setlength{\\tabcolsep}{2pt}' out/bivar_lm_summ_veg_type.tex |\
+	sed '$a}' > out/bivar_lm_summ_veg_type_fmt.tex
 
 sed '3i\\\setlength{\\tabcolsep}{4pt}' out/bivar_lm_summ_veg_type.tex > out/bivar_lm_summ_veg_type_fmt.tex

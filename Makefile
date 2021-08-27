@@ -173,9 +173,12 @@ $(IMGDIR)/map.pdf : \
 	cd $(SRCDIR) ; Rscript $(notdir $<)
 
 # Compile drawio images
-$(IMGDIR)/schematic.pdf : drawio/schematic.drawio
+$(IMGDIR)/winkelmass.pdf $(IMGDIR)/plot.pdf : \
+	drawio_export.sh \
+	drawio/plot.drawio \
+	drawio/winkelmass.drawio
 	@echo Compile drawio images
-	./drawio_export.sh $< $@
+	./drawio_export.sh
 
 # Format some tables
 $(OUTDIR)/indval_fmt.tex $(OUTDIR)/clust_summ_fmt.tex $(OUTDIR)/height_profile_dredge_best_fmt.tex $(OUTDIR)/canopy_rough_dredge_best_fmt.tex $(OUTDIR)/bivar_lm_summ_all_fmt.tex $(OUTDIR)/bivar_lm_summ_veg_type_fmt.tex : \
@@ -187,7 +190,7 @@ $(OUTDIR)/indval_fmt.tex $(OUTDIR)/clust_summ_fmt.tex $(OUTDIR)/height_profile_d
 	$(OUTDIR)/bivar_lm_summ_all.tex \
 	$(OUTDIR)/bivar_lm_summ_veg_type.tex 
 	@echo Format tables
-	./table_fmt.sh $< $@
+	./table_fmt.sh
 
 # Compile latex variables
 $(OUTDIR)/var.tex : \
@@ -204,7 +207,7 @@ $(TEXFILE).pdf : \
 	$(TEXFILE).tex \
 	$(OUTDIR)/var.tex \
 	$(OUTDIR)/clust_summ_fmt.tex \
-	$(OUTDIR)/indval.tex \
+	$(OUTDIR)/indval_fmt.tex \
 	$(OUTDIR)/height_profile_dredge_best_fmt.tex \
 	$(OUTDIR)/canopy_rough_dredge_best_fmt.tex \
 	$(OUTDIR)/bivar_lm_summ_all_fmt.tex \

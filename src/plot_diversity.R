@@ -327,7 +327,7 @@ clust_summ_xtable <- xtable(clust_summ_all,
   align = c("c", "l", "c", "S[table-format=2.0]", "r", "r", "r"),
   display = c("s", "d", "d", "d", "s", "s", "s"),
   digits = c(0, 0, 0, 0, 0, 0, 0),
-  caption = "Description of the vegetation type clusters, identified using the Ward algorithm based on basal area weighted genus abundance. AGB = Above-Ground woody Biomass. Species richness, stem density and AGB are reported as the median among plots, with the interquartile range in parentheses.")
+  caption = "Description of the vegetation type clusters, identified using Ward's algorithm based on basal area weighted genus abundance. AGB = Above-Ground woody Biomass. Species richness, stem density and AGB are reported as the median among plots, with the interquartile range in parentheses.")
 
 fileConn <- file("../out/clust_summ.tex")
 writeLines(print(clust_summ_xtable,
@@ -388,7 +388,7 @@ indval_xtable <- xtable(indval_dom,
   align = c("c", "c", "r", "r", "S[table-format=1.2]"),
   display = c("s", "s", "s", "s", "f"),
   digits = c(0, 0, 0, 0, 2),
-  caption = "Floristic description of the vegetation type clusters. Dominant species are the most abundant individuals across all plots per cluster. Indicator species are derived from Dufr\\^{e}ne-Legendre indicator species analysis with the three highest indicator values.")
+  caption = "Floristic description of the vegetation type clusters. Dominant species are the most abundant individuals across all plots within each cluster. Indicator species are the three species with the highest indicator values, from Dufr\\^{e}ne-Legendre indicator species analysis.")
 
 fileConn <- file("../out/indval.tex")
 writeLines(print(indval_xtable,
