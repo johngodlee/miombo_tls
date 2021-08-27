@@ -10,7 +10,7 @@
 \addbibresource{lidar.bib}
 
 % Variables
-\input{out/var.tex}
+\input{inc/var.tex}
 
 \title{Species diversity and stand structure as drivers of canopy complexity in southern African woodlands}
 \author{John L. Godlee}
@@ -110,9 +110,9 @@ Statistical analysis of the determinants of plot level canopy complexity metrics
 Path analysis was used to test whether tree species diversity influences canopy complexity indirectly through its effect on stand structure, using the \texttt{piecewiseSEM} R package \citep{piecewiseSEM}. Two path analyses were conducted, one at the plot level and one at the subplot level. Subplot path analysis investigated the direct effect of species diversity on canopy closure, as well as the indirect effect of diversity on canopy closure via the CV of basal area, with random intercept terms for each vegetation type. Again, these models excluded the ex-Acacia vegetation type due to lack of replication. Plot level path analysis investigated the direct effects of species diversity and spatial mingling of species on mean canopy height, as well as the indirect effects of these metrics on canopy height via tree density and basal area CV. Again, ex-Acacia plots were excluded from this path analysis.
 
 
-\input{out/clust_summ_fmt.tex}
+\input{inc/clust_summ_fmt.tex}
 
-\input{out/indval_fmt.tex}
+\input{inc/indval_fmt.tex}
 
 \section{Results}
 
@@ -134,7 +134,7 @@ Bivariate plots and linear models show that subplot species diversity, measured 
 
 At the plot level, effects of species diversity and stand structure on canopy complexity were similarly weak, but not strictly significant except for the effect on canopy height, which explained more variance in canopy height than tree density (\autoref{plot_bivar}, \autoref{bivar_lm_summ_all}). The effect of spatial regularity of stems on canopy closure, measured by uniform angle index, was clearly negative, while the effect of spatial clustering of stems, measured by Voronoi cell area CV, was negligible. Additionally, there was a non-significant negative effect of basal area CV on whole canopy rugosity. As expected, tree density had strong positive and significant effects on foliage density and canopy closure, but negative effects on canopy roughness and canopy rugosity. Cluster 4 represented an outlier in plot level bivariate relationships, with low canopy closure, low canopy height, low species diversity, and low variation in stem size.
 
-\input{out/bivar_lm_summ_all_fmt.tex}
+\input{inc/bivar_lm_summ_all_fmt.tex}
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{bivar_subplot}
@@ -175,7 +175,7 @@ Linear mixed effects models showed that species diversity of the subplot neighbo
 	\label{height_profile_mod_rich_slopes_sites}
 \end{figure}
 
-\input{out/height_profile_dredge_best_fmt.tex}
+\input{inc/height_profile_dredge_best_fmt.tex}
 
 \subsection{Plot level linear models}
 
@@ -189,7 +189,7 @@ Despite the weak effect sizes of species diversity on canopy complexity at the p
 	\label{canopy_rough_slopes}
 \end{figure}
 
-\input{out/canopy_rough_dredge_best_fmt.tex}
+\input{inc/canopy_rough_dredge_best_fmt.tex}
 
 \subsection{Path analysis}
 
@@ -198,13 +198,13 @@ The subplot level path analysis investigating the indirect effect of subplot spe
 The plot level path analysis, which tested the effects of species diversity and species mingling on canopy height, showed that the main effect of species diversity on canopy height was direct (\treeShannonHeightPath{}), while the indirect effects via basal area CV (\treeShannonBaHeightPath{}), and tree density (\treeShannonDensHeightPath{}), remained small and insignificant. Shannon diversity had a strong positive effect on tree density. Species mingling had a moderately strong negative but insignificant direct effect on canopy height, as in the linear mixed models and bivariate relationships.
 
 \begin{figure}
-	\input{out/path_diag_cover.tex}
+	\input{inc/path_diag_cover.tex}
 	\caption{Directed Acyclic Graph showing standardised path coefficients of paths in the path analysis of the indirect effect of subplot species diversity (Shannon diversity index) on canopy closure via basal area CV. Asterisks define p-value thresholds: *<0.05, **<0.01, ***<0.001.}
 	\label{path_diag_cover}
 \end{figure}
 
 \begin{figure}
-	\input{out/path_diag_height.tex}
+	\input{inc/path_diag_height.tex}
 	\caption{Directed Acyclic Graph showing standardised path coefficients of paths in the path analysis of the indirect effect of plot species diversity (Shannon diversity index) and species mingling on mean canopy height via stand structural metrics of basal area CV and tree density. Asterisks define p-value thresholds: *<0.05, **<0.01, ***<0.001.}
 	\label{path_diag_height}
 \end{figure}
@@ -290,6 +290,6 @@ Here I explored how tree species diversity and stand structure influence canopy 
 	\label{pred_comp_subplot}
 \end{figure}
 
-\input{out/bivar_lm_summ_veg_type_fmt.tex}
+\input{inc/bivar_lm_summ_veg_type_fmt.tex}
 
 \end{document}

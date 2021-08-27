@@ -11,8 +11,8 @@
 \usepackage{placeins}
 
 % Variables
-\input{out/mingle_winkel_diag_var.tex}
-\input{out/hemi_anal_var.tex}
+\input{inc/mingle_winkel_diag_var.tex}
+\input{inc/hemi_anal_var.tex}
 
 \title{Estimation of woodland canopy structure with terrestrial LiDAR: extended methods}
 \author{John L. Godlee}
@@ -151,18 +151,18 @@ Point clouds within a subplot were aligned using the reflective targets as ancho
 
 GNSS measurements of target locations were used to register point clouds in real space. The TrimbleRTX GNSS post-processing service was used to improve the precision of target locations recorded with GNSS, using distributed regional stations to validate the rover and base station GNSS measurements (\autoref{auspos_close}) \citep{Chen2011}. Following point cloud registration, subplot point clouds were combined to a plot level point cloud.
 
-\input{out/auspos_close.tex}
+\input{inc/auspos_close.tex}
 
 PTX files were converted to compressed LAZ files using PDAL \citep{PDAL}, to reduce file size and speed up further processing. \autoref{ptx_laz} contains the code used to transform PTX to LAZ. 
 
 \vspace{\baselineskip}
 \begin{minipage}{\linewidth}
-\lstinputlisting[label=ptx_laz,language=bash,caption={The processing chain used to convert Leica Cyclone PTX files to LAZ files, using PDAL, POSIX shell scripting, and common UNIX utilities. The \texttt{ptx\_laz.json} JSON pipeline is shown in \autoref{ptx_laz_json}.}]{out/ptx_laz.txt}
+\lstinputlisting[label=ptx_laz,language=bash,caption={The processing chain used to convert Leica Cyclone PTX files to LAZ files, using PDAL, POSIX shell scripting, and common UNIX utilities. The \texttt{ptx\_laz.json} JSON pipeline is shown in \autoref{ptx_laz_json}.}]{inc/ptx_laz.txt}
 \end{minipage}
 
 \vspace{\baselineskip}
 \begin{minipage}{\linewidth}
-	\lstinputlisting[label=ptx_laz_json,language=json,caption={The JSON pipeline used in \autoref{ptx_laz} to convert PTX files to LAZ files, and applying a rotation matrix.}]{out/ptx_laz_json.txt}
+	\lstinputlisting[label=ptx_laz_json,language=json,caption={The JSON pipeline used in \autoref{ptx_laz} to convert PTX files to LAZ files, and applying a rotation matrix.}]{inc/ptx_laz_json.txt}
 \end{minipage}
 
 \subsection{Voxelisation}
