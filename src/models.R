@@ -67,7 +67,7 @@ dredge_list <- lapply(mod_list, function(x) {
   })
 
 # Write dredging to file
-sink(file = "../out/height_profile_dredge_mods.txt")
+sink(file = "../inc/height_profile_dredge_mods.txt")
 dredge_list
 sink()
 
@@ -123,7 +123,7 @@ sig_dredge_tab <- xtable(sig_vars_dredge_clean,
 
 names(sig_dredge_tab) <- c("Response", "Hegyi", "Shannon", "CV basal area", "$\\Delta$AIC", "R\\textsuperscript{2}\\textsubscript{c}", "R\\textsuperscript{2}\\textsubscript{m}")
 
-fileConn <- file("../out/height_profile_dredge_best.tex")
+fileConn <- file("../inc/height_profile_dredge_best.tex")
 writeLines(print(sig_dredge_tab, 
   include.rownames = FALSE, 
   caption.placement = "top",
@@ -232,7 +232,7 @@ cover_mod_spec <- psem(
 
 cover_mod_summ <- summary(cover_mod_spec, .progressBar = FALSE)
 
-sink(file = "../out/height_profile_sem_summ.txt")
+sink(file = "../inc/height_profile_sem_summ.txt")
 cover_mod_summ
 sink()
 
@@ -279,7 +279,7 @@ height_mod_summ <- summary(height_mod_spec, .progressBar = FALSE)
 
 height_sem_r2 <- height_mod_summ$R2$R.squared[1]
 
-sink(file = "../out/canopy_height_sem_summ.txt")
+sink(file = "../inc/canopy_height_sem_summ.txt")
 height_mod_summ
 sink()
 
@@ -347,7 +347,7 @@ plot_mod_stat_df <- do.call(rbind, lapply(seq_along(plot_mod_list), function(x) 
 
 plot_dredge_list <- lapply(plot_mod_list, dredge)
 
-sink(file = "../out/canopy_dredge_mods.txt")
+sink(file = "../inc/canopy_dredge_mods.txt")
 plot_dredge_list
 sink()
 
@@ -411,7 +411,7 @@ plot_sig_dredge_tab <- xtable(plot_sig_vars_dredge_clean,
 
 names(plot_sig_dredge_tab) <- c("Response", "Shannon", "Tree density", "CV basal area", "Mingling", "Winkelmass", "CV Voronoi", "$\\Delta$AIC", "R\\textsuperscript{2}", "Prob.")
 
-fileConn <- file("../out/canopy_rough_dredge_best.tex")
+fileConn <- file("../inc/canopy_rough_dredge_best.tex")
 writeLines(print(plot_sig_dredge_tab, 
   include.rownames = FALSE, 
   caption.placement = "top",
@@ -491,7 +491,7 @@ ggplot() +
 dev.off()
 
 # Output model sta
-sink("../out/canopy_rough_mod_summ.txt")
+sink("../inc/canopy_rough_mod_summ.txt")
 lapply(mod_list, summary)
 sink()
 
@@ -532,5 +532,5 @@ write(
     commandOutput(tree_shannon_ba_height_path, "treeShannonBaHeightPath"),
     commandOutput(tree_shannon_dens_height_path, "treeShannonDensHeightPath")
     ),
-  file = "../out/models_var.tex")
+  file = "../inc/models_var.tex")
 

@@ -408,4 +408,4 @@ write(
     commandOutput(wi_k_n, "wikn"),  # Number of replicates for Wi var. with k 
     commandOutput(wi_k_i, "wiki")  # Number of individuals for Wi var. with k 
     ),
-  file = "../out/mingle_winkel_diag_var.tex")
+  file = "../inc/mingle_winkel_diag_var.tex")

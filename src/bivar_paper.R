@@ -412,7 +412,7 @@ bivar_lm_summ_all_tab <- xtable(bivar_lm_summ_all,
 
 names(bivar_lm_summ_all_tab) <- c("Response", "Predictor", "Slope", "F", "R\\textsuperscript{2}", "T")
 
-fileConn <- file("../out/bivar_lm_summ_all.tex")
+fileConn <- file("../inc/bivar_lm_summ_all.tex")
 writeLines(print(bivar_lm_summ_all_tab, 
   include.rownames = FALSE, 
   caption.placement = "top",
@@ -451,7 +451,7 @@ bivar_lm_summ_veg_type_tab <- xtable(bivar_lm_summ_veg_type,
 
 names(bivar_lm_summ_veg_type_tab) <- c("Response", "Predictor", "Cluster", "Slope", "F", "R\\textsuperscript{2}", "T")
 
-fileConn <- file("../out/bivar_lm_summ_veg_type.tex")
+fileConn <- file("../inc/bivar_lm_summ_veg_type.tex")
 writeLines(print(bivar_lm_summ_veg_type_tab, 
   tabular.environment = "longtable",
   include.rownames = FALSE, 
@@ -516,5 +516,5 @@ write(
     commandOutput(tree_shannon_roughp, "shannonRoughPB"),
     commandOutput(tree_shannon_rugp, "shannonRugPB")
     ),
-  file = "../out/bivar_paper_var.tex")
+  file = "../inc/bivar_paper_var.tex")
 

@@ -72,7 +72,7 @@ nearest_xtable <- xtable(nearest_close,
 
 names(nearest_xtable) <- c("Site", "Receiver", "Distance (km)")
 
-fileConn <- file("../out/auspos_close.tex")
+fileConn <- file("../inc/auspos_close.tex")
 writeLines(print(nearest_xtable, 
   include.rownames = FALSE, 
   caption.placement = "top",

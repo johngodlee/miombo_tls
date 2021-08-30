@@ -218,6 +218,6 @@ ggplot() +
 dev.off()
 
 # Output best model stats
-sink("../out/vol_best_mod_summ.txt")
+sink("../inc/vol_best_mod_summ.txt")
 summary(vol_best_mod)
 sink()

@@ -6,7 +6,7 @@ WORKTEXFILE  = workflow
 
 SRCDIR   = ./src
 IMGDIR   = ./img
-OUTDIR   = ./out
+OUTDIR   = ./inc
 DATDIR   = ./dat
 
 # Include .pdf here to ensure it is always built

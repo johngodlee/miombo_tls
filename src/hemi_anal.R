@@ -92,10 +92,10 @@ write(
     commandOutput(cor_stat, "hemiCor"),
     commandOutput(lme_stat, "hemiLme")
     ),
-  file = "../out/hemi_anal_var.tex")
+  file = "../inc/hemi_anal_var.tex")
 
 
-sink("../out/cover_hemi_tls_mod_summ.txt")
+sink("../inc/cover_hemi_tls_mod_summ.txt")
 summary(cover_mod)
 sink()
 

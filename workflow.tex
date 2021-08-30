@@ -14,7 +14,7 @@
 \input{inc/mingle_winkel_diag_var.tex}
 \input{inc/hemi_anal_var.tex}
 
-\title{Estimation of woodland canopy structure with terrestrial LiDAR: extended methods}
+\title{Estimation of woodland canopy complexity with terrestrial LiDAR: extended methods}
 \author{John L. Godlee}
 \date{\today}
 
@@ -69,14 +69,14 @@ Five Leica 6" (15.24 cm) diameter planar tilt-and-turn cross-pattern reflective 
 	\label{ppk}
 \end{figure}
 
-\begin{table} \centering 
+\begin{table} 
+	\centering 
   \caption{Description of scan settings used for each scan.} 
   \label{scan_settings} 
-\begin{tabular}{@{\extracolsep{0pt}} rl} 
-\\[-1.8ex]\hline 
-\hline \\[-1.8ex] 
+\begin{tabular}{rl} 
+	\toprule
 {Setting} & {Value} \\
-\hline \\[-1.8ex] 
+	\midrule
 TLS model & Leica HDS6100 \\
 Wavelength & 650-690 nm \\
 Spot size at exit & 3 mm \\
@@ -90,8 +90,7 @@ Pixels per line & \num{20000} \\
 Lines & \num{10000} \\
 Compressed file size & \textasciitilde{}800 MB \\
 Duration of scan & 6 minutes 44 seconds \\
-\hline
-\hline \\[-1.8ex] 
+	\bottomrule
 \end{tabular} 
 \end{table} 
 
