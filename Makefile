@@ -211,6 +211,15 @@ $(OUTDIR)/var.tex : \
 	@echo Compile LaTeX variables
 	cat $^ > $@
 
+# Convert large images
+$(IMGDIR)/veg_type_tile_fmt.png : \
+	large_img_fmt.sh \
+	$(IMGDIR)/veg_type_tile.pg_fmt.sh \
+	$(IMGDIR)/veg_type_tile.pdf
+	@echo Format large images
+	./large_img_fmt.sh
+
+
 # Compile manuscript tex
 $(MANUTEXFILE).pdf : \
 	$(MANUTEXFILE).tex \
@@ -226,7 +235,7 @@ $(MANUTEXFILE).pdf : \
 	$(IMGDIR)/map.pdf \
 	$(IMGDIR)/nmds.pdf \
 	$(IMGDIR)/bivar.pdf \
-	$(IMGDIR)/veg_type_tile.pdf \
+	$(IMGDIR)/veg_type_tile_fmt.png \
 	$(IMGDIR)/height_profile_mod_rich_slopes_sites.pdf \
 	$(IMGDIR)/canopy_rough_slopes.pdf \
 	$(IMGDIR)/path_diag.pdf \
