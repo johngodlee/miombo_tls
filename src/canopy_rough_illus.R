@@ -15,27 +15,28 @@ source("functions.R")
 h_summ <- readRDS("../dat/gam_points.rds")
 chm_nona <- readRDS("../dat/chm_points.rds")
 plot_id_lookup <- read.csv("../dat/plot_id_lookup.csv")
+plot_summ <- read.csv("../dat/plot_summ.csv")
 
 # Filter to one plot from each vegetation type and clean
 plot_per_clust <- c("ABG_1", "TKW_13", "ABG_13", "TKW_7")
 
-chm_nona_clean <- chm_nona %>%
-  mutate(Z = case_when(
+chm_nona_adj <- chm_nona %>%
+  left_join(., plot_summ[,c("seosaw_id", "paper_id", "man_clust")], 
+    by = c("plot_id_new" = "seosaw_id")) %>%
+  rename(paper_plot_id = paper_id) %>%
+  mutate(
+    Z = case_when(
       plot_id_new == "TKW_13" & Z > 20 ~ NA_real_,
       plot_id_new == "TKW_7" & Z > 11 ~ NA_real_,
-      TRUE ~ Z), 
-    paper_plot_id = plot_id_lookup$paper_id[match(plot_id_new, plot_id_lookup$seosaw_id)]) %>%
-  filter(plot_id_new %in% plot_per_clust) %>%
+      TRUE ~ Z),
+    paper_plot_id = paste0("Cluster ", man_clust, ": ", paper_plot_id)) %>%
   group_by(paper_plot_id) %>%
   mutate(
     x = x - min(x, na.rm = TRUE),
-    y = y - min(y, na.rm = TRUE)) %>%
-  mutate(paper_plot_id = case_when(
-      paper_plot_id == "B1" ~ "Cluster 1: B1",
-      paper_plot_id == "B13" ~ "Cluster 3: B13",
-      paper_plot_id == "M1" ~ "Cluster 4: M1",
-      paper_plot_id == "M5" ~ "Cluster 2: M5",
-      TRUE ~ NA_character_))
+    y = y - min(y, na.rm = TRUE)) 
+
+chm_nona_clean <- chm_nona_adj %>%
+  filter(plot_id_new %in% plot_per_clust)
 
 chm_nona_clean_split <- split(chm_nona_clean, chm_nona_clean$paper_plot_id)
 
@@ -59,6 +60,31 @@ pdf(file = "../img/veg_type_tile.pdf", width = 7, height = 7)
 wrap_plots(veg_type_tile_plots) + 
   plot_layout(guides = "collect") &  
   theme(legend.position = "bottom") 
+dev.off()
+
+# Plot all plots
+chm_nona_adj_split <- split(chm_nona_adj, chm_nona_adj$paper_plot_id)
+
+veg_type_tile_plots_all <- lapply(chm_nona_adj_split, function(x) {
+  ggplot() + 
+    geom_tile(data = x, aes(x = x, y = y, fill = Z, colour = Z), 
+      size = 0.5) + 
+    scale_fill_scico(name = "Canopy height (m)", palette = "bamako", 
+      limits=c(0, 20)) + 
+    scale_colour_scico(name = "Canopy height (m)", palette = "bamako", 
+      limits=c(0, 20)) + 
+    ggtitle(unique(x$paper_plot_id)) + 
+    theme_bw() + 
+    theme(plot.title = element_text(size = 10)) + 
+    labs(x = "", y = "") + 
+    coord_equal()
+  })
+
+pdf(file = "../img/veg_type_tile_all.pdf", width = 7, height = 13)
+wrap_plots(veg_type_tile_plots_all) + 
+  plot_layout(guides = "collect", ncol = 3) &  
+  theme(legend.position = "bottom",
+    plot.margin = margin(0.5,0.5,0.5,0.5)) 
 dev.off()
 
 # Filter to one plot that looks good
