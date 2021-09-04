@@ -80,9 +80,9 @@ veg_type_tile_plots_all <- lapply(chm_nona_adj_split, function(x) {
     coord_equal()
   })
 
-pdf(file = "../img/veg_type_tile_all.pdf", width = 7, height = 13)
+pdf(file = "../img/veg_type_tile_all.pdf", width = 10, height = 13)
 wrap_plots(veg_type_tile_plots_all) + 
-  plot_layout(guides = "collect", ncol = 3) &  
+  plot_layout(guides = "collect", ncol = 4) &  
   theme(legend.position = "bottom",
     plot.margin = margin(0.5,0.5,0.5,0.5)) 
 dev.off()
