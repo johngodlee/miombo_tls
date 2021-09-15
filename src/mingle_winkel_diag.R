@@ -58,9 +58,12 @@ sp_plot <- ggplot() +
     aes(x = x, y = spm), 
     shape = 21, fill = "darkgrey") + 
   theme_bw() + 
-  labs(x = "N species", y = expression(bar(M[i])))
+  labs(x = "N species", y = expression(bar(M[i]))) + 
+  theme(
+    axis.text = element_text(size = 15), 
+    axis.title = element_text(size = 15))
 
-pdf(file = "../img/mingling_nspecies.pdf", width = 8, height = 6)
+pdf(file = "../img/mingling_nspecies.pdf", width = 6, height = 4)
 sp_plot
 dev.off()
 
@@ -157,13 +160,16 @@ subs_plot <- ggplot() +
   geom_line(data = repl_df_g, 
     aes(x = adj, y = spm, group = run), alpha = 0.5) + 
   theme_bw() + 
-  labs(x = "N substitutions", y = expression(bar(M[i])))
+  labs(x = "N substitutions", y = expression(bar(M[i]))) + 
+  theme(
+    axis.text = element_text(size = 15), 
+    axis.title = element_text(size = 15))
 
-pdf(file = "../img/mingling_nmingl.pdf", width = 8, height = 6)
+pdf(file = "../img/mingling_nmingl.pdf", width = 6, height = 4)
 subs_plot
 dev.off()
 
-pdf(file = "../img/mingling_both.pdf", width = 12, height = 5)
+pdf(file = "../img/mingling_both.pdf", width = 6, height = 5)
 (sp_plot | subs_plot)
 dev.off()
 
@@ -293,7 +299,7 @@ wi_k_summ_plot <- wi_k_df_clean %>%
   theme_bw() +
   labs(x = "k", y = expression(bar(W[i])))
 
-pdf(file = "../img/wi_k.pdf", width = 8, height = 5)
+pdf(file = "../img/wi_k.pdf", width = 6, height = 4)
 wi_k_plot
 dev.off()
 
@@ -398,9 +404,121 @@ cell_area_plot + voronoi_maps +
   plot_layout(ncol = 1, heights = c(2,1))
 dev.off()
 
+# Iterative Hegyi index
+
+# Create some example layouts
+centre <- matrix(c(0,0), nrow = 1)
+
+# Increasing number of points
+npoints <- seq_len(100)
+
+hegyi_inc_points <- unlist(lapply(npoints, function(x) {
+  poly_vert <- polyVert(x, 5)
+  poly_vert$diam <- 10
+
+  poly_vert$dist <- apply(poly_vert[,1:2], 1, function(y) {
+    eucDist(y, centre)
+  })
+
+  out <- hegyiPoint(poly_vert$diam, poly_vert$dist)
+
+  return(out)
+}))
+
+hegyi_inc_points_df <- data.frame(npoints, hegyi_inc_points)
+
+pdf(file = "../img/hegyi_inc_points.pdf", width = 4, height = 4)
+ggplot(data = hegyi_inc_points_df, aes(x = npoints, y = hegyi_inc_points)) + 
+  geom_point() +
+  theme_bw() + 
+  labs(x = "n", y = expression(H[i]))
+dev.off()
+
+# Increasing distance of points 
+dist_vec <- seq(0.1, 5, 0.1)
+
+hegyi_inc_dist <- unlist(lapply(dist_vec, function(x) {
+  poly_vert <- polyVert(12, x)
+  poly_vert$diam <- 10
+
+  poly_vert$dist <- apply(poly_vert[,1:2], 1, function(y) {
+    eucDist(y, centre)
+  })
+
+  out <- hegyiPoint(poly_vert$diam, poly_vert$dist)
+
+  return(out)
+}))
+
+hegyi_inc_dist_df <- data.frame(dist_vec, hegyi_inc_dist)
+
+pdf(file = "../img/hegyi_inc_dist.pdf", width = 4, height = 4)
+ggplot(data = hegyi_inc_dist_df, aes(x = dist_vec, y = hegyi_inc_dist)) + 
+  geom_point() +
+  theme_bw() + 
+  labs(x = expression(L[ij]), y = expression(H[i]))
+dev.off()
+
+# Increasing diameter of points
+diam_vec <- seq(5, 50, 1)
+
+hegyi_inc_diam <- unlist(lapply(diam_vec, function(x) {
+  poly_vert <- polyVert(12, 5)
+  poly_vert$diam <- x
+
+  poly_vert$dist <- apply(poly_vert[,1:2], 1, function(y) {
+    eucDist(y, centre)
+  })
+
+  out <- hegyiPoint(poly_vert$diam, poly_vert$dist)
+
+  return(out)
+}))
+
+hegyi_inc_diam_df <- data.frame(diam_vec, hegyi_inc_diam)
+
+pdf(file = "../img/hegyi_inc_diam.pdf", width = 4, height = 4)
+ggplot(data = hegyi_inc_diam_df, aes(x = diam_vec, y = hegyi_inc_diam)) + 
+  geom_point() +
+  theme_bw() + 
+  labs(x = expression(D[j]), y = expression(H[i]))
+dev.off()
+
+# Increasing variability of diameter of points
+diam_var_vec <- log(seq(1,100,1))
+he_sd_reps <- 100
+
+hegyi_inc_diam_var_df <- do.call(rbind, lapply(diam_var_vec, function(x) {
+  poly_vert <- polyVert(12, 5)
+  poly_vert$dist <- apply(poly_vert[,1:2], 1, function(y) {
+    eucDist(y, centre)
+  })
+
+  hegyi_vec <- unlist(replicate(he_sd_reps, {
+      poly_vert_rep <- poly_vert
+      poly_vert_rep$diam <- rlnorm(nrow(poly_vert), 
+        meanlog = log(5), sdlog = x)
+      out <- hegyiPoint(poly_vert_rep$diam, poly_vert_rep$dist)
+      return(out)
+    }, simplify = FALSE))
+
+  out_df <- data.frame(hegyi = hegyi_vec, sd = x, rep = seq_along(hegyi_vec))
+
+  return(out_df)
+    }))
+
+pdf(file = "../img/hegyi_inc_diam_var.pdf", width = 4, height = 4)
+ggplot(data = hegyi_inc_diam_var_df, aes(x = sd, y = hegyi)) + 
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "loess") + 
+  theme_bw() + 
+  labs(x = expression(sigma*D[j]), y = expression(H[i]))
+dev.off()
+
 # Write some stats to file
 write(
   c(
+    commandOutput(he_sd_reps, "hesdreps"),  # Number of replicates for Hi var. diam sd
     commandOutput(mi_sp_reps, "mispreps"),  # Number of replicates for Mi var with sp.
     commandOutput(mi_n_reps, "minreps"),  # Number of replicates for Mi var with mingling
     commandOutput(mi_n_sp, "minsp"),  # Number of species for Mi var with mingling

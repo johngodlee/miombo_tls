@@ -711,3 +711,26 @@ pairGroups <- function(trt, m, a, b, pval, thresh = 0.05) {
 
   return(w) 
 }
+
+# Generate regular polygons
+polyVert <- function(nsides, radius, centre = c(0,0), angle = 0) {
+  steps <- 2 * pi / nsides
+  x <- NULL
+  y <- NULL
+
+  for (i in seq_len(nsides)) {
+      x[i] <- radius * cos(angle);
+      y[i] <- radius * sin(angle);
+      angle <- angle + steps;
+  }
+
+  x <- x + centre[1]
+  y <- y + centre[2]
+
+  return(data.frame(x,y))
+}
+
+# Calculate euclidean distances
+eucDist <- function(x1, x2) {
+  sqrt(sum((x1 - x2) ^ 2))
+}

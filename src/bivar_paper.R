@@ -211,7 +211,7 @@ wrap_plots(pred_comb[[1]], byrow = FALSE) +
   theme(legend.position = "bottom")
 dev.off()
 
-pdf(file = "../img/pred_comp_plot.pdf", width = 12, height = 12)
+pdf(file = "../img/pred_comp_plot.pdf", width = 12, height = 15)
 wrap_plots(pred_comb[[2]], byrow = FALSE) + 
   plot_layout(ncol = 3, guides = "collect") &
   theme(legend.position = "bottom")
@@ -248,7 +248,7 @@ canopy_comp <- lapply(seq_along(canopy_resp_list), function(x) {
   })
 })
 
-pdf(file = "../img/canopy_metric_comp_subplot.pdf", width = 12, height = 5)
+pdf(file = "../img/canopy_metric_comp_subplot.pdf", width = 8, height = 5)
 wrap_plots(canopy_comp[[1]], byrow = FALSE) + 
   plot_layout(ncol = 3, guides = "collect") &
   theme(legend.position = "bottom")
